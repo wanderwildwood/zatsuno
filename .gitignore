@@ -8,3 +8,4 @@ signing/signing.properties
 signing/signing.keystore
 .cxx/
 .kotlin/
+__pycache__/
