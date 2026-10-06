@@ -137,6 +137,12 @@ private fun PositionCard(model: CompassModel) {
             LocationPrompt(live) { model.refresh() }
         } else {
             PositionLines(fix, big = true)
+            // A fix from before location was switched off or refused: still worth reading out,
+            // with its age beside it, but say why it will not get newer.
+            if (!live.permitted || !live.locationOn) {
+                Spacer(Modifier.height(8.dp))
+                LocationPrompt(live) { model.refresh() }
+            }
             Spacer(Modifier.height(10.dp))
             WideButton(stringResource(R.string.pos_share)) { sharePosition(context, fix) }
         }

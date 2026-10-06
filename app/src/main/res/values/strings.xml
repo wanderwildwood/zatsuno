@@ -62,6 +62,9 @@
     <string name="age_hours">%1$s h old</string>
     <string name="pos_share">Share position</string>
     <string name="pos_map">Open in map</string>
+    <!-- The same two, short, for the row of three buttons under the compass -->
+    <string name="compass_share">Share</string>
+    <string name="compass_map">Map</string>
     <!-- %1$s is the number to dial -->
     <string name="pos_dial">Dial %1$s</string>
     <!-- First line of a shared position. %1$s the time, %2$s metres -->
@@ -216,7 +219,7 @@
     <!-- About -->
 
     <string name="about_title">Field Kit %1$s</string>
-    <string name="about_what">First aid, knots and a compass that work with no signal. Location is used only for the compass and your position, on this phone. The app has no internet access.</string>
+    <string name="about_what">First aid, knots and a compass that work with no signal. Location is used only for the compass and your position, on this phone. The emergency card stays on this phone too, and goes on the lock screen only if you switch that on. The app has no internet access.</string>
     <string name="about_aid">First-aid pages written from US government sources (MedlinePlus, NIH, CDC, NPS, NWS, DHS), each named on its page. They do not replace training.</string>
     <string name="about_licence">GNU General Public License v3</string>
     <string name="about_kcompass">Compass and position code from kCompass by Ondřej Koloničný, OK1CDJ, GPL-3.0</string>

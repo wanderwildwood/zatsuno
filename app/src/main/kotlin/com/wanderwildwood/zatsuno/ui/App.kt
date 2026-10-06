@@ -76,7 +76,7 @@ fun FieldKitApp(model: CompassModel = viewModel()) {
             val cardTitle = stringResource(R.string.card_title)
             val cardKeys = stringResource(R.string.card_keywords)
             val knotTexts = Knots.all.map { k ->
-                Triple(k, stringResource(k.name), (listOf(stringResource(k.use)) + k.steps.map { stringResource(it.caption) }).joinToString(" "))
+                Triple(k, stringResource(k.name), (listOf(stringResource(k.use)) + k.steps.map { stringResource(it.caption) }).joinToString("\n"))
             }
             val entries = remember(pages) {
                 pages.map { Entry(Kind.AID, it.id, it.title, it.keywords, it.searchText()) } +

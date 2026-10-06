@@ -95,7 +95,19 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
 
             Spacer(Modifier.height(4.dp))
             val fix = live.fix
-            if (fix != null) PositionLines(fix, big = false) else LocationPrompt(live) { model.refresh() }
+            if (fix != null) {
+                PositionLines(fix, big = false)
+                // An old fix, kept: one short line on why it will not get newer, so the
+                // buttons stay on the screen. "Calling for help" carries the full prompt.
+                if (!live.permitted || !live.locationOn) {
+                    TextMMD(
+                        text = stringResource(if (!live.permitted) R.string.pos_need_permission else R.string.pos_off),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            } else {
+                LocationPrompt(live) { model.refresh() }
+            }
 
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
@@ -104,8 +116,8 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
                     Modifier.weight(1f),
                 ) { model.freeze() }
                 if (fix != null) {
-                    WideButton(stringResource(R.string.pos_share), Modifier.weight(1f)) { sharePosition(context, fix) }
-                    WideButton(stringResource(R.string.pos_map), Modifier.weight(1f)) { openInMap(context, fix) }
+                    WideButton(stringResource(R.string.compass_share), Modifier.weight(1f)) { sharePosition(context, fix) }
+                    WideButton(stringResource(R.string.compass_map), Modifier.weight(1f)) { openInMap(context, fix) }
                 }
             }
         }
@@ -131,7 +143,10 @@ private fun Rose(heading: Float?, letters: List<String>, modifier: Modifier) {
             close()
         }
         drawPath(mark, Color.Black)
-        rotate(degrees = -(heading ?: 0f), pivot = centre) {
+        // With no heading to show honestly, the card is left blank rather than pointing
+        // a north it does not know.
+        if (heading == null) return@Canvas
+        rotate(degrees = -heading, pivot = centre) {
             for (deg in 0 until 360 step 15) {
                 val a = Math.toRadians(deg.toDouble())
                 val len = when {
@@ -148,7 +163,7 @@ private fun Rose(heading: Float?, letters: List<String>, modifier: Modifier) {
                 )
             }
             // The needle: north half outlined heavy, south half a thin line.
-            val tip = Offset(cx, cy - (r - 34f))
+            val tip = Offset(cx, cy - (r - 58f))
             val needle = Path().apply {
                 moveTo(tip.x, tip.y)
                 lineTo(cx - 11f, cy)
@@ -156,7 +171,7 @@ private fun Rose(heading: Float?, letters: List<String>, modifier: Modifier) {
                 close()
             }
             drawPath(needle, Color.Black, style = Stroke(width = 4f))
-            drawLine(Color.Black, centre, Offset(cx, cy + (r - 34f)), strokeWidth = 2f)
+            drawLine(Color.Black, centre, Offset(cx, cy + (r - 58f)), strokeWidth = 2f)
             val paint = Paint().apply {
                 color = android.graphics.Color.BLACK
                 textSize = 20f * density

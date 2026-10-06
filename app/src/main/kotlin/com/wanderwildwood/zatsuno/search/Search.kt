@@ -58,7 +58,7 @@ object Search {
         Normalizer.normalize(text, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "").lowercase(Locale.ROOT)
 
     private fun snippet(body: String, term: String): String? {
-        val sentences = body.split(Regex("(?<=[.!?])\\s+"))
+        val sentences = body.split(Regex("(?<=[.!?])\\s+|\\n"))
         return sentences.firstOrNull { s -> words(s).any { it.startsWith(term) } }?.trim()?.take(140)
     }
 }

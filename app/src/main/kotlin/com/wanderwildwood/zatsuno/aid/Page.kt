@@ -47,7 +47,7 @@ data class Page(
     }
 
     /** Every word on the page a search can find it by. */
-    fun searchText(): String = blocks.joinToString(" ") {
+    fun searchText(): String = blocks.joinToString("\n") {
         when (it) {
             is Block.Heading -> it.text
             is Block.Step -> it.text
