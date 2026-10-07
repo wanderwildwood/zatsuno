@@ -18,6 +18,14 @@ and it will install on any Android 12 device.
   dispatcher, with how close it is and how old. Share it as text to Messaging or anything else
   (decimal, degrees-minutes-seconds, a `geo:` address and a map link), or open the dialler with
   911 or 112 filled in. What to tell the call-taker, and what to do with no signal.
+- **Work through it.** A second way into the first-aid pages, for when you don't know yet
+  what's wrong. It walks the response chain (scene, life threats, call, look, treat, watch) one
+  plain question at a time, with ABCDE, SAMPLE and OPQRST in small letters at the edge for
+  anyone trained in them. As you answer, the pages that fit gather on one screen, the danger
+  pages not yet ruled out stay in view with the one question that would settle each, and
+  "not sure" never rules anything out. It writes a timed SOAP note as you go, to read out to a
+  call-taker or send to Messaging, and reminds you to recheck every 15 minutes, or 5 while a
+  danger page fits. It names pages; it never says someone is fine.
 - **First aid.** Twenty-nine short pages: checking the scene and the person, hands-only CPR,
   choking, severe bleeding and tourniquets, drowning, anaphylaxis, trouble breathing and
   asthma, chest pain, stroke, shock, seizures, low blood sugar, poisoning and carbon monoxide,
@@ -42,14 +50,16 @@ and it will install on any Android 12 device.
   [Glance](https://github.com/wanderwildwood/hitome) if you switch that on, with the lines you
   choose.
 - **Search across all of it**, and send any page or knot to Notes or anywhere else as text.
-  Select text on a page to reach Define and the other text apps.
+  Select text on a page to reach Define and the other text apps; a "see Shock" on a page opens
+  that page.
 
 ## What it does not do
 
 - **It does not replace first-aid training, or a call for help.** Every page says so. The pages
   are a reminder for someone who has to act, not a course.
-- **No internet.** The app has no internet permission. Location is used only while the compass
-  or "Calling for help" is open, and stays on the phone.
+- **No internet.** The app has no internet permission. Location is used only while the compass,
+  "Calling for help" or the note is open, and stays on the phone. A note you start stays on the
+  phone until you clear it.
 - **The emergency card stays on the phone.** It is shown on the lock screen only if you switch
   that on, and then anyone holding the phone can read it without unlocking.
 - **True north needs a fix.** The declination depends on where you are, so until there is a
@@ -58,10 +68,11 @@ and it will install on any Android 12 device.
 
 ## Where the first-aid pages come from
 
-Each page was written for this app from public-domain US government sources: MedlinePlus and
-other NIH pages, the CDC and NIOSH, the National Park Service, the National Weather Service,
-DHS's Stop the Bleed material, 911.gov and the FCC. The sources are named at the foot of each
-page. The pages live in `app/src/main/res/raw/aid_*.txt` in a small plain-text markup, so a
+Each page was written for this app from current guidance: US government sources (MedlinePlus
+and other NIH pages, the CDC, the National Park Service, the National Weather Service, DHS's
+Stop the Bleed material, 911.gov and the FCC), the AHA and American Red Cross first-aid
+guidelines, the Wilderness Medical Society's practice guidelines, and a few others where they
+say it best. The sources are named at the foot of each page. The pages live in `app/src/main/res/raw/aid_*.txt` in a small plain-text markup, so a
 translation is a copy of that folder (`raw-de/`, `raw-es/` …) and Android picks the reader's
 language.
 

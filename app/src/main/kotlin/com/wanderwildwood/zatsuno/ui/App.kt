@@ -20,6 +20,8 @@ import com.wanderwildwood.zatsuno.Opening
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.aid.Pages
 import com.wanderwildwood.zatsuno.compass.CompassModel
+import com.wanderwildwood.zatsuno.key.Keys
+import com.wanderwildwood.zatsuno.key.Stage
 import com.wanderwildwood.zatsuno.knots.Knots
 import com.wanderwildwood.zatsuno.search.Entry
 import com.wanderwildwood.zatsuno.search.Kind
@@ -34,6 +36,9 @@ object Route {
     const val SEARCH = "search"
     const val CARD = "card"
     const val CARD_EDIT = "card:edit"
+    const val KEY = "key"
+    const val NOTE = "key:note"
+    const val READ_OUT = "key:readout"
     fun aid(id: String, more: Boolean = false) = if (more) "aid:$id:more" else "aid:$id"
     fun knot(id: String) = "knot:$id"
 }
@@ -54,6 +59,7 @@ fun FieldKitApp(
     val stack = rememberSaveable(saver = stackSaver()) { mutableStateListOf(Route.HOME) }
     var about by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
+    var keyStage by rememberSaveable { mutableStateOf(Stage.SCENE.name) }
     // A position another app sent for "Calling for help", until the reader goes back to the phone's own.
     var givenSaved by rememberSaveable { mutableStateOf<String?>(null) }
     val given = remember(givenSaved) { Given.restore(givenSaved) }
@@ -73,16 +79,39 @@ fun FieldKitApp(
                 givenSaved = r.given?.save()
                 stack.add(Route.aid(Pages.CALL))
             }
+            // The recheck reminder, tapped: the key at Watch, over the home screen.
+            Opening.Request.Watch -> {
+                stack.add(Route.HOME)
+                stack.add(Route.KEY)
+                keyStage = Stage.WATCH.name
+            }
         }
         onRequestHandled()
     }
 
     val pages = remember { Pages.all(context) }
+    val titles = remember(pages) { pages.associate { it.title to it.id } }
+    val keyState = remember { KeyState(context, Keys.get(context), Keys.words(context), pages.associate { it.id to it.title }) }
     val route = stack.last()
     // A sent position belongs to the visit that brought it; the call page opened later is the phone's own.
     LaunchedEffect(route) { if (route != Route.aid(Pages.CALL) && route != Route.aid(Pages.CALL, more = true)) givenSaved = null }
     when {
-        route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true })
+        route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true }, keyState.incident?.let { keyState.note.time(it.started) })
+        route == Route.KEY -> KeyScreen(
+            state = keyState,
+            stage = Stage.valueOf(keyStage),
+            onStage = { keyStage = it.name },
+            model = model,
+            onOpenPage = { open(Route.aid(it)) },
+            onNote = { open(Route.NOTE) },
+            onReadOut = { open(Route.READ_OUT) },
+            onBack = ::back,
+        )
+        route == Route.NOTE -> NoteScreen(keyState, model, onReadOut = { open(Route.READ_OUT) }, onBack = ::back) {
+            keyStage = Stage.SCENE.name
+            back()
+        }
+        route == Route.READ_OUT -> ReadOutScreen(keyState, model, ::back)
         route == Route.AID -> ListScreen(
             title = stringResource(R.string.home_aid),
             rows = pages.map { it.title to null },
@@ -93,7 +122,11 @@ fun FieldKitApp(
             val id = route.removePrefix("aid:").substringBefore(':')
             val page = pages.firstOrNull { it.id == id }
             if (page == null) back()
-            else AidScreen(page, model, ::back, given, onDropGiven = { givenSaved = null }, openMore = route.endsWith(":more"))
+            else AidScreen(
+                page, model, ::back, given, onDropGiven = { givenSaved = null }, openMore = route.endsWith(":more"),
+                titles = titles, onOpenPage = { open(Route.aid(it)) },
+                readOut = keyState.incident?.let { keyState.note.readOut(it) },
+            )
         }
         route == Route.KNOTS -> {
             val rows = Knots.all.map { stringResource(it.name) to stringResource(it.use) }

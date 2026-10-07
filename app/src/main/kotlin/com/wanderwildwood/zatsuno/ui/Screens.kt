@@ -60,7 +60,7 @@ fun Screen(
  * then the three parts. Search and About sit in the bar.
  */
 @Composable
-fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Unit) {
+fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Unit, keyStarted: String? = null) {
     Screen(
         title = stringResource(R.string.app_name),
         onBack = null,
@@ -74,6 +74,8 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
             HorizontalDividerMMD()
             HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) }
             HorizontalDividerMMD()
+            HomeRow(stringResource(R.string.home_key), keyStarted?.let { stringResource(R.string.home_key_started, it) }) { onOpen(Route.KEY) }
+            HorizontalDividerMMD()
             HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) }
             HorizontalDividerMMD()
             HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) }
@@ -84,16 +86,18 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
     }
 }
 
+/** A row of the home screen; [line] under it only while there is something to say (a note open since …). */
 @Composable
-private fun HomeRow(label: String, onClick: () -> Unit) {
-    TextMMD(
-        text = label,
-        style = MaterialTheme.typography.headlineSmall,
-        modifier = Modifier
+private fun HomeRow(label: String, line: String? = null, onClick: () -> Unit) {
+    Column(
+        Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 26.dp),
-    )
+            .padding(horizontal = 20.dp, vertical = if (line == null) 26.dp else 14.dp),
+    ) {
+        TextMMD(text = label, style = MaterialTheme.typography.headlineSmall)
+        if (line != null) TextMMD(text = line, style = MaterialTheme.typography.labelSmall)
+    }
 }
 
 /** A plain list of names to choose from, with an optional line under each. */

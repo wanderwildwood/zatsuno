@@ -13,7 +13,6 @@ source: 911.gov (NHTSA), "Calling 911"; FCC, "Text to 911"; FCC, 911 call rules 
 3. The number you are calling from.
 4. What happened, how many are hurt, and whether each is awake, breathing and bleeding.
 - The call-taker may talk you through CPR or bleeding control. Do what they ask.
-+++
 # No signal
 - Satellite messenger, PLB or phone satellite SOS: use it now.
 - Try 911 even with no service showing: any carrier's tower must carry it.

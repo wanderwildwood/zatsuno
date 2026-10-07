@@ -231,11 +231,296 @@
     <string name="card_given_done">Added to the emergency card</string>
 
     <!-- ============================================================ -->
+    <!-- Work through it: the response chain as questions. The question and answer ids are in
+         assets/key/key.txt; each key_q_ is a question, key_a_<question>_<answer> one of its
+         answers on a button, key_n_ the short name it goes under in the note. -->
+
+    <string name="home_key">Work through it</string>
+    <!-- Under the home row while a note is open. %1$s is a time -->
+    <string name="home_key_started">started %1$s</string>
+    <string name="key_title">Work through it</string>
+    <!-- The bar button that opens the note -->
+    <string name="key_note">Note</string>
+    <string name="key_not_sure">Not sure</string>
+    <!-- The six stages, in the strip under the bar -->
+    <string name="key_stage_scene">Scene</string>
+    <string name="key_stage_threats">Threats</string>
+    <string name="key_stage_call">Call</string>
+    <string name="key_stage_look">Look</string>
+    <string name="key_stage_treat">Treat</string>
+    <string name="key_stage_watch">Watch</string>
+    <!-- The button at the foot of each stage. %1$s is the next stage -->
+    <string name="key_next">Next: %1$s</string>
+    <string name="key_unsafe">Not safe: stay back and call from where you are. Don\'t become a second casualty.</string>
+    <string name="key_scene_page">Check the scene and the person</string>
+    <string name="key_pick_all">Pick all that apply.</string>
+    <!-- The bold line at the top when an answer hits a life threat -->
+    <string name="key_alarm_cpr">Not breathing normally: start CPR now.</string>
+    <string name="key_alarm_bleeding">Heavy bleeding: press hard on it now.</string>
+    <string name="key_alarm_choking">Choking: act now.</string>
+    <string name="key_alarm_breathing">Struggling to breathe: help them now.</string>
+    <string name="key_alarm_anaphylaxis">Severe allergic reaction: their epinephrine now.</string>
+    <string name="key_flags">What you\'ve told it that calls for help:</string>
+    <string name="key_flags_none">Nothing you\'ve told it calls for help right now. That isn\'t the same as fine.</string>
+    <string name="key_read_out">What to read out</string>
+    <string name="key_decided">What did you decide? It goes in the note.</string>
+    <string name="key_look_see">What do you see?</string>
+    <string name="key_look_body">Head to toe</string>
+    <string name="key_look_body_hint">Look and feel from head to feet. Tap what you find.</string>
+    <string name="key_vitals">Vitals</string>
+    <string name="key_sample">SAMPLE</string>
+    <string name="key_opqrst">The pain (OPQRST)</string>
+    <string name="key_to_settle">Still to check</string>
+    <!-- Offered on Yes to "Is the hurt person you?". %1$s is the card's lines -->
+    <string name="key_card_offer">From your emergency card: %1$s</string>
+    <string name="key_card_use">Put these in the note</string>
+    <string name="key_fits">Fits</string>
+    <string name="key_still">Still to check</string>
+    <!-- %1$s is a count -->
+    <string name="key_ruled_out">Ruled out (%1$s)</string>
+    <!-- Under a ruled-out page. %1$s the answers, %2$s their time -->
+    <string name="key_ruled_by">%1$s, %2$s</string>
+    <string name="key_cannot_settle">Can\'t be ruled out from here.</string>
+    <string name="key_fits_none">Nothing fits yet.</string>
+    <string name="key_not_fine">Nothing here decides whether they\'re fine. If unsure, call.</string>
+    <string name="key_done_hint">What you did, e.g. splinted the leg</string>
+    <string name="key_done_add">Add to the note</string>
+    <!-- %1$s is a time -->
+    <string name="key_next_check">Next check %1$s</string>
+    <string name="key_recheck">Recheck the threats</string>
+    <string name="key_count">Count 15 s</string>
+    <string name="key_counting">Counting…</string>
+    <string name="key_save_check">Save check</string>
+    <string name="key_now">now</string>
+    <string name="key_pulse_15">Pulse: beats in 15 s</string>
+    <string name="key_breaths_15">Breaths in 15 s</string>
+    <!-- %1$s is a rate -->
+    <string name="key_per_minute">%1$s a minute</string>
+    <string name="key_skin">Skin</string>
+    <string name="key_share">Send the note</string>
+    <string name="key_start_over">Start over</string>
+    <string name="key_start_over_armed">Tap again to clear the note</string>
+    <string name="key_note_empty">Nothing written yet.</string>
+
+    <!-- Scene -->
+    <string name="key_q_safe">Is it safe to go to them?</string>
+    <string name="key_n_safe">Scene</string>
+    <string name="key_a_safe_yes">Safe</string>
+    <string name="key_a_safe_no">Not safe</string>
+    <string name="key_q_what">What happened?</string>
+    <string name="key_n_what">What happened</string>
+    <string name="key_a_what_fall">Fall</string>
+    <string name="key_a_what_water">In water</string>
+    <string name="key_a_what_cold">Cold</string>
+    <string name="key_a_what_heat">Heat</string>
+    <string name="key_a_what_bite_sting">Bite or sting</string>
+    <string name="key_a_what_lightning">Lightning</string>
+    <string name="key_a_what_swallowed">Poison or fumes</string>
+    <string name="key_a_what_by_itself">Came on by itself</string>
+    <string name="key_a_what_dont_know">Don\'t know</string>
+    <string name="key_q_count">How many are hurt?</string>
+    <string name="key_n_count">How many hurt</string>
+    <string name="key_a_count_one">One</string>
+    <string name="key_a_count_more">More than one</string>
+
+    <!-- Life threats -->
+    <string name="key_q_bleeding">Is there heavy bleeding?</string>
+    <string name="key_n_bleeding">Bleeding</string>
+    <string name="key_a_bleeding_none">None</string>
+    <string name="key_a_bleeding_some">Some</string>
+    <string name="key_a_bleeding_heavy">Heavy, soaking through</string>
+    <string name="key_q_avpu">Do they answer you?</string>
+    <string name="key_n_avpu">Responds</string>
+    <string name="key_a_avpu_alert">Awake, talking</string>
+    <string name="key_a_avpu_voice">Only to your voice</string>
+    <string name="key_a_avpu_pain">Only to a pinch</string>
+    <string name="key_a_avpu_none">Nothing</string>
+    <string name="key_q_breathing">Are they breathing normally?</string>
+    <string name="key_n_breathing">Breathing</string>
+    <string name="key_a_breathing_normal">Normal</string>
+    <string name="key_a_breathing_struggling">Struggling</string>
+    <string name="key_a_breathing_gasping">Gasping or not at all</string>
+    <string name="key_q_skin">Is their skin pale, grey, cool or clammy?</string>
+    <string name="key_n_skin">Pale, cool or clammy</string>
+    <string name="key_a_skin_yes">Yes</string>
+    <string name="key_a_skin_no">No, normal</string>
+    <string name="key_q_move">Can they move and feel their hands and feet?</string>
+    <string name="key_n_move">Moves and feels hands and feet</string>
+    <string name="key_a_move_yes">Yes</string>
+    <string name="key_a_move_no">No</string>
+    <string name="key_q_head_hit">Did a fall or blow involve the head or neck?</string>
+    <string name="key_n_head_hit">Head or neck hit</string>
+    <string name="key_a_head_hit_yes">Yes</string>
+    <string name="key_a_head_hit_no">No</string>
+    <string name="key_q_confused">Are they confused, drowsy or acting oddly?</string>
+    <string name="key_n_confused">Confused or odd</string>
+    <string name="key_a_confused_yes">Yes</string>
+    <string name="key_a_confused_no">No</string>
+    <string name="key_q_cold">Are they cold, wet, or lying on cold ground?</string>
+    <string name="key_n_cold">Cold, wet or on cold ground</string>
+    <string name="key_a_cold_yes">Yes</string>
+    <string name="key_a_cold_no">No</string>
+    <string name="key_q_hot">Are they hot, or have they worked hard in the heat?</string>
+    <string name="key_n_hot">Hot or worked hard in heat</string>
+    <string name="key_a_hot_yes">Yes</string>
+    <string name="key_a_hot_no">No</string>
+
+    <!-- Call -->
+    <string name="key_q_plan">What did you decide?</string>
+    <string name="key_n_plan">Decided</string>
+    <string name="key_a_plan_called">Called for help</string>
+    <string name="key_a_plan_walk">Walking out</string>
+    <string name="key_a_plan_carry">Carrying out</string>
+    <string name="key_a_plan_stay">Staying put, watching</string>
+
+    <!-- Look -->
+    <string name="key_q_seen">What do you see?</string>
+    <string name="key_n_seen">Seen</string>
+    <string name="key_a_seen_hurt_limb">Hurt arm or leg</string>
+    <string name="key_a_seen_pain">Pain</string>
+    <string name="key_a_seen_hard_breathe">Hard to breathe</string>
+    <string name="key_a_seen_chest_pain">Chest pain</string>
+    <string name="key_a_seen_choking">Choking</string>
+    <string name="key_a_seen_wound">Cut or bleeding</string>
+    <string name="key_a_seen_cold_shiver">Cold, shivering</string>
+    <string name="key_a_seen_overheated">Overheated</string>
+    <string name="key_a_seen_face_speech">Face or speech changed</string>
+    <string name="key_a_seen_bite_sting">Bite or sting</string>
+    <string name="key_a_seen_rash_swelling">Rash or swelling</string>
+    <string name="key_a_seen_burn">Burn</string>
+    <string name="key_a_seen_fit">Fit or shaking</string>
+    <string name="key_a_seen_numb_white">Numb, white or hard skin</string>
+    <string name="key_a_seen_thirsty">Very thirsty, little pee</string>
+    <string name="key_a_seen_water">Was in water</string>
+    <string name="key_a_seen_high_up">Unwell up high</string>
+    <string name="key_a_seen_swallowed">Swallowed or breathed something</string>
+    <string name="key_a_seen_diabetic">Diabetic, acting odd</string>
+    <string name="key_a_seen_blister">Blister</string>
+    <string name="key_a_seen_tick">Tick</string>
+    <string name="key_q_deformed">Is it bent wrong or badly swollen?</string>
+    <string name="key_n_deformed">Bent or badly swollen</string>
+    <string name="key_a_deformed_yes">Yes</string>
+    <string name="key_a_deformed_no">No</string>
+    <string name="key_q_use_limb">Can they use it or put weight on it?</string>
+    <string name="key_n_use_limb">Can use it</string>
+    <string name="key_a_use_limb_yes">Yes</string>
+    <string name="key_a_use_limb_no">No</string>
+    <string name="key_q_bite_kind">What bit or stung them?</string>
+    <string name="key_n_bite_kind">Bit or stung by</string>
+    <string name="key_a_bite_kind_snake">Snake</string>
+    <string name="key_a_bite_kind_insect">Bee, wasp or other insect</string>
+    <string name="key_a_bite_kind_tick">Tick</string>
+    <string name="key_a_bite_kind_other">Something else</string>
+    <string name="key_q_face">Ask them to smile. Does one side droop?</string>
+    <string name="key_n_face">Face</string>
+    <string name="key_a_face_droops">Droops</string>
+    <string name="key_a_face_even">Even</string>
+    <string name="key_q_arm">Both arms out, eyes shut. Does one drift down?</string>
+    <string name="key_n_arm">Arms</string>
+    <string name="key_a_arm_drifts">One drifts</string>
+    <string name="key_a_arm_level">Both level</string>
+    <string name="key_q_speech">Is their speech slurred or strange?</string>
+    <string name="key_n_speech">Speech</string>
+    <string name="key_a_speech_slurred">Slurred or strange</string>
+    <string name="key_a_speech_clear">Clear</string>
+    <string name="key_q_chest">Any chest pain, pressure or tightness?</string>
+    <string name="key_n_chest">Chest pain or pressure</string>
+    <string name="key_a_chest_yes">Yes</string>
+    <string name="key_a_chest_no">No</string>
+    <string name="key_q_diabetic">Do they have diabetes?</string>
+    <string name="key_n_diabetic">Diabetes</string>
+    <string name="key_a_diabetic_yes">Yes</string>
+    <string name="key_a_diabetic_no">No</string>
+    <string name="key_q_body">Head to toe</string>
+    <string name="key_n_body">Head to toe</string>
+    <string name="key_place_head">Head</string>
+    <string name="key_place_neck">Neck</string>
+    <string name="key_place_chest">Chest</string>
+    <string name="key_place_belly">Belly</string>
+    <string name="key_place_back">Back</string>
+    <string name="key_place_pelvis">Hips</string>
+    <string name="key_place_arms">Arms</string>
+    <string name="key_place_legs">Legs</string>
+    <string name="key_find_hurt">hurt</string>
+    <string name="key_find_bleeding">bleeding</string>
+    <string name="key_find_deformed">deformed</string>
+    <string name="key_find_numb">can\'t feel</string>
+    <string name="key_q_you">Is the hurt person you?</string>
+    <string name="key_n_you">The hurt person is the phone\'s owner</string>
+    <string name="key_a_you_yes">Yes</string>
+    <string name="key_a_you_no">No</string>
+
+    <!-- Written lines -->
+    <string name="key_field_who">Who: about how old, man or woman</string>
+    <string name="key_field_symptoms">What they feel</string>
+    <string name="key_field_allergies">Allergies</string>
+    <string name="key_field_medicines">Medicines</string>
+    <string name="key_field_past">Past illness</string>
+    <string name="key_field_last">Last ate and drank</string>
+    <string name="key_field_events">What led up to it</string>
+    <string name="key_field_onset">How it started</string>
+    <string name="key_field_provokes">What makes it worse or better</string>
+    <string name="key_field_quality">What it feels like</string>
+    <string name="key_field_radiates">Where it spreads</string>
+    <string name="key_field_severity">How bad, 0 to 10</string>
+    <string name="key_field_time">How long</string>
+
+    <!-- Vitals: skin words, and AVPU as its one letter -->
+    <string name="key_skin_pink">pink</string>
+    <string name="key_skin_pale">pale</string>
+    <string name="key_skin_grey">grey</string>
+    <string name="key_skin_flushed">flushed</string>
+    <string name="key_skin_warm">warm</string>
+    <string name="key_skin_cool">cool</string>
+    <string name="key_skin_hot">hot</string>
+    <string name="key_skin_dry">dry</string>
+    <string name="key_skin_clammy">clammy</string>
+    <string name="key_skin_sweaty">sweaty</string>
+    <string name="key_avpu_short_alert">A</string>
+    <string name="key_avpu_short_voice">V</string>
+    <string name="key_avpu_short_pain">P</string>
+    <string name="key_avpu_short_none">U</string>
+
+    <!-- The SOAP note, as sent. Times are 24-hour, HH:MM -->
+    <!-- First line. %1$s the start, %2$s the latest -->
+    <string name="note_head">SOAP %1$s–%2$s · Field Kit</string>
+    <!-- %1$s the position, %2$s metres, %3$s the time -->
+    <string name="note_where">Where: %1$s (±%2$s m, %3$s)</string>
+    <string name="note_where_no_accuracy">Where: %1$s (%2$s)</string>
+    <string name="note_where_none">Where: not recorded</string>
+    <string name="note_nothing">–</string>
+    <string name="note_who">Who: %1$s</string>
+    <!-- %1$s what happened, %2$s when it was answered -->
+    <string name="note_what">What happened: %1$s %2$s</string>
+    <string name="note_how">How they are: %1$s.</string>
+    <string name="note_pulse">Pulse %1$s</string>
+    <string name="note_breaths">Breaths %1$s</string>
+    <string name="note_pages">Pages that fit: %1$s</string>
+    <string name="note_done">Done: %1$s</string>
+    <string name="note_avpu">AVPU</string>
+    <string name="note_pulse_row">Pulse</string>
+    <string name="note_breaths_row">Breaths</string>
+    <string name="note_skin_row">Skin</string>
+    <!-- %1$s is the pages, each ending in a full stop -->
+    <string name="note_fits">Fits: %1$s</string>
+    <string name="note_fits_none">Fits: no page yet.</string>
+    <string name="note_still">Still open: %1$s</string>
+    <!-- A page still open, and what hasn't been checked: "Head injury (Head or neck hit not checked)" -->
+    <string name="note_still_one">%1$s (%2$s not checked)</string>
+    <!-- %1$s is a number of minutes -->
+    <string name="note_recheck">Rechecking every %1$s min.</string>
+
+    <!-- The recheck reminder -->
+    <string name="recheck_channel">Recheck reminders</string>
+    <string name="recheck_title">Time to recheck</string>
+    <string name="recheck_text">Breathing, how they answer, pulse and skin. Add a check to the note.</string>
+
+    <!-- ============================================================ -->
     <!-- About -->
 
     <string name="about_title">Field Kit %1$s</string>
-    <string name="about_what">First aid, knots and a compass that work with no signal. Location is used only for the compass and your position, on this phone. The emergency card stays on this phone too, and goes on the lock screen only if you switch that on. The app has no internet access.</string>
-    <string name="about_aid">First-aid pages written from US government sources (MedlinePlus, NIH, CDC, NPS, NWS, DHS), each named on its page. They do not replace training.</string>
+    <string name="about_what">First aid, knots and a compass that work with no signal. Location is used only for the compass and your position, on this phone. The emergency card stays on this phone too, and goes on the lock screen only if you switch that on. A note you start in Work through it stays on the phone until you clear it. The app has no internet access.</string>
+    <string name="about_aid">First-aid pages written from current guidance: US government sources (MedlinePlus, CDC, NPS and others), the AHA and Red Cross first-aid guidelines, and the Wilderness Medical Society, each named on its page. They do not replace training.</string>
     <string name="about_licence">GNU General Public License v3</string>
     <string name="about_kcompass">Compass and position code from kCompass by Ondřej Koloničný, OK1CDJ, GPL-3.0</string>
     <string name="about_icons">Icons from Material Symbols, Apache 2.0</string>

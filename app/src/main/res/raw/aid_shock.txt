@@ -20,6 +20,6 @@ source: MedlinePlus (NIH), "Shock" and "Anaphylaxis"; Resuscitation Council UK, 
 # Don't
 ! Don't let them stand or walk out, even if they feel better. Bring help to them.
 +++
-- Nothing to eat or drink if drowsy, vomiting or badly hurt. Fully awake and cold, overheated or dried out: see that page.
+- Nothing to eat or drink if drowsy, vomiting or badly hurt. Fully awake and cold, overheated or dried out: see Hypothermia, Heat exhaustion and heat stroke, or Dehydration.
 - Possible spine injury: move them only if the spot is dangerous, cold or wet. Then move head, neck and body together.
 - Vomiting: roll them onto their side in one piece.

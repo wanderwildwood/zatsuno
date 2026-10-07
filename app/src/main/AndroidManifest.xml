@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Location, and nothing else: for true north, and for the position the compass and the
-         "Calling for help" page show. Only while one of those screens is open. No internet. -->
+    <!-- Location: for true north, and for the position the compass, the "Calling for help"
+         page and the note in "Work through it" show. Only while one of those screens is
+         open. No internet. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- "Work through it": a buzz at the end of a 15-second count, and the recheck reminder,
+         one alarm at a time while a note is open. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <!-- The compass works from the rotation sensor; a phone without one still gets the rest. -->
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
@@ -74,6 +80,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- The recheck reminder for "Work through it". Only the app's own alarm reaches it. -->
+        <receiver
+            android:name=".key.RecheckReceiver"
+            android:exported="false" />
 
         <!-- The emergency card for Glance's lock-screen panel: it answers Glance alone, and only
              while "Show on the lock screen" is switched on in the card. -->

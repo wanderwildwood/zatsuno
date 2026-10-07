@@ -39,7 +39,7 @@ class PagesTest {
         for (p in pages) for (m in see.findAll(p.searchText())) {
             checked++
             val named = m.groupValues[1].trim()
-            val parts = if (named in titles) listOf(named) else named.split(" or ").map { it.trim() }
+            val parts = if (named in titles) listOf(named) else named.split(", or ", " or ", ", ").map { it.trim() }
             for (t in parts) assertTrue("${p.id}: \"See $t\" is no page's title", t in titles)
         }
         assertTrue("only $checked cross-references found", checked > 40)
@@ -49,7 +49,9 @@ class PagesTest {
     @Test
     fun everyPageOpensOnWhatToDoNowWithEveryWarningAboveMore() {
         for (p in pages) {
-            assertTrue("${p.id} has a More part", p.rest.isNotEmpty())
+            // Calling for help shows whole: other pages send readers to its No signal part.
+            if (p.id == "call") assertTrue("call shows whole", p.rest.isEmpty())
+            else assertTrue("${p.id} has a More part", p.rest.isNotEmpty())
             assertTrue("${p.id} opens on steps or warnings", p.now.any { it is Block.Step || it is Block.Urgent })
             assertTrue("${p.id}: a ! line under More", p.rest.none { it is Block.Urgent })
             assertTrue("${p.id}: a note left above More", p.now.none { it is Block.Note })

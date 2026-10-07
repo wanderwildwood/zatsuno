@@ -35,7 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.components.lazy.LazyColumnMMD
 import com.mudita.mmd.components.text.TextMMD
@@ -43,6 +49,7 @@ import com.wanderwildwood.zatsuno.Given
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.aid.Block
 import com.wanderwildwood.zatsuno.aid.Page
+import com.wanderwildwood.zatsuno.aid.SeeLinks
 import com.wanderwildwood.zatsuno.compass.CompassModel
 import com.wanderwildwood.zatsuno.compass.Fix
 import com.wanderwildwood.zatsuno.knots.Knot
@@ -60,6 +67,10 @@ private fun Readable(content: @Composable () -> Unit) {
  * for help" also carries the live position, with the buttons that use it.
  *
  * [openMore] opens it ready open, for a search that found its words under More.
+ *
+ * A "See Shock" in the text is a link to that page ([titles], [onOpenPage]): the title
+ * underlined, nothing more. [readOut] is the open note from "Work through it", shown under
+ * the position on "Calling for help" so it can be read to the call-taker.
  */
 @Composable
 fun AidScreen(
@@ -69,8 +80,12 @@ fun AidScreen(
     given: Given? = null,
     onDropGiven: () -> Unit = {},
     openMore: Boolean = false,
+    titles: Map<String, String> = emptyMap(),
+    onOpenPage: (String) -> Unit = {},
+    readOut: String? = null,
 ) {
     val context = LocalContext.current
+    val link: (String) -> AnnotatedString = remember(page.id, titles) { { text -> linked(text, titles, page.id, onOpenPage) } }
     val sources = stringResource(R.string.aid_sources)
     val disclaimer = stringResource(R.string.aid_disclaimer)
     val hasPosition = page.blocks.any { it == Block.Position }
@@ -99,7 +114,11 @@ fun AidScreen(
             }
             page.now.forEachIndexed { i, block ->
                 item(key = i) {
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven) }
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link) }
+                }
+                // The open note, right under the position it starts with.
+                if (block == Block.Position && readOut != null) {
+                    item(key = "readout") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { ReadOutBox(readOut) } }
                 }
             }
             if (hasMore) {
@@ -108,7 +127,7 @@ fun AidScreen(
             if (moreOpen || !hasMore) {
                 page.rest.forEachIndexed { i, block ->
                     item(key = page.more + i) {
-                        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven) }
+                        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link) }
                     }
                 }
                 item(key = "sources") {
@@ -147,8 +166,19 @@ private fun MoreRow(open: Boolean, onToggle: () -> Unit) {
     }
 }
 
+/** [text] with each page it sends the reader to underlined, and opening that page when tapped. */
+private fun linked(text: String, titles: Map<String, String>, from: String, onOpen: (String) -> Unit): AnnotatedString {
+    val links = SeeLinks.find(text, titles, from)
+    if (links.isEmpty()) return AnnotatedString(text)
+    val style = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
+    return buildAnnotatedString {
+        append(text)
+        for (l in links) addLink(LinkAnnotation.Clickable(l.page, style) { onOpen(l.page) }, l.start, l.end)
+    }
+}
+
 @Composable
-private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGiven: () -> Unit) {
+private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGiven: () -> Unit, link: (String) -> AnnotatedString) {
     val body = MaterialTheme.typography.bodyMedium
     when (block) {
         is Block.Heading -> Readable {
@@ -157,19 +187,19 @@ private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGi
         }
         is Block.Step -> Row(Modifier.padding(vertical = 3.dp)) {
             TextMMD(text = "${block.number}.", style = body, fontWeight = FontWeight.Bold, modifier = Modifier.width(26.dp))
-            Readable { TextMMD(text = block.text, style = body) }
+            Readable { TextMMD(text = link(block.text), style = body) }
         }
         is Block.Point -> Row(Modifier.padding(vertical = 3.dp)) {
             TextMMD(text = "–", style = body, modifier = Modifier.width(26.dp))
-            Readable { TextMMD(text = block.text, style = body) }
+            Readable { TextMMD(text = link(block.text), style = body) }
         }
         is Block.Urgent -> Readable {
-            TextMMD(text = block.text, style = body, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 6.dp))
+            TextMMD(text = link(block.text), style = body, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 6.dp))
         }
         // What has changed, and who says so: set apart by a rule round it, not by colour.
         is Block.Note -> Readable {
             TextMMD(
-                text = block.text,
+                text = link(block.text),
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -177,7 +207,7 @@ private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGi
                     .padding(10.dp),
             )
         }
-        is Block.Para -> Readable { TextMMD(text = block.text, style = body, modifier = Modifier.padding(vertical = 3.dp)) }
+        is Block.Para -> Readable { TextMMD(text = link(block.text), style = body, modifier = Modifier.padding(vertical = 3.dp)) }
         Block.Position -> PositionCard(model, given, onDropGiven)
     }
 }
