@@ -219,6 +219,12 @@
     <string name="card_lock_glance">The lock screen shows it through the Glance app, when Glance is installed and switched on.</string>
     <string name="card_lock_on">Shown on the lock screen, through Glance.</string>
     <string name="card_lock_off">Not shown on the lock screen.</string>
+    <!-- Someone sent from Contacts ("Add to emergency card") -->
+    <string name="card_given_ask">Add to the emergency contacts on your card?</string>
+    <string name="card_given_already">Already one of the emergency contacts on your card.</string>
+    <string name="card_given_add">Add</string>
+    <string name="card_given_cancel">Cancel</string>
+    <string name="card_given_done">Added to the emergency card</string>
 
     <!-- ============================================================ -->
     <!-- About -->

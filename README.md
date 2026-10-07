@@ -111,6 +111,14 @@ Intent("com.wanderwildwood.zatsuno.action.CALL_FOR_HELP")
     .putExtra("com.wanderwildwood.zatsuno.extra.LABEL", "Point on the map")
 ```
 
+**Someone for the emergency card:** action
+`com.wanderwildwood.zatsuno.action.ADD_EMERGENCY_CONTACT`, with the string extras
+`com.wanderwildwood.zatsuno.extra.NAME` and `com.wanderwildwood.zatsuno.extra.NUMBER` (a
+number is needed). This one does change something, so Field Kit shows the name and number
+first and adds them to the card's emergency contacts only when **Add** is pressed. A number
+already on the card is said so, not added twice. Contacts offers it as "Add to emergency
+card" on a person's More page.
+
 ## Building
 
 ```

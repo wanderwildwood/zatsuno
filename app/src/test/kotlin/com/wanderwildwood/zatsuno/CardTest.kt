@@ -49,4 +49,18 @@ class CardTest {
             Card.decodeContacts(Card.encodeContacts(list)),
         )
     }
+
+    @Test
+    fun aContactHandedOverNeedsANumber() {
+        assertEquals(null, Card.given("Tomas Reyes", null))
+        assertEquals(null, Card.given("Tomas Reyes", "none"))
+        assertEquals(Contact("Tomas Reyes", "+1 555 010 1001"), Card.given(" Tomas\n Reyes ", " +1 555 010 1001 "))
+    }
+
+    @Test
+    fun theSameNumberIsAlreadyThere() {
+        assertTrue(card.hasNumber("(555) 010-1001"))
+        assertTrue(!card.hasNumber("555 010 1002"))
+        assertTrue(!card.hasNumber(""))
+    }
 }

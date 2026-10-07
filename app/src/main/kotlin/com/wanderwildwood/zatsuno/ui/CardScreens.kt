@@ -82,7 +82,12 @@ fun CardLines(card: Card, bordered: Boolean) {
 @Composable
 fun CardScreen(onBack: () -> Unit, onEdit: () -> Unit) {
     val context = LocalContext.current
-    val card = remember { CardStore.load(context) }
+    var card by remember { mutableStateOf(CardStore.load(context)) }
+    // Read again on coming back: Contacts can add someone while this is open underneath.
+    androidx.lifecycle.compose.LifecycleResumeEffect(Unit) {
+        card = CardStore.load(context)
+        onPauseOrDispose { }
+    }
     Screen(
         title = stringResource(R.string.card_title),
         onBack = onBack,
@@ -144,6 +149,20 @@ fun CardEditScreen(onDone: () -> Unit) {
         shown.mapNotNull { n -> Field.entries.firstOrNull { it.name == n } }.toSet(),
     )
     fun save() { CardStore.save(context, current()); onDone() }
+
+    // Someone added from Contacts while this page was open underneath joins the list here,
+    // so Done does not write the card back without them.
+    var stored by remember { mutableStateOf(start.contacts) }
+    androidx.lifecycle.compose.LifecycleResumeEffect(Unit) {
+        val now = CardStore.load(context).contacts
+        val arrived = now - stored.toSet()
+        stored = now
+        if (arrived.isNotEmpty()) {
+            val list = Card.decodeContacts(contacts)
+            contacts = Card.encodeContacts(list + arrived.filter { a -> list.none { it.number == a.number } })
+        }
+        onPauseOrDispose { }
+    }
 
     val pickContact = rememberLauncherForActivityResult(PickPhone()) { picked ->
         if (picked != null) contacts = Card.encodeContacts(Card.decodeContacts(contacts) + picked)

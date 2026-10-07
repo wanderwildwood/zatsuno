@@ -60,6 +60,21 @@
             </intent-filter>
         </activity>
 
+        <!-- Someone for the emergency card, sent from Contacts ("Add to emergency card"),
+             added only after Add is pressed here. card/AddContactActivity.kt; the README
+             lists the names. -->
+        <activity
+            android:name=".card.AddContactActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="com.wanderwildwood.zatsuno.action.ADD_EMERGENCY_CONTACT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <!-- The emergency card for Glance's lock-screen panel: it answers Glance alone, and only
              while "Show on the lock screen" is switched on in the card. -->
         <provider

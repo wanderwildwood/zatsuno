@@ -40,6 +40,12 @@ data class Card(
         if (note.isNotBlank()) add(Field.NOTE to note.trim())
     }
 
+    /** Whether someone with this number is already one of the contacts; digits alone are compared. */
+    fun hasNumber(number: String): Boolean {
+        val digits = number.filter(Char::isDigit).takeLast(10)
+        return digits.isNotEmpty() && contacts.any { it.number.filter(Char::isDigit).takeLast(10) == digits }
+    }
+
     /** What may go on the lock screen: nothing unless switched on, then only the ticked fields. */
     fun lockScreenLines(): List<Pair<Field, String>> =
         if (!onLockScreen) emptyList() else lines().filter { it.first in shown }
@@ -47,6 +53,16 @@ data class Card(
     companion object {
         /** A note can hold anything, so it starts off the lock screen; the rest start on. */
         val DEFAULT_SHOWN: Set<Field> = Field.entries.toSet() - Field.NOTE
+
+        /**
+         * A contact another app handed over, cleaned as one picked by hand would be; null
+         * when there is no number to call.
+         */
+        fun given(name: String?, number: String?): Contact? {
+            val n = number?.replace(Regex("\\s+"), " ")?.trim()?.take(40).orEmpty()
+            if (n.none { it.isDigit() }) return null
+            return Contact(name?.replace(Regex("\\s+"), " ")?.trim()?.take(100).orEmpty(), n)
+        }
 
         /** Contacts as text, one to a line, name and number split by a tab. */
         fun encodeContacts(contacts: List<Contact>): String =
