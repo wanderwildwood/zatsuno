@@ -29,10 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.components.lazy.LazyColumnMMD
 import com.mudita.mmd.components.text.TextMMD
+import com.wanderwildwood.zatsuno.Given
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.aid.Block
 import com.wanderwildwood.zatsuno.aid.Page
 import com.wanderwildwood.zatsuno.compass.CompassModel
+import com.wanderwildwood.zatsuno.compass.Fix
 import com.wanderwildwood.zatsuno.knots.Knot
 
 /** Text that can be selected, with Define and the other text apps behind the selection ⋮. */
@@ -47,7 +49,7 @@ private fun Readable(content: @Composable () -> Unit) {
  * position, with the buttons that use it.
  */
 @Composable
-fun AidScreen(page: Page, model: CompassModel, onBack: () -> Unit) {
+fun AidScreen(page: Page, model: CompassModel, onBack: () -> Unit, given: Given? = null, onDropGiven: () -> Unit = {}) {
     val context = LocalContext.current
     val sources = stringResource(R.string.aid_sources)
     val disclaimer = stringResource(R.string.aid_disclaimer)
@@ -69,7 +71,7 @@ fun AidScreen(page: Page, model: CompassModel, onBack: () -> Unit) {
             }
             page.blocks.forEachIndexed { i, block ->
                 item(key = i) {
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model) }
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven) }
                 }
             }
             item(key = "foot") {
@@ -84,7 +86,7 @@ fun AidScreen(page: Page, model: CompassModel, onBack: () -> Unit) {
 }
 
 @Composable
-private fun BlockView(block: Block, model: CompassModel) {
+private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGiven: () -> Unit) {
     val body = MaterialTheme.typography.bodyMedium
     when (block) {
         is Block.Heading -> Readable {
@@ -114,13 +116,17 @@ private fun BlockView(block: Block, model: CompassModel) {
             )
         }
         is Block.Para -> Readable { TextMMD(text = block.text, style = body, modifier = Modifier.padding(vertical = 3.dp)) }
-        Block.Position -> PositionCard(model)
+        Block.Position -> PositionCard(model, given, onDropGiven)
     }
 }
 
-/** The live position on the "Calling for help" page, and the presses that send it or call. */
+/**
+ * The live position on the "Calling for help" page, and the presses that send it or call. A
+ * position another app sent ([given]: a point on Topo's map, say) stands in its place, under
+ * the name it came with, until the reader asks for the phone's own.
+ */
 @Composable
-private fun PositionCard(model: CompassModel) {
+private fun PositionCard(model: CompassModel, given: Given?, onDropGiven: () -> Unit) {
     val context = LocalContext.current
     val live by model.live.collectAsState()
     Column(
@@ -130,10 +136,18 @@ private fun PositionCard(model: CompassModel) {
             .border(BorderStroke(2.dp, Color.Black), RoundedCornerShape(12.dp))
             .padding(14.dp),
     ) {
-        TextMMD(text = stringResource(R.string.pos_title), style = MaterialTheme.typography.labelSmall)
+        TextMMD(text = given?.let { it.label ?: stringResource(R.string.pos_given) } ?: stringResource(R.string.pos_title),
+            style = MaterialTheme.typography.labelSmall)
         Spacer(Modifier.height(4.dp))
         val fix = live.fix
-        if (fix == null) {
+        if (given != null) {
+            val sent = remember(given) { Fix(given.lat, given.lon, null, 0L, 0L, 0f) }
+            PositionLines(sent, big = true, quality = false)
+            Spacer(Modifier.height(10.dp))
+            WideButton(stringResource(R.string.pos_share)) { shareGiven(context, given) }
+            Spacer(Modifier.height(8.dp))
+            WideButton(stringResource(R.string.pos_use_phone)) { onDropGiven() }
+        } else if (fix == null) {
             LocationPrompt(live) { model.refresh() }
         } else {
             PositionLines(fix, big = true)

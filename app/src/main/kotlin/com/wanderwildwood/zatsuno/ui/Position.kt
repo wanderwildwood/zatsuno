@@ -43,6 +43,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mudita.mmd.components.buttons.OutlinedButtonMMD
 import com.mudita.mmd.components.text.TextMMD
+import com.wanderwildwood.zatsuno.Given
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.compass.CompassModel
 import com.wanderwildwood.zatsuno.compass.Fix
@@ -127,7 +128,7 @@ fun LocationPrompt(live: Live, onChanged: () -> Unit) {
  * hidden, since an old position is still worth reading out.
  */
 @Composable
-fun PositionLines(fix: Fix, big: Boolean) {
+fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
     val context = LocalContext.current
     val copied = stringResource(R.string.copied)
     fun copy(text: String) {
@@ -151,7 +152,8 @@ fun PositionLines(fix: Fix, big: Boolean) {
             modifier = Modifier.fillMaxWidth().clickable { copy(dms) }.padding(vertical = 2.dp),
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            TextMMD(text = accuracyText(fix), style = MaterialTheme.typography.labelSmall)
+            // A position sent by another app comes with no accuracy or time to show.
+            TextMMD(text = if (quality) accuracyText(fix) else "", style = MaterialTheme.typography.labelSmall)
             TextMMD(
                 text = "${stringResource(R.string.label_locator)} $locator",
                 style = MaterialTheme.typography.labelSmall,
@@ -191,6 +193,12 @@ fun sharePosition(context: Context, fix: Fix) {
         else context.getString(R.string.share_heading_no_accuracy, time)
     val text = Place.shareText(heading, fix.lat, fix.lon)
     shareText(context, context.getString(R.string.pos_title), text)
+}
+
+/** Sends a position another app handed over, under the name it came with. */
+fun shareGiven(context: Context, given: Given) {
+    val heading = context.getString(R.string.share_heading_given, given.label ?: context.getString(R.string.pos_given))
+    shareText(context, context.getString(R.string.pos_title), Place.shareText(heading, given.lat, given.lon))
 }
 
 /** Hands the position to whatever map app is on the phone (Topo answers `geo:`). */

@@ -36,6 +36,9 @@ object Pages {
         "dehydration" to R.raw.aid_dehydration,
     )
 
+    /** Every page's id, without reading the pages: what another app may ask to open. */
+    val ids: List<String> get() = order.map { it.first }
+
     @Volatile private var cache: Pair<String, List<Page>>? = null
 
     /** Every page, read once per language. */

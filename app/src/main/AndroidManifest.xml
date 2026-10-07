@@ -51,6 +51,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Other apps open a first-aid page, or "Calling for help" with a position they
+                 hold. Opening.kt reads them; the README lists the names. -->
+            <intent-filter>
+                <action android:name="com.wanderwildwood.zatsuno.action.FIRST_AID" />
+                <action android:name="com.wanderwildwood.zatsuno.action.CALL_FOR_HELP" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <!-- The emergency card for Glance's lock-screen panel: it answers Glance alone, and only

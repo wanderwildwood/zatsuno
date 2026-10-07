@@ -1,7 +1,9 @@
 package com.wanderwildwood.zatsuno.ui
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +15,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.wanderwildwood.zatsuno.Given
+import com.wanderwildwood.zatsuno.Opening
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.aid.Pages
 import com.wanderwildwood.zatsuno.compass.CompassModel
@@ -34,19 +38,49 @@ object Route {
     fun knot(id: String) = "knot:$id"
 }
 
-/** The whole app: a stack of screens over the home screen. Back pops one. */
+/**
+ * The whole app: a stack of screens over the home screen. Back pops one.
+ *
+ * Opened by another app at a page ([request]), that page is the whole stack, so Back goes
+ * straight back to the app that sent it there rather than through this one's home screen.
+ */
 @Composable
-fun FieldKitApp(model: CompassModel = viewModel()) {
+fun FieldKitApp(
+    model: CompassModel = viewModel(),
+    request: Opening.Request? = null,
+    onRequestHandled: () -> Unit = {},
+) {
     val context = LocalContext.current
     val stack = rememberSaveable(saver = stackSaver()) { mutableStateListOf(Route.HOME) }
     var about by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
+    // A position another app sent for "Calling for help", until the reader goes back to the phone's own.
+    var givenSaved by rememberSaveable { mutableStateOf<String?>(null) }
+    val given = remember(givenSaved) { Given.restore(givenSaved) }
     fun open(route: String) { stack.add(route) }
-    fun back() { if (stack.size > 1) stack.removeAt(stack.lastIndex) }
+    fun back() {
+        if (stack.size > 1) stack.removeAt(stack.lastIndex)
+        else if (stack.last() != Route.HOME) (context as? Activity)?.finish()
+    }
     BackHandler(enabled = stack.size > 1) { back() }
+
+    LaunchedEffect(request) {
+        val r = request ?: return@LaunchedEffect
+        stack.clear()
+        when (r) {
+            is Opening.Request.Aid -> stack.add(Route.aid(r.page))
+            is Opening.Request.Call -> {
+                givenSaved = r.given?.save()
+                stack.add(Route.aid(Pages.CALL))
+            }
+        }
+        onRequestHandled()
+    }
 
     val pages = remember { Pages.all(context) }
     val route = stack.last()
+    // A sent position belongs to the visit that brought it; the call page opened later is the phone's own.
+    LaunchedEffect(route) { if (route != Route.aid(Pages.CALL)) givenSaved = null }
     when {
         route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true })
         route == Route.AID -> ListScreen(
@@ -57,7 +91,7 @@ fun FieldKitApp(model: CompassModel = viewModel()) {
         )
         route.startsWith("aid:") -> {
             val page = pages.firstOrNull { it.id == route.removePrefix("aid:") }
-            if (page == null) back() else AidScreen(page, model, ::back)
+            if (page == null) back() else AidScreen(page, model, ::back, given) { givenSaved = null }
         }
         route == Route.KNOTS -> {
             val rows = Knots.all.map { stringResource(it.name) to stringResource(it.use) }

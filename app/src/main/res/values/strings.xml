@@ -71,6 +71,11 @@
     <string name="share_heading">My position at %1$s, to within %2$s m:</string>
     <string name="share_heading_no_accuracy">My position at %1$s:</string>
     <string name="map_label">My position</string>
+    <!-- Over a position another app sent to "Calling for help" without a name for it -->
+    <string name="pos_given">Position sent from another app</string>
+    <!-- First line of a shared position another app sent. %1$s is its name -->
+    <string name="share_heading_given">%1$s:</string>
+    <string name="pos_use_phone">Use this phone\'s position</string>
     <string name="no_map">Nothing on this phone opens a map.</string>
     <string name="no_dialer">This phone cannot dial.</string>
     <string name="copied">Copied</string>

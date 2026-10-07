@@ -75,6 +75,42 @@ Drawn by `tools/make-knots.py`, which writes them as vector drawables. Each knot
 written as a few points it passes through, each marked as over, under or neither; the steps are
 that rope cut short. Run it with `--sheet DIR` to get every step as an SVG to look at.
 
+## Opening it from another app
+
+Two intents open Field Kit at a page. Neither needs a permission, and neither changes
+anything on the phone; they only choose what the screen shows. Back from that page returns to
+the app that opened it. On Android 11 and later the calling app needs
+`<package android:name="com.wanderwildwood.zatsuno" />` in its `<queries>` to see that Field
+Kit is installed, and should offer the link only when it is.
+
+**A first-aid page:** action `com.wanderwildwood.zatsuno.action.FIRST_AID`, with the page's id
+as the string extra `com.wanderwildwood.zatsuno.extra.PAGE`. The ids are `scene`, `call`,
+`cpr`, `choking`, `bleeding`, `shock`, `anaphylaxis`, `allergy`, `head`, `fracture`, `sprain`,
+`burns`, `hypothermia`, `frostbite`, `heat`, `lightning`, `snakebite`, `ticks`, `wounds`,
+`blisters` and `dehydration`. An id that is not one of these opens nothing.
+
+```kotlin
+Intent("com.wanderwildwood.zatsuno.action.FIRST_AID")
+    .setPackage("com.wanderwildwood.zatsuno")
+    .putExtra("com.wanderwildwood.zatsuno.extra.PAGE", "heat")
+```
+
+**"Calling for help" with a position:** action `com.wanderwildwood.zatsuno.action.CALL_FOR_HELP`,
+with the double extras `com.wanderwildwood.zatsuno.extra.LATITUDE` and
+`com.wanderwildwood.zatsuno.extra.LONGITUDE` in degrees, and optionally a few words saying
+what the point is as the string `com.wanderwildwood.zatsuno.extra.LABEL` (cut at 80
+characters). The page shows that position under the label, ready to read out or share, with
+a button to use the phone's own instead. Without a position, or with one that is not on the
+globe, the page opens with the phone's own.
+
+```kotlin
+Intent("com.wanderwildwood.zatsuno.action.CALL_FOR_HELP")
+    .setPackage("com.wanderwildwood.zatsuno")
+    .putExtra("com.wanderwildwood.zatsuno.extra.LATITUDE", 44.27056)
+    .putExtra("com.wanderwildwood.zatsuno.extra.LONGITUDE", -71.30333)
+    .putExtra("com.wanderwildwood.zatsuno.extra.LABEL", "Point on the map")
+```
+
 ## Building
 
 ```
