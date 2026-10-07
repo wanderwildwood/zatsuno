@@ -1,17 +1,18 @@
 title: Hypothermia
 keywords: cold, shivering, wet, exposure, hypothermia, confusion, slurred speech, fumbling, winter, cold water
-source: CDC, "Preventing Hypothermia" and "Avoid, Spot, Treat Frostbite and Hypothermia".
+source: CDC, "Preventing Hypothermia" and "Avoid, Spot, Treat Frostbite and Hypothermia"; Wilderness Medical Society, Accidental Hypothermia Guidelines (2019); NIH MedlinePlus, "Hypothermia".
 ---
-! Hypothermia is a medical emergency. Call for help. It can happen above 40°F (4°C) when someone is wet.
+! Can happen above 40°F (4°C) when wet. Confused, drowsy, or shivering stops: emergency. Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, send someone for help.
 # Signs
-- Shivering, tiredness, clumsy or fumbling hands
-- Confusion, memory loss, slurred speech, drowsiness
-- Shivering can stop as it gets worse. That is a bad sign, not a good one.
+- Shivering, tiredness, fumbling hands
+- Worse: confusion, slurred speech, drowsiness, shivering stops
 # Do this
-1. Get them out of the wind and wet, into shelter.
-2. Take off wet clothing.
-3. Warm the center of the body first: chest, neck, head and groin. Use dry layers, blankets, a sleeping bag, skin-to-skin contact.
-4. Put something between them and the cold ground.
-5. If they are awake and can swallow, give warm, sweet drinks. No alcohol.
-6. Handle them gently and keep them lying down if they are very cold.
-- Not breathing normally: start CPR, and keep warming them.
+1. Out of wind and wet. Insulate them from the ground.
+2. In shelter, remove wet clothes. No shelter: leave them on, wrap plastic or foil over.
+3. Warm chest, neck, head and groin first: dry layers, sleeping bag, skin-to-skin. Wrap heat packs and hot bottles in cloth. Never direct heat or hot water on skin.
+4. Alert, shivering and can swallow: warm, sweet drinks or food. No alcohol.
+5. Handle gently. Don't rub arms or legs. Keep them sitting or lying down.
+- Breathing can be very slow: check for a full minute. Not breathing normally: start CPR (see Hands-only CPR), keep warming. A very cold person can look dead and still be saved.
++++
+- Alert and shivering: once warm, fed and steady, they can walk out slowly.
+- Confused, drowsy or not shivering: keep lying flat and warming. Don't let them walk.

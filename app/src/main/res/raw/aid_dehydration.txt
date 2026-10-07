@@ -1,17 +1,21 @@
 title: Dehydration
 keywords: dehydration, thirst, water, fluids, dark urine, dizziness, oral rehydration, ORS, diarrhea, vomiting, electrolytes
-source: MedlinePlus (NIH), "Dehydration"; CDC, "Treating Cholera" (oral rehydration).
+source: MedlinePlus (NIH), "Dehydration" and "Diarrhea in infants"; CDC, "Treating Cholera" (oral rehydration); Wilderness Medical Society, Exercise-Associated Hyponatremia guideline (2019 update).
 ---
 # Signs
 - Thirst, dry mouth, tiredness, headache
-- Little urine, or urine dark yellow or amber
+- Little urine, or dark yellow urine
 - Dizziness, especially on standing up
-! Call 911 for confusion, fainting, a fast heartbeat or fast breathing, no urine for many hours, or signs of heat stroke.
+! Call 911 or your local emergency number for confusion, fainting, fast heartbeat or breathing, no urine for many hours, signs of heat stroke (see Heat exhaustion and heat stroke), fluids not staying down, or no better after rest and fluids.
+! No signal: try 911 anyway (see Calling for help); if it fails, send someone out.
+! Baby with no wet diaper in 3 hours, no tears when crying, or unusual sleepiness: get care now.
 # Do this
 1. Rest in shade.
-2. Sip water often, or suck ice. Small amounts keep down better than large ones.
-3. After heavy sweating, vomiting or diarrhea, water alone is not enough. Oral rehydration salts mixed with safe water put back what was lost; a sports drink helps after sweating.
-4. Keep drinking until the urine is pale again.
+2. If awake and able to swallow, sip water often. Small amounts stay down better.
+3. After heavy sweating, vomiting or diarrhea, water alone is not enough. Use oral rehydration salts mixed with safe water exactly as the packet says, or a sports drink after sweating. Neither? Safe water plus salty food or broth.
+4. Keep drinking until urine is pale again.
+- Baby: keep up breast milk or formula, plus small sips of infant oral rehydration solution. Not plain water or sports drinks.
++++
 # Don't
-- With diarrhea, avoid very sweet drinks such as juice or soda. They can make it worse.
-- Don't wait to feel thirsty on a hot day. Drink before you need to.
+- With diarrhea, avoid juice, soda and other very sweet drinks.
+- Don't drink beyond thirst during long exertion. Too much plain water can dangerously lower body salt. Confusion, headache or vomiting after drinking a lot needs help, not more water.

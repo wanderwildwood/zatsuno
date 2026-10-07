@@ -1,22 +1,24 @@
 title: Stings and anaphylaxis
-keywords: bee, wasp, hornet, sting, stinger, insect, allergy, allergic reaction, anaphylaxis, epinephrine, EpiPen, auto-injector, swelling, throat, hives
-source: MedlinePlus (NIH), "Anaphylaxis" and "Insect bites and stings"; NIOSH (CDC), "Insects and Scorpions".
+keywords: bee, wasp, hornet, sting, stinger, insect, allergy, allergic reaction, anaphylaxis, epinephrine, EpiPen, auto-injector, nasal spray, neffy, swelling, throat, hives
+source: MedlinePlus (NIH), "Anaphylaxis", "Insect bites and stings" and "Bee, wasp, hornet, or yellow jacket sting"; NIOSH (CDC), "Insects and Scorpions"; FDA, "neffy (epinephrine nasal spray)"; Perth Children's Hospital, "Stings" guideline; AHA/Red Cross Guidelines for First Aid (2024); Resuscitation Council UK, "Emergency treatment of anaphylaxis"; Visscher et al., "Removing bee stings" (Lancet, 1996).
 ---
-# Anaphylaxis: call 911 right away
+# Anaphylaxis: get help right away
 - Trouble breathing, wheezing, a tight throat or a hoarse voice
 - Swelling of the lips, tongue or face
-- Hives spreading over the body, faintness, a weak fast pulse
+- Hives spreading over the body, faintness, a weak fast pulse, vomiting or belly cramps
 - Can start within minutes of a sting, food or medicine
 # Do this
-1. Call 911 or your local emergency number.
-2. If they carry epinephrine, help them use it now. An auto-injector goes into the outer thigh, through clothing if need be.
-3. Lay them down with the feet raised. If breathing is hard, let them sit up instead.
-4. If they are not getting better and there is a second injector, ask the call-taker about a second dose.
-5. Stay with them. Start CPR if they stop breathing normally.
-- Don't give anything by mouth if they are struggling to breathe.
-> Epinephrine is the first treatment for anaphylaxis, used straight away (MedlinePlus). An antihistamine is not a substitute for it.
+1. Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, give epinephrine first, then send someone for help.
+2. If they carry epinephrine, help them use it now: an auto-injector into the outer thigh, through clothing if need be, or a nasal spray up one nostril.
+3. Lay them down with the feet raised (pregnant: on the left side). If breathing is hard, let them sit up instead. Don't let them stand or walk while signs remain.
+4. No better 5 to 10 minutes after the first dose, or the signs come back: give the second dose if there is one.
+5. Stay with them. Anyone with these signs needs a hospital, even if they get better: it can come back hours later.
+6. Start CPR if they stop breathing normally (see Hands-only CPR).
+- Nothing by mouth if they are struggling to breathe.
+! Many stings at once, or a sting inside the mouth or throat: get medical help now, even without those signs.
++++
+> Epinephrine is the first treatment, used straight away (MedlinePlus). An antihistamine is not a substitute for it.
 # A sting without those signs
-1. Scrape the stinger out with a fingernail or the edge of a card. Don't squeeze it or use tweezers.
-2. Wash with soap and water.
-3. A cold pack on the sting helps the swelling.
-- Watch them for the next hour. Signs of anaphylaxis can come on late.
+1. Move away from the insects. Scrape or pull the stinger out right away: speed matters more than method.
+2. Wash with soap and water. A cold pack helps the swelling.
+- Watch them for an hour. Signs can come on late.

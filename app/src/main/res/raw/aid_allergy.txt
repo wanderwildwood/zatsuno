@@ -1,18 +1,22 @@
 title: Allergic reactions
 keywords: allergy, hives, rash, itching, swelling, antihistamine, food allergy, plant, medicine reaction, anaphylaxis, epinephrine
-source: MedlinePlus (NIH), "Allergic reactions" and "Anaphylaxis".
+source: MedlinePlus (NIH), "Allergic reactions" and "Anaphylaxis"; AHA and Red Cross first aid guidelines (2024); Wilderness Medical Society, epinephrine guideline.
 ---
-! Trouble breathing, a swollen tongue or throat, or faintness is anaphylaxis. Call 911 and see Stings and anaphylaxis.
+! Trouble breathing, a swollen tongue or throat, faintness, or hives with repeated vomiting is anaphylaxis. Give their epinephrine (auto-injector or nasal spray) now. See Stings and anaphylaxis.
+! Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, send someone for help.
+- Struggling to breathe: let them sit up.
 # A mild reaction
-- Itchy eyes, sneezing, a local rash or hives, mild swelling where something touched the skin
-1. Move them away from whatever caused it, if you know.
-2. Wash skin that touched a plant or chemical with soap and water.
-3. A cold, wet cloth eases itching. An antihistamine they already use can help.
-4. Watch them closely. A mild reaction can turn into a severe one.
+- Itching, sneezing, a local rash or hives, mild swelling
+1. Move them away from the cause, if you know it.
+2. Wash off any plant or chemical with soap and water.
+3. A cold, wet cloth or an antihistamine they already use eases itching.
+4. Watch them. Mild can turn severe.
++++
+> After epinephrine they need a hospital today. If no help can come, walk out slowly once all signs are gone, with company and the second dose.
 # Get medical care if
-- The reaction spreads or gets worse
+- It spreads or gets worse
 - It came from a medicine
-- They have had a severe reaction before
+- They have had a severe one before
 # Don't
-- Don't assume earlier allergy shots will protect them.
-- Don't put a pillow under the head of someone who is struggling to breathe.
+- Don't count on past allergy shots.
+- Don't give an antihistamine instead of epinephrine. It is too slow and won't fix breathing.

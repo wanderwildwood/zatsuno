@@ -1,15 +1,19 @@
 title: Ticks
 keywords: tick, tick bite, Lyme, deer tick, remove tick, tweezers, rash, fever
-source: CDC, "What to Do After a Tick Bite".
+source: CDC, "What to Do After a Tick Bite"; CDC, Rocky Mountain spotted fever; NIH MedlinePlus, "Tick paralysis".
 ---
 # Remove it now
-1. Grip the tick as close to the skin as you can with fine-tipped tweezers. Fingers will do if you have nothing else.
-2. Pull it straight out with steady, even pressure. Don't twist or jerk.
-3. If mouthparts stay in the skin, leave them. The skin pushes them out as it heals.
+1. Grip the tick as close to the skin as you can with fine-tipped tweezers. Fingers if you have nothing else.
+2. Pull straight out with steady, even pressure. Don't twist or jerk.
+3. Mouthparts left in? Leave them. The skin pushes them out.
 4. Clean the bite and your hands with soap and water, rubbing alcohol or sanitizer.
-5. Put the tick in a sealed bag or container, or wrap it in tape. Don't crush it with your fingers.
-6. Check the rest of the body, the hair and the clothes. Where there is one tick there may be others.
-# Don't
-- No petroleum jelly, nail polish, heat or matches. They make the tick push more into the skin.
+5. Seal the tick in a bag or wrap it in tape. Don't crush it with your fingers.
+6. Check the whole body, hair and clothes for more.
 # Afterwards
-- See a doctor if a rash or fever comes in the weeks after. Say when and where the bite happened.
+- Rash, fever, headache or body aches in the weeks after: see a doctor. Say when and where the bite happened.
+! Fever and headache days after a bite, still on a trip: head out now. Some tick fevers can kill within days without treatment.
+! Unsteady walking or leg weakness creeping upward, often in a child: check the scalp, hair and skin folds for a tick; remove it. Weakness reaches the arms or breathing: Call 911 or your local emergency number.
+  No signal: try 911 anyway (see Calling for help); if it fails, send someone for help.
++++
+# Don't
+- No petroleum jelly, nail polish, heat or matches. They waste time and can push the tick's fluids into the bite.

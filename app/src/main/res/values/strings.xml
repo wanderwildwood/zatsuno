@@ -40,6 +40,10 @@
     <string name="aid_disclaimer">This page does not replace first-aid training, or a call for help.</string>
     <!-- Before the page's sources: "Sources: MedlinePlus (NIH), …" -->
     <string name="aid_sources">Sources:</string>
+    <!-- The row a first-aid page keeps the rest under (why, when to get care, what not to do, sources). Tapping it opens the rest in place. -->
+    <string name="aid_more">More</string>
+    <!-- Read aloud by a screen reader for the More row once it is open: tapping closes it -->
+    <string name="aid_less">Less</string>
 
     <!-- ============================================================ -->
     <!-- Position (compass, and the "Calling for help" page) -->

@@ -1,17 +1,22 @@
 title: Burns
 keywords: burn, scald, fire, flame, stove, hot water, blister, electrical burn, sunburn, chemical
-source: MedlinePlus (NIH), "Burns".
+source: MedlinePlus (NIH), "Burns", "Electrical injury" and "Chemical burn or reaction"; American Red Cross Scientific Advisory Council, "Burn Cooling" (2019); American Heart Association and American Red Cross, "Guidelines for First Aid" (2024).
 ---
-! Call 911 for burns that are large, deep, charred or white, on the face, hands, feet, groin or a joint, or from electricity or chemicals.
+! Call 911 or your local emergency number for burns bigger than their palm, deep, charred or white, on the face, hands, feet, groin or a joint, all the way around a limb or the chest, or from electricity or chemicals.
+! Singed nose hair or eyebrows, soot in the mouth or nose, hoarse voice or cough after smoke or flames: the airway can swell shut over hours. Get help now.
+! No signal: try 911 anyway (see Calling for help); if it fails, head out now.
 # On fire
 - Stop, drop and roll, or smother the flames with a coat or blanket, then pour on water.
 # Do this
-1. Get them away from the heat. With electricity, turn off the power first or move them with something that isn't metal.
-2. Cool the burn under cool running water, not ice, for 5 to 30 minutes.
-3. Take off rings, watches and tight things before it swells. Leave clothing that is stuck to the skin.
-4. Cover loosely with a clean, dry, non-stick dressing or cloth.
-5. A large burn: keep them warm and watch for shock.
+1. Get them away from the heat. Electricity: power off first, and stay 20 feet (6 m) from power lines until they're off. Can't turn it off: push them free with something dry, not metal. Not breathing normally: see Hands-only CPR.
+2. Chemicals: brush off powder, take off soaked clothing and jewelry, rinse with running water for 15 minutes or more.
+3. Cool with cool, clean water, not ice, for at least 10 minutes, 20 if you can, even up to 3 hours later. Keep the rest of them warm.
+4. Take off rings, watches and tight things before it swells. Leave clothing stuck to the skin.
+5. Cover loosely with a clean, dry, non-stick dressing or cloth.
+6. Large burn: watch for shock. See Shock.
++++
+7. Small burn: keep it clean and covered. Pus, fever, red streaks, worse pain or pain after 2 days: get help; far out, head out now.
 # Don't
 - No butter, oil, ice, toothpaste or home remedies.
 - Don't break blisters.
-> Cooling with water, and nothing on a serious burn but a clean cover, is the current advice (MedlinePlus). Butter and ice are old remedies that make burns worse.
+- Nothing on a serious burn but a clean cover.

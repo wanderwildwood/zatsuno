@@ -1,21 +1,25 @@
 title: Calling for help
 keywords: 911, 112, emergency number, dispatch, dispatcher, location, coordinates, position, text to 911, rescue, search and rescue, no signal, whistle
-source: 911.gov (NHTSA), "Calling 911"; FCC, "Text to 911"; NPS, "Hiking Safety".
+source: 911.gov (NHTSA), "Calling 911"; FCC, "Text to 911"; FCC, 911 call rules (47 CFR 20.18); NPS, "Hiking Safety"; NPS, "Outdoor Emergency Plan"; NPS White Sands, "Hiking Safety Tips".
 ---
 @position
 # Call
-1. Call 911, or your local emergency number. In Europe and many other countries 112 works from any mobile phone.
-2. Put the phone on speaker so your hands are free.
-3. Stay on the line until the call-taker tells you to hang up.
+1. Call 911 or your local emergency number (112 in Europe and many other countries).
+2. Put the phone on speaker. Stay on the line until told to hang up. If the call drops, call back.
+3. After the call, keep the phone on for rescuers. Use it for nothing else.
 # What to tell them
-1. Where you are. Read out the position above, and how close it is (the ± figure).
-2. What you can see: the trail, the trailhead you started from, a lake, a ridge, a road.
+1. Where you are: read out the position above and its ± figure.
+2. What you can see: trail, trailhead, lake, ridge or road.
 3. The number you are calling from.
-4. What happened, and how many people are hurt.
-5. How each person is: awake or not, breathing or not, bleeding or not.
-- Many call-takers can talk you through CPR or bleeding control. Do what they ask.
+4. What happened, how many are hurt, and whether each is awake, breathing and bleeding.
+- The call-taker may talk you through CPR or bleeding control. Do what they ask.
++++
 # No signal
-- Move to higher ground or open sky and try again. A call can get through where data cannot.
-- In many parts of the US you can text 911. Call if you can, text if you can't. Put your position in the first text.
-- Three of anything is a call for help: three whistle blasts, three shouts, three flashes.
-- If you are lost, stay where you are. You are easier to find standing still.
+- Satellite messenger, PLB or phone satellite SOS: use it now.
+- Try 911 even with no service showing: any carrier's tower must carry it.
+- Still failing: if safe, try from higher ground or open sky nearby. A call can get through where data cannot.
+- Can't call? Text 911 (many US areas take it) or someone who can call for you. Position first.
+- Signal in threes: three whistle blasts, shouts or flashes.
+- Still nothing: send two people out to call if you can, with the position and what happened written down. The rest stay with the injured.
+- Alone with them: make them as safe as you can, then go. Not if you are doing CPR or they are choking: stay and keep going.
+- Lost: stay put unless the spot is unsafe (rising water, rockfall, fire). You are easier to find standing still.

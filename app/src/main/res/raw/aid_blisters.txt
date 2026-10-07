@@ -1,17 +1,22 @@
 title: Blisters
 keywords: blister, foot, heel, hot spot, friction, boots, hiking, moleskin
-source: MedlinePlus (NIH), "Blisters".
+source: MedlinePlus (NIH), "Blisters" and "Cellulitis"; American Academy of Dermatology, "How to prevent and treat blisters".
 ---
 # A hot spot
-- Stop as soon as a spot feels hot or sore. Tape or pad it before a blister forms.
+- Stop when a spot feels hot or sore. Tape or pad it now, before it blisters.
 # A blister
-1. Leave it whole if you can. The skin over it keeps infection out.
-2. Cover it with a bandage or a pad with a hole cut out around the blister.
-3. Find what is rubbing and change it: wet socks, a loose lace, grit in the boot.
+1. Leave it whole if you can. The skin keeps infection out.
+  Large, painful or about to burst: wash it, prick the edge with an alcohol-cleaned needle, press out the fluid, leave the skin on. Do not drain it if they have diabetes or poor circulation.
+2. Cover it with a bandage, or a pad with a hole cut around it.
+3. Fix what is rubbing: wet socks, a loose lace, grit in the boot.
 # If it has torn open
-1. Wash it gently with clean water and soap.
-2. Leave the flap of skin in place.
-3. Cover it with a clean, non-stick dressing.
+1. Wash gently with clean water and soap.
+2. Leave the skin flap in place.
+3. Cover with a clean, non-stick dressing.
++++
 # Get medical care if
-- It shows infection: pus, spreading redness, warmth, swelling, more pain.
-- The person has diabetes or poor circulation.
+- It looks infected: pus, spreading redness or red streaks, warmth, swelling, more pain, fever.
+  Fever or red streaks far from help: head out now.
+- They have diabetes or poor circulation.
+- No clear cause, or many at once.
+- From a burn or cold: see Burns or Frostbite.

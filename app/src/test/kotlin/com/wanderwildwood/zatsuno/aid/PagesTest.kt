@@ -13,9 +13,47 @@ class PagesTest {
     private val pages = raw.listFiles { f -> f.name.startsWith("aid_") }!!.sortedBy { it.name }
         .map { Markup.parse(it.nameWithoutExtension.removePrefix("aid_"), it.readText()) }
 
+    private val titles = pages.map { it.title }.toSet()
+
     @Test
-    fun allTwentyOnePagesAreThere() {
-        assertEquals(21, pages.size)
+    fun allTwentyNinePagesAreThere() {
+        assertEquals(29, pages.size)
+        for (id in listOf("chest", "breathing", "sugar", "seizure", "stroke", "drowning", "altitude", "poisoning")) {
+            assertTrue("$id is there", pages.any { it.id == id })
+        }
+    }
+
+    @Test
+    fun theListNamesEveryPageOnce() {
+        val src = listOf("src/main/kotlin", "app/src/main/kotlin").map { File(it, "com/wanderwildwood/zatsuno/aid/Pages.kt") }.first { it.isFile }
+        val listed = Regex("""R\.raw\.aid_(\w+)""").findAll(src.readText()).map { it.groupValues[1] }.toList()
+        assertEquals(listed.toSet().size, listed.size)
+        assertEquals(pages.map { it.id }.toSet(), listed.toSet())
+    }
+
+    @Test
+    fun everySeeNamesARealPage() {
+        // "See Severe bleeding", "see Burns or Frostbite": a capital after "see" is a page title.
+        val see = Regex("""\b[Ss]ee ([A-Z][^.;:)\n]*)""")
+        var checked = 0
+        for (p in pages) for (m in see.findAll(p.searchText())) {
+            checked++
+            val named = m.groupValues[1].trim()
+            val parts = if (named in titles) listOf(named) else named.split(" or ").map { it.trim() }
+            for (t in parts) assertTrue("${p.id}: \"See $t\" is no page's title", t in titles)
+        }
+        assertTrue("only $checked cross-references found", checked > 40)
+
+    }
+
+    @Test
+    fun everyPageOpensOnWhatToDoNowWithEveryWarningAboveMore() {
+        for (p in pages) {
+            assertTrue("${p.id} has a More part", p.rest.isNotEmpty())
+            assertTrue("${p.id} opens on steps or warnings", p.now.any { it is Block.Step || it is Block.Urgent })
+            assertTrue("${p.id}: a ! line under More", p.rest.none { it is Block.Urgent })
+            assertTrue("${p.id}: a note left above More", p.now.none { it is Block.Note })
+        }
     }
 
     @Test
@@ -34,8 +72,17 @@ class PagesTest {
     }
 
     @Test
-    fun pagesStaySmallEnoughToReadAtAGlance() {
-        for (p in pages) assertTrue("${p.id} has ${p.blocks.size} blocks", p.blocks.size <= 30)
+    fun theOpeningPartStaysShort() {
+        for (p in pages) {
+            val words = p.now.sumOf { b ->
+                when (b) {
+                    is Block.Heading -> b.text; is Block.Step -> b.text; is Block.Point -> b.text
+                    is Block.Urgent -> b.text; is Block.Note -> b.text; is Block.Para -> b.text
+                    Block.Position -> ""
+                }.split(Regex("\\s+")).count { it.isNotEmpty() }
+            }
+            assertTrue("${p.id} opens on $words words", words <= 400)
+        }
     }
 
     @Test
@@ -67,8 +114,32 @@ class PagesTest {
                 Block.Note("Note"), Block.Position, Block.Para("Para")),
             page.blocks,
         )
+        assertEquals(page.blocks.size, page.more)
+        assertEquals(page.blocks, page.now)
         val text = page.asText("Sources:", "Not training.")
         assertTrue(text.contains("1. One continued"))
         assertTrue(text.endsWith("Sources: CDC\nNot training."))
+    }
+
+    @Test
+    fun theMoreLineSplitsThePage() {
+        val page = Markup.parse("x", """
+            title: T
+            source: CDC
+            ---
+            ! Urgent
+            1. One
+            +++
+              not a continuation of the line above
+            - Why
+            > Note
+        """.trimIndent())
+        assertEquals(listOf(Block.Urgent("Urgent"), Block.Step(1, "One")), page.now)
+        assertEquals(listOf(Block.Para("not a continuation of the line above"), Block.Point("Why"), Block.Note("Note")), page.rest)
+        assertTrue(page.nowText().contains("One"))
+        assertFalse(page.nowText().contains("Why"))
+        assertTrue(page.restText().contains("Why"))
+        assertTrue(page.searchText().contains("Why"))
+        assertTrue(page.asText("Sources:", "").contains("Why"))
     }
 }

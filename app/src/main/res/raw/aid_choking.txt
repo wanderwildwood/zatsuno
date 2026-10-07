@@ -1,22 +1,25 @@
 title: Choking
 keywords: airway, Heimlich, abdominal thrusts, back blows, chest thrusts, can't breathe, food stuck, infant, baby, child
-source: MedlinePlus (NIH), "Choking: adult or child over 1 year" and "Choking: infant under 1 year".
+source: MedlinePlus (NIH), "Choking: adult or child over 1 year", "Choking: infant under 1 year" and "Heimlich maneuver on self".
 ---
-! If they can cough hard or speak, let them keep coughing, and stay with them.
+! Can cough hard, speak or cry: let them keep coughing, and stay with them. Don't reach into an awake person's mouth.
 # Can't speak, cough or breathe: adult or child over 1
-1. Have someone call 911 or your local emergency number.
-2. Stand behind them. Hold them across the chest with one arm and lean them forward.
+1. Have someone call 911 or your local emergency number. Alone: shout for help and start now. No signal: try 911 anyway (see Calling for help); if it fails, keep going.
+2. Stand behind them, arm across their chest, and lean them forward.
 3. Give 5 firm blows between the shoulder blades with the heel of your hand.
-4. Then 5 abdominal thrusts: your fist just above the navel, your other hand over it, pull sharply in and up.
+4. Then 5 abdominal thrusts: fist just above the navel, other hand over it, pull sharply in and up.
 5. Keep going, 5 and 5, until the object comes out or they collapse.
-- Pregnant, or too big to reach around: thrust on the middle of the breastbone instead.
+- Pregnant, or too big to reach around: arms around the chest, fist on the middle of the breastbone, thrust straight back.
+- Choking alone: your own fist in and up above your navel, or push your upper belly hard against a chair back or railing.
 # Baby under 1
-1. Lay the baby face down along your forearm, head lower than the body, jaw held in your fingers.
+- Call for help as above and start now. Never give a baby abdominal thrusts.
+1. Baby face down along your forearm, head lower than the body, jaw held in your fingers.
 2. Give 5 firm back blows between the shoulder blades.
-3. Turn the baby face up. Give 5 chest thrusts with the heel of one hand on the middle of the breastbone, just below the nipples.
+3. Turn face up. Give 5 chest thrusts: heel of one hand mid-breastbone, just below the nipples.
 4. Repeat until the object comes out or the baby stops responding.
-# If they collapse
-1. Lay them on a firm surface and start CPR. Compressions can push the object out.
-2. Look in the mouth before any breath. Take the object out only if you can see it.
-> MedlinePlus now gives back blows and abdominal thrusts together for adults, and the heel of one hand for a baby's chest thrusts. Older US advice taught abdominal thrusts alone, and two fingers for a baby.
-- Anyone who needed thrusts should be seen by a doctor afterward.
+# If they collapse or stop responding
+1. Lay them on a firm surface and start CPR (see Hands-only CPR). Compressions can push the object out. No one has called? Shout for help. Alone with a baby: call on speaker; if you must leave to call, give 2 minutes of CPR first.
+2. Before any breath, look in the mouth. Remove the object only if you can see it and it is loose. Never sweep blindly or grab at anything in the throat.
++++
+> Changed: adults now get back blows as well as thrusts, and a baby gets the heel of one hand, not two fingers.
+- See a doctor after any thrusts. Get help now for a cough that won't stop, wheezing, short breath, trouble swallowing or speaking, or after CPR.

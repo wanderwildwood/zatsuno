@@ -18,11 +18,14 @@ and it will install on any Android 12 device.
   dispatcher, with how close it is and how old. Share it as text to Messaging or anything else
   (decimal, degrees-minutes-seconds, a `geo:` address and a map link), or open the dialler with
   911 or 112 filled in. What to tell the call-taker, and what to do with no signal.
-- **First aid.** Twenty-one short pages: checking the scene and the person, hands-only CPR,
-  choking, severe bleeding and tourniquets, shock, anaphylaxis and allergic reactions, head
-  injury, fractures, sprains, burns, hypothermia, frostbite, heat illness, lightning, snakebite,
-  ticks, wounds, blisters and dehydration. Each is written for this screen from current US
-  government guidance and names its sources. Where the advice has changed (tourniquets,
+- **First aid.** Twenty-nine short pages: checking the scene and the person, hands-only CPR,
+  choking, severe bleeding and tourniquets, drowning, anaphylaxis, trouble breathing and
+  asthma, chest pain, stroke, shock, seizures, low blood sugar, poisoning and carbon monoxide,
+  head injury, heat illness, hypothermia, altitude sickness, lightning, burns, snakebite,
+  allergic reactions, fractures, frostbite, dehydration, sprains, wounds, ticks and blisters.
+  Each opens on what to do now: the warnings and the first steps. The why, when to get care,
+  what not to do and the sources wait under More, a tap away. Each is written for this screen
+  from current guidance and names its sources. Where the advice has changed (tourniquets,
   CPR, choking, snakebite) the page says what changed and who says so.
 - **Knots.** Overhand, figure-eight, figure-eight loop, bowline, clove hitch, two half hitches,
   taut-line hitch, sheet bend, square knot, prusik, double fisherman's and timber hitch. What

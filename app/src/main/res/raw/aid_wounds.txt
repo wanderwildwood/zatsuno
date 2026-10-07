@@ -1,20 +1,22 @@
 title: Wound care
 keywords: cut, scrape, puncture, laceration, wound, clean, infection, bandage, tetanus, splinter
-source: MedlinePlus (NIH), "Cuts and puncture wounds"; CDC, "Tetanus: Clinical Overview".
+source: MedlinePlus (NIH), "Cuts and puncture wounds"; CDC, "Tetanus: Clinical Overview"; Wilderness Medical Society, "Practice Guidelines for Basic Wound Management in the Austere Environment: 2014 Update".
 ---
-! Severe bleeding comes first. See Severe bleeding.
+! Severe bleeding comes first. If firm pressure doesn't stop it, call 911 or your local emergency number. See Severe bleeding.
 # Clean and cover
-1. Wash your hands, and put on gloves if you have them.
+1. Wash your hands. Gloves on if you have them.
 2. Press on it until the bleeding stops.
-3. Wash the wound with clean water and mild soap. Rinse a puncture under running water for 5 minutes.
+3. Wash around it with mild soap. Flush the wound hard with at least a quart (1 liter) of drinking water from a squeeze bottle or syringe, even if it looks clean.
 4. Pick out dirt you can see. Rinse again.
-5. Cover it with a clean dressing that won't stick. Change it daily, or when it gets wet or dirty.
-- Even a wound that looks clean gets washed.
-- Don't try to clean a large, deep wound. Cover it and get help.
-- Don't pull out an object stuck deep in the body. Pad around it and get help.
+5. Cover it with a clean dressing that won't stick. Change it daily, or when wet or dirty.
+- Large, deep wound: once bleeding is controlled, gently flush out dirt. Don't dig or disturb clots. Cover it and get help.
+- Don't pull out an object stuck deep in it: pad around it. Don't push back organs or tissue that stick out: cover them with a clean dressing. Get help.
++++
+- No hydrogen peroxide or rubbing alcohol: they harm tissue.
 # Get medical care if
-- It is deep, gaping, on the face, or reaches bone. It may need stitches.
-- Bleeding doesn't stop after 10 minutes of pressure.
-- It was an animal or human bite.
-- It shows infection: spreading redness, warmth, swelling, pus, a red streak, fever.
-- Their last tetanus shot was more than 10 years ago, or 5 for a dirty wound.
+- Deep, gaping, on the face, or to the bone (may need stitches).
+- Numb past the wound, or a finger or limb won't move right.
+- An animal or human bite.
+- Infection: spreading redness, warmth, swelling, pus, a red streak, fever.
+  Fever, confusion or a red streak: head out now.
+- Last tetanus shot over 10 years ago (5 for a dirty, puncture or bite wound), or unknown.

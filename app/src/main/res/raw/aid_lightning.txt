@@ -1,17 +1,20 @@
 title: Lightning
 keywords: lightning, thunder, thunderstorm, storm, struck, electrical, shelter, 30 minutes
-source: NWS (NOAA), "Lightning Safety"; NPS, "Lightning Safety".
+source: NWS (NOAA), "Lightning Safety"; NPS, "Lightning Safety"; Wilderness Medical Society, lightning injury guidelines (2014 update).
 ---
 # Someone is struck
-1. Call 911 or your local emergency number.
-2. It is safe to touch them. A person struck by lightning carries no charge.
-3. Move to a safer place if lightning is still close; the storm may still be overhead.
-4. Not breathing normally: start CPR, and use an AED if there is one.
-5. Several people hurt: help first anyone who is not breathing. Someone who is moaning or moving is breathing.
-6. Look for burns, broken bones and head injury, and keep them warm.
+1. Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, start care, then send someone for help.
+2. It is safe to touch them. They carry no charge.
+3. Lightning still close: move to a safer place.
+4. Not breathing normally: start CPR, with rescue breaths if you can, and use an AED if there is one. See Hands-only CPR.
+- Keep giving breaths until they breathe on their own. Breathing can stay stopped after the heart restarts.
+5. Several people hurt: help first anyone not breathing. Someone moaning or moving is breathing.
+6. Look for burns, broken bones and head injury. Keep them warm.
+7. Anyone struck needs a doctor, even if they seem fine. Get them out or send for help.
++++
 # Staying safe
 - When thunder roars, go indoors. No place outside is safe in a thunderstorm.
 - A hard-topped car or a building with plumbing and wiring is safe. Tents, picnic shelters and caves are not.
 - Wait 30 minutes after the last thunder before going back out.
-- Caught out: get off peaks and ridges, away from lone trees, water and metal. Spread a group out.
-> Crouching low on the balls of the feet was once taught as a safe position. The National Weather Service no longer calls it safe; it only lowers the risk a little.
+- Caught out: get off peaks and ridges, away from lone trees, water and metal. Do not lie flat. Spread a group at least 20 feet (6 m) apart.
+> Crouching was once taught as safe. The National Weather Service no longer calls it safe; it only lowers the risk a little.

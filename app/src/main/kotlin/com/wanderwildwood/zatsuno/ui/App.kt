@@ -34,7 +34,7 @@ object Route {
     const val SEARCH = "search"
     const val CARD = "card"
     const val CARD_EDIT = "card:edit"
-    fun aid(id: String) = "aid:$id"
+    fun aid(id: String, more: Boolean = false) = if (more) "aid:$id:more" else "aid:$id"
     fun knot(id: String) = "knot:$id"
 }
 
@@ -80,7 +80,7 @@ fun FieldKitApp(
     val pages = remember { Pages.all(context) }
     val route = stack.last()
     // A sent position belongs to the visit that brought it; the call page opened later is the phone's own.
-    LaunchedEffect(route) { if (route != Route.aid(Pages.CALL)) givenSaved = null }
+    LaunchedEffect(route) { if (route != Route.aid(Pages.CALL) && route != Route.aid(Pages.CALL, more = true)) givenSaved = null }
     when {
         route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true })
         route == Route.AID -> ListScreen(
@@ -90,8 +90,10 @@ fun FieldKitApp(
             onPick = { open(Route.aid(pages[it].id)) },
         )
         route.startsWith("aid:") -> {
-            val page = pages.firstOrNull { it.id == route.removePrefix("aid:") }
-            if (page == null) back() else AidScreen(page, model, ::back, given) { givenSaved = null }
+            val id = route.removePrefix("aid:").substringBefore(':')
+            val page = pages.firstOrNull { it.id == id }
+            if (page == null) back()
+            else AidScreen(page, model, ::back, given, onDropGiven = { givenSaved = null }, openMore = route.endsWith(":more"))
         }
         route == Route.KNOTS -> {
             val rows = Knots.all.map { stringResource(it.name) to stringResource(it.use) }
@@ -121,7 +123,10 @@ fun FieldKitApp(
             val hits = remember(query, entries) { Search.find(entries, query) }
             SearchScreen(query, { query = it }, hits, ::back) { hit ->
                 when (hit.entry.kind) {
-                    Kind.AID -> open(Route.aid(hit.entry.id))
+                    Kind.AID -> {
+                        val page = pages.first { it.id == hit.entry.id }
+                        open(Route.aid(page.id, more = Search.onlyIn(page.restText(), page.nowText(), query)))
+                    }
                     Kind.KNOT -> open(Route.knot(hit.entry.id))
                     Kind.COMPASS -> open(Route.COMPASS)
                     Kind.CARD -> open(Route.CARD)

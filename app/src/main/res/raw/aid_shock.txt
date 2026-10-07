@@ -1,20 +1,25 @@
 title: Shock
 keywords: pale, clammy, cold sweat, weak pulse, fast breathing, faint, confused, blood loss, low blood pressure
-source: MedlinePlus (NIH), "Shock".
+source: MedlinePlus (NIH), "Shock" and "Anaphylaxis"; Resuscitation Council UK, anaphylaxis guideline (2021).
 ---
-! Call 911 or your local emergency number as soon as you see signs of shock. Do not wait for them to get worse.
+! Call 911 or your local emergency number at the first signs of shock. Don't wait.
+  No signal: try 911 anyway (see Calling for help); if it fails, send someone now with your location.
 # Signs
 - Pale or gray, cool, clammy skin
 - Fast, weak pulse; fast, shallow breathing
 - Anxious, confused, drowsy or faint
 - Thirst, nausea, vomiting
 # Do this
-1. Treat the cause you can: stop bleeding first.
-2. Lay them flat on their back.
-3. If there is no injury to the head, neck, back or legs, raise the feet about 12 inches (30 cm).
-4. Cover them to keep them warm, including underneath if the ground is cold. Loosen tight clothing.
-5. Stay with them and keep checking breathing.
+1. Stop bleeding first (see Severe bleeding).
+  Severe allergic reaction: use their epinephrine now.
+2. Lay them flat. Pregnant: on the left side.
+  Struggling to breathe: let them sit up, legs straight.
+3. No head, neck, back or leg injury: raise the feet 12 inches (30 cm), unless it hurts.
+4. Keep them warm, with something under them on cold ground. Loosen tight clothing.
+5. Stay with them and keep checking breathing. Not breathing normally: start CPR (see Hands-only CPR).
 # Don't
-- Don't give anything to eat or drink.
-- Don't move them if you think the spine is hurt.
-- If they vomit, roll them onto their side. With a spine injury, roll head and body together as one.
+! Don't let them stand or walk out, even if they feel better. Bring help to them.
++++
+- Nothing to eat or drink if drowsy, vomiting or badly hurt. Fully awake and cold, overheated or dried out: see that page.
+- Possible spine injury: move them only if the spot is dangerous, cold or wet. Then move head, neck and body together.
+- Vomiting: roll them onto their side in one piece.

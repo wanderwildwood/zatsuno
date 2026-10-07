@@ -1,16 +1,20 @@
 title: Fractures and splints
 keywords: broken bone, fracture, dislocation, splint, sling, immobilize, deformed limb, open fracture
-source: MedlinePlus (NIH), "Broken bone" and "Splints".
+source: MedlinePlus (NIH), "Broken bone", "Dislocation" and "Splints"; OHSU wilderness medicine course, "Principles of limb immobilization: backcountry applications".
 ---
-! Call 911 if bone shows through the skin, the limb is cold, pale or numb beyond the injury, or the hip, pelvis, thigh, neck or back may be broken.
+! Call 911 or your local emergency number if bone shows through the skin, the limb is cold, pale or numb beyond the injury, or the hip, pelvis, thigh, neck or back may be broken.
+  No signal: try 911 anyway (see Calling for help); if it fails, splint it and send someone for help.
 # Do this
-1. Check breathing and stop any heavy bleeding first.
-2. Bone through the skin: cover the wound with something clean. Don't push the bone back.
-3. Splint it the way you found it. Don't straighten it.
-4. Pad the splint and tie it so it holds the joint above and the joint below the break.
-5. Check the fingers or toes before and after: warm, pink, and they can feel you touch them. If not, loosen the ties.
-6. Cool the area with a wrapped cold pack.
-- A splint can be a stick, a rolled map, a sleeping pad, a trekking pole. A sling holds an arm.
+1. Check breathing and stop any heavy bleeding first. See Severe bleeding.
+2. Bone through the skin: cover it with something clean. Don't push it back.
+3. Splint it as you found it. Don't straighten it or push a joint back in.
+4. Pad the splint. Tie it to hold the joints above and below the break.
+5. Check fingers or toes before, after, and often as it swells: warm, pink, and they feel your touch. If not, loosen the ties.
+  Still cold and pale, help hours away: gently ease a crooked arm or leg toward its normal line, never at a joint. Stop if it resists or pain sharply rises. Splint again.
+6. Cool it with a wrapped cold pack. Keep them warm, padded off the ground if that won't move the injury.
++++
+- Splints: a stick, rolled map, sleeping pad or trekking pole. A sling holds an arm.
+- Can't put weight on a leg: send for help; don't make them walk. Arm in a sling: they can usually walk out with company.
 # Don't
-- Don't move them if the neck, back, hip or pelvis may be hurt, unless where they are is dangerous.
+- Don't move them if the neck, back, hip or pelvis may be hurt, unless the spot is dangerous, cold or wet. Then move head, neck and body together.
 - Don't test whether the bone moves.

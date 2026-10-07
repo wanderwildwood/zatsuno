@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -19,6 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.ui.Alignment
+import com.mudita.mmd.components.divider.HorizontalDividerMMD
 import com.wanderwildwood.zatsuno.card.CardStore
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,17 +54,29 @@ private fun Readable(content: @Composable () -> Unit) {
 }
 
 /**
- * A first-aid page, a block to a row so a swipe moves it a few steps at a time. Its sources
- * and the line about training close every page. "Calling for help" also carries the live
- * position, with the buttons that use it.
+ * A first-aid page, a block to a row so a swipe moves it a few steps at a time. It opens on
+ * what to do now; the rest waits under a More row that opens and closes in place, with the
+ * sources at its foot. The line about training closes every page, More open or not. "Calling
+ * for help" also carries the live position, with the buttons that use it.
+ *
+ * [openMore] opens it ready open, for a search that found its words under More.
  */
 @Composable
-fun AidScreen(page: Page, model: CompassModel, onBack: () -> Unit, given: Given? = null, onDropGiven: () -> Unit = {}) {
+fun AidScreen(
+    page: Page,
+    model: CompassModel,
+    onBack: () -> Unit,
+    given: Given? = null,
+    onDropGiven: () -> Unit = {},
+    openMore: Boolean = false,
+) {
     val context = LocalContext.current
     val sources = stringResource(R.string.aid_sources)
     val disclaimer = stringResource(R.string.aid_disclaimer)
     val hasPosition = page.blocks.any { it == Block.Position }
     if (hasPosition) RunWhileShown(model)
+    var moreOpen by rememberSaveable(page.id) { mutableStateOf(openMore) }
+    val list = rememberLazyListState()
     Screen(
         title = page.title,
         onBack = onBack,
@@ -65,23 +87,63 @@ fun AidScreen(page: Page, model: CompassModel, onBack: () -> Unit, given: Given?
         },
     ) { modifier ->
         val card = remember { if (hasPosition) CardStore.load(context) else null }
-        LazyColumnMMD(modifier = modifier) {
-            if (card != null && !card.isEmpty) {
-                item(key = "card") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { CardLines(card, bordered = true) } }
+        val showCard = card != null && !card.isEmpty
+        val hasMore = page.rest.isNotEmpty()
+        // Opened from a search that found its words under More: start at the More row.
+        LaunchedEffect(page.id) {
+            if (openMore && hasMore) list.scrollToItem(page.now.size + if (showCard) 1 else 0)
+        }
+        LazyColumnMMD(modifier = modifier, state = list) {
+            if (showCard) {
+                item(key = "card") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { CardLines(card!!, bordered = true) } }
             }
-            page.blocks.forEachIndexed { i, block ->
+            page.now.forEachIndexed { i, block ->
                 item(key = i) {
                     Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven) }
                 }
             }
+            if (hasMore) {
+                item(key = "more") { MoreRow(moreOpen) { moreOpen = !moreOpen } }
+            }
+            if (moreOpen || !hasMore) {
+                page.rest.forEachIndexed { i, block ->
+                    item(key = page.more + i) {
+                        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven) }
+                    }
+                }
+                item(key = "sources") {
+                    Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 18.dp)) {
+                        Readable { TextMMD(text = "$sources ${page.source}", style = MaterialTheme.typography.labelSmall) }
+                    }
+                }
+            }
             item(key = "foot") {
-                Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 18.dp, bottom = 16.dp)) {
-                    Readable { TextMMD(text = "$sources ${page.source}", style = MaterialTheme.typography.labelSmall) }
-                    Spacer(Modifier.height(8.dp))
+                Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = if (moreOpen || !hasMore) 8.dp else 18.dp, bottom = 16.dp)) {
                     TextMMD(text = disclaimer, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                 }
             }
         }
+    }
+}
+
+/** The row between what to do now and the rest: More, with its chevron, opening in place. */
+@Composable
+private fun MoreRow(open: Boolean, onToggle: () -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(top = 14.dp)) {
+        HorizontalDividerMMD()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClickLabel = stringResource(if (open) R.string.aid_less else R.string.aid_more), onClick = onToggle)
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+        ) {
+            TextMMD(text = stringResource(R.string.aid_more), style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            Icon(if (open) Icons.ExpandLess else Icons.ExpandMore, contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(22.dp))
+        }
+        HorizontalDividerMMD()
     }
 }
 

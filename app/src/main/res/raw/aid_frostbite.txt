@@ -1,19 +1,22 @@
 title: Frostbite
 keywords: frostbite, frostnip, cold, numb, fingers, toes, nose, ears, white skin, waxy, rewarming
-source: CDC, "Preventing Frostbite".
+source: CDC, "Preventing Frostbite"; Wilderness Medical Society Frostbite Guidelines (2024); MedlinePlus, "Frostbite".
 ---
 # Signs
-- Redness or pain first, then white or grayish-yellow skin
-- Skin that feels unusually firm or waxy
+- Red or painful first, then white or grayish-yellow
+- Firm or waxy skin
 - Numbness. Often someone else notices it first.
-! Check for hypothermia too. It is the more dangerous of the two.
+! Check for hypothermia too and treat it first. See Hypothermia.
 # Do this
-1. Get them somewhere warm.
-2. Don't walk on frostbitten feet or toes unless you have to.
-3. Warm the area in warm water, not hot: comfortable to an unhurt hand.
-4. No warm water: use body heat. Frozen fingers can go into an armpit.
-5. Get medical care.
+1. Get them somewhere warm. Remove wet clothes, rings and anything tight before it swells.
+2. Must walk out? Do it before thawing feet. Once thawed, don't walk on them: send for help.
+3. Warm it in warm water, not hot: 98–102°F (37–39°C), comfortable to an unhurt hand. Keep it in until soft and colored, often 30 minutes. It will hurt.
+4. No warm water: body heat, like fingers in an armpit.
+5. Pad it loosely with dry cloth, between fingers and toes too. Keep it warm. Ibuprofen helps if they can take it.
+6. Color and feeling back soon: likely frostnip. Protect it and carry on; watch for blisters for a day.
+! Still numb, pale or blistered after warming: head out for medical care now. Some treatments only work within 24 hours.
++++
 # Don't
-- Don't rub it, or rub snow on it.
-- Don't warm it by a fire, stove, heat lamp, heating pad or radiator. Numb skin burns easily.
-- Don't thaw it if it could freeze again before you reach shelter. Refreezing does more harm.
+- Don't rub it, or rub snow on it. Don't break blisters.
+- No fire, stove, heat lamp, heating pad or radiator. Numb skin burns easily.
+- Don't thaw it if it could refreeze before shelter. Refreezing does more harm.

@@ -5,7 +5,8 @@ import com.wanderwildwood.zatsuno.R
 
 /**
  * The first-aid pages, in the order the list shows them: what to do first, then what
- * threatens life soonest, then the rest.
+ * threatens life soonest (no breath, no pulse, blood loss), then what can turn bad within the
+ * hour, then the rest.
  */
 object Pages {
 
@@ -18,22 +19,30 @@ object Pages {
         "cpr" to R.raw.aid_cpr,
         "choking" to R.raw.aid_choking,
         "bleeding" to R.raw.aid_bleeding,
-        "shock" to R.raw.aid_shock,
+        "drowning" to R.raw.aid_drowning,
         "anaphylaxis" to R.raw.aid_anaphylaxis,
-        "allergy" to R.raw.aid_allergy,
+        "breathing" to R.raw.aid_breathing,
+        "chest" to R.raw.aid_chest,
+        "stroke" to R.raw.aid_stroke,
+        "shock" to R.raw.aid_shock,
+        "seizure" to R.raw.aid_seizure,
+        "sugar" to R.raw.aid_sugar,
+        "poisoning" to R.raw.aid_poisoning,
         "head" to R.raw.aid_head,
-        "fracture" to R.raw.aid_fracture,
-        "sprain" to R.raw.aid_sprain,
-        "burns" to R.raw.aid_burns,
-        "hypothermia" to R.raw.aid_hypothermia,
-        "frostbite" to R.raw.aid_frostbite,
         "heat" to R.raw.aid_heat,
+        "hypothermia" to R.raw.aid_hypothermia,
+        "altitude" to R.raw.aid_altitude,
         "lightning" to R.raw.aid_lightning,
+        "burns" to R.raw.aid_burns,
         "snakebite" to R.raw.aid_snakebite,
-        "ticks" to R.raw.aid_ticks,
-        "wounds" to R.raw.aid_wounds,
-        "blisters" to R.raw.aid_blisters,
+        "allergy" to R.raw.aid_allergy,
+        "fracture" to R.raw.aid_fracture,
+        "frostbite" to R.raw.aid_frostbite,
         "dehydration" to R.raw.aid_dehydration,
+        "sprain" to R.raw.aid_sprain,
+        "wounds" to R.raw.aid_wounds,
+        "ticks" to R.raw.aid_ticks,
+        "blisters" to R.raw.aid_blisters,
     )
 
     /** Every page's id, without reading the pages: what another app may ask to open. */

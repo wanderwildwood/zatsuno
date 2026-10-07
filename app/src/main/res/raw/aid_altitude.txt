@@ -1,0 +1,27 @@
+title: Altitude sickness
+keywords: altitude sickness, mountain sickness, AMS, altitude, high altitude, elevation, mountains, headache, nausea, dizzy, can't sleep, short of breath, cough, confused, stumbling, HACE, HAPE
+source: CDC Yellow Book (2026), "High-Altitude Travel and Altitude Illness"; MedlinePlus (NIH), "High altitude illness"; Wilderness Medical Society, "Clinical Practice Guidelines for the Prevention and Treatment of Acute Altitude Illness" (2024 update).
+---
+! Confused, very drowsy, or stumbling like they are drunk: brain swelling (HACE). Test: have them walk heel to toe in a straight line. If they can't, treat it as brain swelling.
+! Short of breath at rest, a cough, or too weak to keep up: fluid in the lungs (HAPE).
+! Either one: go down now, even at night if the way down is safe, with people helping them. Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, start down with them. If there are enough of you, send two people ahead for help.
+  Go down at least 1,000 to 3,000 ft (300 to 1,000 m), or until they are clearly better.
+  Keep them warm. Let them do as little as they can: carry their pack. If they can't go down yet, keep them warm and resting, sitting up if breathing is hard, and go down as soon as you can.
+  Even if they feel better lower down, end the trip and get them to a doctor. Don't go back up.
+# Mild altitude sickness
+- Headache, plus nausea, poor appetite, dizziness, tiredness or poor sleep
+1. Don't go any higher until the symptoms are gone.
+2. Rest. Drink water. No alcohol or sleeping pills.
+3. A pain reliever they already use may ease the headache.
+4. Worse, or not better after a day of rest: go down. Going down 1,000 to 3,000 ft (300 to 1,000 m) usually helps. Keep going until they feel better.
++++
+# When
+- Mostly above 8,000 ft (2,500 m). Mild signs often start 2 to 12 hours after going higher.
+- Lung fluid (HAPE) usually starts on the 2nd to 4th night up high. Brain swelling (HACE) can follow days of mild symptoms.
+# Prevent it
+- Go up slowly. Above 10,000 ft (3,000 m), sleep no more than 1,600 ft (500 m) higher each night, with a rest day every 3 or 4 days.
+- Being fit does not protect you. Anyone can get it.
+# Don't
+- Don't blame a headache, cough or tiredness up high on a cold, a hangover or the hike. Treat it as altitude sickness until proven otherwise.
+- Don't go higher with symptoms.
+- Don't send someone sick down alone.

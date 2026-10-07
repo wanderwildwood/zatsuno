@@ -53,4 +53,13 @@ class SearchTest {
     fun accentsAndCaseAreIgnored() {
         assertEquals(listOf("cafe"), Search.words("CAFÉ"))
     }
+
+    @Test
+    fun aWordMissingFromTheOpeningIsFoundUnderMore() {
+        val head = "Severe bleeding\nPress hard on the wound."
+        val rest = "Tourniquets now go on early."
+        assertTrue(Search.onlyIn(rest, head, "press tourniquet"))
+        assertTrue(!Search.onlyIn(rest, head, "Wound pres"))
+        assertTrue(!Search.onlyIn(rest, head, "windlass"))
+    }
 }

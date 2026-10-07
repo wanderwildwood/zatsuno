@@ -1,20 +1,23 @@
 title: Snakebite
 keywords: snake, snakebite, rattlesnake, copperhead, cottonmouth, coral snake, venom, bite, antivenom
-source: NIOSH (CDC), "Venomous Snakes".
+source: NIOSH (CDC), "Venomous Snakes"; Wilderness Medical Society, pit viper envenomation guidelines (2015, 2026 update).
 ---
-! Get to a hospital as soon as you can. Antivenom works best early.
+! Get to a hospital as soon as you can, even if the bite looks minor. Don't wait for symptoms. Antivenom works best early.
 # Do this
 1. Move away from the snake. Don't try to catch or kill it; a photo from a safe distance helps.
 2. Call 911 or your local emergency number.
-3. Keep calm and as still as you can. Don't drive yourself.
+  No signal: try 911 anyway (see Calling for help); if it fails, walk out as in step 3.
+3. Keep calm and as still as you can. Don't drive yourself. If help can't reach you, walk out slowly with others, resting often.
 4. Lie or sit with the bite in a comfortable, neutral position.
 5. Take off rings, watches and tight clothing before swelling starts.
-6. Wash the bite with soap and water and cover it with a clean, dry dressing.
-7. Mark the edge of the swelling on the skin with a pen, and write the time beside it.
+6. Wash the bite with soap and water. Cover it with a clean, dry dressing.
+7. Mark the edge of the swelling with a pen; write the time beside it.
+! Faint, pale and sweaty, or trouble breathing: lay them down and keep them warm. See Shock.
++++
 # Don't
-- No tourniquet, and no cutting the wound.
-- Don't suck out the venom.
+- No tourniquet or tight wrap, no cutting, no electric shock.
+- Don't suck out the venom, by mouth or with a pump or kit.
 - No ice, and don't soak it in water.
 - No alcohol, and no aspirin, ibuprofen or naproxen.
 - Don't handle the snake, even a dead one.
-> NIOSH now says to rest the bite in a neutral position. Older advice was to keep it below the heart.
+> NIOSH now says to rest the bite in a neutral position, not below the heart as older advice said.

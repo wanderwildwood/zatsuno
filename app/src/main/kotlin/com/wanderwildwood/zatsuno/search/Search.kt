@@ -50,6 +50,16 @@ object Search {
             .map { (e, _, snip) -> Hit(e, snip) }
     }
 
+    /**
+     * Whether some word of [query] is found in [rest] and not in [head]: a page found by words
+     * that are only under its More opens with More open.
+     */
+    fun onlyIn(rest: String, head: String, query: String): Boolean {
+        val inHead = words(head)
+        val inRest = words(rest)
+        return words(query).any { t -> inHead.none { it.startsWith(t) } && inRest.any { it.startsWith(t) } }
+    }
+
     /** Lower case, accents off, split on anything that is not a letter or digit. */
     fun words(text: String): List<String> =
         fold(text).split(Regex("[^\\p{L}\\p{N}]+")).filter { it.isNotEmpty() }

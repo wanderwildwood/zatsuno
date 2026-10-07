@@ -1,16 +1,19 @@
 title: Sprains
 keywords: sprain, strain, twisted ankle, ligament, swelling, RICE, rest, ice, compression, elevation, wrist, knee
-source: NIAMS (NIH), "Sprains and Strains"; MedlinePlus (NIH), "Sprains and Strains".
+source: NIAMS (NIH), "Sprains and Strains"; MedlinePlus (NIH), "Sprains and Strains" and "Ankle sprain - aftercare"; NHS, "Sprains and strains"; NOLS Wilderness Medicine (usable vs. unusable injuries).
 ---
-# Do this for the first two days
-1. Rest: keep weight off it.
-2. Ice: a cold pack wrapped in cloth, 15 to 20 minutes at a time, every few hours.
-3. Compression: an elastic wrap, snug but not tight. Fingers or toes should stay warm and pink.
-4. Elevation: raise it above the heart when you can.
 # Treat it as a break if
-- It is out of shape, or the bone may be showing
+- It is out of shape, or bone may be showing
 - They can't put any weight on it, or can't move the joint
-- It is numb, or pain is severe over the bone itself
+- It is numb, cold or pale beyond the injury, or pain is severe over the bone
 - See Fractures and splints.
+# For the first two days
+1. Rest: keep weight off it.
+2. Ice: a cold pack, or snow or cold water in a bag, wrapped in cloth. 15 to 20 minutes, every few hours.
+3. Wrap: an elastic wrap, snug but not tight. Fingers or toes numb, tingly, cold or pale: loosen it now.
+4. Raise it above the heart when you can.
++++
+- No heat, hot soaks, alcohol or rubbing. They add swelling.
 # Walking out on it
-- A firm wrap or tape gives some support. Go slowly and stop if pain gets sharp.
+- A firm wrap or tape helps. Go slowly. Stop if pain gets sharp.
+- Can't walk on it, or it gets worse: stop. Splint it, keep them warm, and get help. See Calling for help.
