@@ -9,8 +9,8 @@ and it will install on any Android 12 device.
 
 | | |
 |---|---|
-| ![The home screen](screenshots/1-home.png) | ![A first-aid page](screenshots/2-aid.png) |
-| ![A knot, step by step](screenshots/3-knot.png) | ![The compass and your position](screenshots/4-compass.png) |
+| ![The home screen](screenshots/1-home.png) | ![Patient assessment at the primary stage](screenshots/2-assessment.png) |
+| ![A first-aid page, opening on what to do now](screenshots/3-aid.png) | ![A knot, step by step](screenshots/4-knot.png) |
 
 ## What it does
 
