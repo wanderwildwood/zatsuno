@@ -79,7 +79,7 @@ data class Key(val questions: List<Question>, val pages: List<KeyPage>) {
         const val NOT_SURE = "not_sure"
 
         /** Answers that come from the vital signs rather than a question. */
-        val DERIVED = mapOf("pulse" to listOf("fast", "normal"), "resp" to listOf("fast"), "vskin" to listOf("pale_cool", "blue"))
+        val DERIVED = mapOf("pulse" to listOf("fast", "normal"), "resp" to listOf("fast"), "vskin" to listOf("pale_cool", "blue"), "pupils" to listOf("unequal"))
 
         fun parse(text: String): Key {
             val questions = mutableListOf<Question>()

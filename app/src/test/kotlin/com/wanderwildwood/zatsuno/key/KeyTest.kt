@@ -438,6 +438,21 @@ class NoFalsePositiveTest {
     }
 
     @Test
+    fun unequalPupilsPointToHeadInjuryAndNothingRulesOnThem() {
+        // Every answer that rules Head injury out, so only the pupils can bring it back.
+        val calm = listOf("head_hit" to "no", "avpu" to "alert", "confused" to "no", "move" to "yes").map { (q, a) -> Incident.Answer(1, q, a) }
+        fun with(pupils: String?) = rank(key, Incident(0L, calm + Incident.Check(2, "alert", 80, 16, listOf("pink"), pupils = pupils)).answers())
+        assertFalse("head ruled out with equal pupils", "head" in with(Incident.EQUAL).visible)
+        assertFalse("head ruled out with pupils not checked", "head" in with(null).visible)
+        assertEquals("not checked is no answer", null, Incident(0L, calm + Incident.Check(2, null, null, null, emptyList())).answers().sure["pupils"])
+        val unequal = with(Incident.UNEQUAL)
+        assertTrue("unequal pupils bring Head injury up", unequal.fits.any { it.page == "head" && it.why == listOf(Atom("pupils", "unequal")) })
+        // Points only: the pupils never rule a page out, so "not checked" and blank change nothing.
+        for (p in key.pages) for (c in p.rules) for (a in c.atoms) assertFalse("${p.id} rules on $a", a.question == "pupils")
+        assertEquals(with(null).ruledOut.map { it.page }.filter { it != "head" }, unequal.ruledOut.map { it.page })
+    }
+
+    @Test
     fun aHeadInjuryAloneIsNotShock() {
         assertTrue(rank(key, answers("avpu=voice", "head_hit=yes")).fits.none { it.page == "shock" })
     }

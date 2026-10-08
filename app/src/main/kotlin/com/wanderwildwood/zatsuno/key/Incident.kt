@@ -20,8 +20,8 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
 
     /**
      * One set of vital signs: LOR (AVPU), HR and RR per minute, the heart's rhythm (regular,
-     * irregular), the breathing's quality (easy, labored, noisy) and SCTM (skin color,
-     * temperature, moisture).
+     * irregular), the breathing's quality (easy, labored, noisy), SCTM (skin color,
+     * temperature, moisture) and the pupils (equal, unequal; null when not checked).
      */
     data class Check(
         override val at: Long,
@@ -31,6 +31,7 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
         val skin: List<String>,
         val rhythm: String? = null,
         val quality: String? = null,
+        val pupils: String? = null,
     ) : Event
 
     /** Something done for them: "Splinted the leg". */
@@ -60,6 +61,8 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
         last.pulse?.let { derive("pulse", setOf(if (it > FAST_PULSE) "fast" else "normal")) }
         last.breaths?.let { if (it > FAST_BREATHS) derive("resp", setOf("fast")) }
         derive("vskin", setOfNotNull("pale_cool".takeIf { last.skin.any { it in PALE_COOL } }, "blue".takeIf { "blue" in last.skin }))
+        // Unequal pupils point to Head injury and nothing else; equal or not checked says nothing.
+        if (last.pupils == UNEQUAL) derive("pupils", setOf(UNEQUAL))
         return a
     }
 
@@ -103,7 +106,7 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
             when (e) {
                 is Answer -> append("A\t${e.at}\t${esc(e.question)}\t${esc(e.value)}")
                 is Text -> append("T\t${e.at}\t${esc(e.field)}\t${esc(e.text)}")
-                is Check -> append("C\t${e.at}\t${e.avpu.orEmpty()}\t${e.pulse ?: ""}\t${e.breaths ?: ""}\t${e.skin.joinToString(",")}\t${e.rhythm.orEmpty()}\t${e.quality.orEmpty()}")
+                is Check -> append("C\t${e.at}\t${e.avpu.orEmpty()}\t${e.pulse ?: ""}\t${e.breaths ?: ""}\t${e.skin.joinToString(",")}\t${e.rhythm.orEmpty()}\t${e.quality.orEmpty()}\t${e.pupils.orEmpty()}")
                 is Done -> append("D\t${e.at}\t${esc(e.text)}")
                 is Where -> append("W\t${e.at}\t${e.lat}\t${e.lon}\t${e.accuracy ?: ""}")
             }
@@ -117,6 +120,9 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
         const val FAST_BREATHS = 30
         /** Skin words from the vital signs that point to Shock. */
         val PALE_COOL = setOf("pale", "grey", "cool", "clammy")
+        /** The pupils as the vital signs record them: equal and reacting to light (PERRL), or not. */
+        const val EQUAL = "equal"
+        const val UNEQUAL = "unequal"
 
         /** Back from [encode]; a line that can't be read is left out rather than losing the rest. */
         fun decode(text: String): Incident? {
@@ -130,7 +136,7 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
                         "A" -> Answer(at, unesc(f[2]), unesc(f[3]))
                         "T" -> Text(at, unesc(f[2]), unesc(f[3]))
                         "C" -> Check(at, f[2].ifEmpty { null }, f[3].toIntOrNull(), f[4].toIntOrNull(), f[5].split(',').filter { it.isNotEmpty() },
-                            f.getOrNull(6)?.ifEmpty { null }, f.getOrNull(7)?.ifEmpty { null })
+                            f.getOrNull(6)?.ifEmpty { null }, f.getOrNull(7)?.ifEmpty { null }, f.getOrNull(8)?.ifEmpty { null })
                         "D" -> Done(at, unesc(f[2]))
                         "W" -> Where(at, f[2].toDouble(), f[3].toDouble(), f[4].toFloatOrNull())
                         else -> null

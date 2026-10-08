@@ -79,6 +79,7 @@ class Note(
                 c.pulse?.let { add(words.get("note_pulse", it.toString())) }
                 c.breaths?.let { add(words.get("note_breaths", it.toString())) }
                 if (c.skin.isNotEmpty()) add(words.get("note_skin_row") + " " + c.skin.joinToString(", ") { words.get("key_skin_$it") })
+                c.pupils?.let { add(words.get("note_pupils_row") + " " + words.get("key_pupils_short_$it")) }
             }
         }
         if (how.isNotEmpty()) out += words.get("note_how", how.joinToString(". "))
@@ -180,8 +181,8 @@ class Note(
 
 /**
  * The vital signs as rows of a table, a name and one cell per set: the time, LOR, HR, RR,
- * SCTM, and the HR rhythm and RR quality when any set has them. The note and the Monitoring
- * screen both show it.
+ * SCTM, and the HR rhythm, RR quality and pupils when any set has them. The note and the
+ * Monitoring screen both show it.
  */
 fun vitalRows(words: Words, checks: List<Incident.Check>, time: (Long) -> String): List<Pair<String, List<String>>> = buildList {
     add("" to checks.map { time(it.at) })
@@ -191,4 +192,5 @@ fun vitalRows(words: Words, checks: List<Incident.Check>, time: (Long) -> String
     add(words.get("note_breaths_row") to checks.map { it.breaths?.toString() ?: "–" })
     if (checks.any { it.quality != null }) add(words.get("note_quality_row") to checks.map { c -> c.quality?.let { words.get("key_quality_$it") } ?: "–" })
     add(words.get("note_skin_row") to checks.map { c -> c.skin.joinToString(",") { words.get("key_skin_$it") }.ifEmpty { "–" } })
+    if (checks.any { it.pupils != null }) add(words.get("note_pupils_row") to checks.map { c -> c.pupils?.let { words.get("key_pupils_short_$it") } ?: "–" })
 }

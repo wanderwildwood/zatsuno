@@ -32,7 +32,7 @@ class NoteTest {
         Incident.Done(at(14, 20), "Splinted."),
         Incident.Answer(at(14, 24), "plan", Key.NOT_SURE),
         Incident.Answer(at(14, 25), "plan", "carry"),
-        Incident.Check(at(14, 27), "alert", 96, 18, listOf("pink", "warm", "dry"), "regular", "easy"),
+        Incident.Check(at(14, 27), "alert", 96, 18, listOf("pink", "warm", "dry"), "regular", "easy", Incident.EQUAL),
     ))
 
     private val note = Note(KeyFixtures.key, KeyFixtures.words, KeyFixtures.titles, ZoneOffset.UTC)
@@ -62,6 +62,7 @@ class NoteTest {
             "   RR       20             18",
             "   quality  –              easy",
             "   SCTM     pale,cool,dry  pink,warm,dry",
+            "   Pupils   –              PERRL",
             "A  Assessment (problem list): Hypothermia. Fractures and splinting. Sprains and strains.",
             "   Not yet ruled out: Choking: Airway not checked. Stings and anaphylaxis: Skin signs of shock not checked. " +
                 "Chest pain: Skin signs of shock not checked. Stroke: Altered mental status not checked. " +
@@ -85,7 +86,7 @@ class NoteTest {
                 "Where: 44.42800, -110.58850 (±8 m, 14:03)",
                 "Patient: Woman about 40",
                 "MOI/NOI: Fall 14:02",
-                "Condition: LOR (AVPU): A: Alert. Breathing: Normal. Severe bleeding: None. HR 96. RR 18. SCTM pink, warm, dry.",
+                "Condition: LOR (AVPU): A: Alert. Breathing: Normal. Severe bleeding: None. HR 96. RR 18. SCTM pink, warm, dry. Pupils PERRL.",
                 "Problem list: Hypothermia, Fractures and splinting, Sprains and strains",
                 "Treatment and plan: Insulated from ground 14:15. Called (911 / SAR) 14:16. Splinted 14:20. Carry out (litter) 14:25.",
             ).joinToString("\n"),

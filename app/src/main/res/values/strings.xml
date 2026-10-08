@@ -309,6 +309,8 @@
     <!-- %1$s is a rate -->
     <string name="key_per_minute">%1$s a minute</string>
     <string name="key_skin">SCTM (skin color, temperature, moisture)</string>
+    <string name="key_pupils">Pupils (PERRL)</string>
+    <string name="key_pupils_not_checked">Not checked</string>
     <string name="key_share">Send the note</string>
     <string name="key_start_over">Start over</string>
     <string name="key_start_over_armed">Tap again to clear the note</string>
@@ -532,6 +534,10 @@
     <string name="key_n_vskin">SCTM</string>
     <string name="key_a_vskin_pale_cool">pale or grey, cool or clammy</string>
     <string name="key_a_vskin_blue">blue lips</string>
+    <string name="key_q_pupils">Check the pupils under Vital signs.</string>
+    <string name="key_n_pupils">Pupils</string>
+    <string name="key_a_pupils_equal">Equal and react to light</string>
+    <string name="key_a_pupils_unequal">Unequal or don\'t react</string>
 
     <!-- Treatment and plan -->
     <string name="key_q_plan">Evacuation decision</string>
@@ -574,6 +580,8 @@
     <string name="key_quality_easy">easy</string>
     <string name="key_quality_labored">labored</string>
     <string name="key_quality_noisy">noisy</string>
+    <string name="key_pupils_short_equal">PERRL</string>
+    <string name="key_pupils_short_unequal">unequal or fixed</string>
     <string name="key_avpu_short_alert">A</string>
     <string name="key_avpu_short_voice">V</string>
     <string name="key_avpu_short_pain">P</string>
@@ -601,6 +609,7 @@
     <string name="note_breaths_row">RR</string>
     <string name="note_quality_row">quality</string>
     <string name="note_skin_row">SCTM</string>
+    <string name="note_pupils_row">Pupils</string>
     <!-- %1$s is the pages, each ending in a full stop -->
     <string name="note_fits">Assessment (problem list): %1$s</string>
     <string name="note_fits_none">Assessment (problem list): none identified yet.</string>

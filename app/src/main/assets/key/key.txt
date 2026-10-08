@@ -25,8 +25,9 @@
 #   <when>: clauses split by " | ", each a list of q=a split by " & ". A "*" in a grid answer
 #   stands for any place or finding. Some answers come from the latest vital signs rather than
 #   a question: pulse=fast (HR over 100 a minute), pulse=normal (HR 100 or under),
-#   resp=fast (RR over 30 a minute), vskin=pale_cool (pale or grey, cool or clammy) and
-#   vskin=blue (blue lips). Until the vital signs are taken, none of them is an answer.
+#   resp=fast (RR over 30 a minute), vskin=pale_cool (pale or grey, cool or clammy),
+#   vskin=blue (blue lips) and pupils=unequal (unequal, or they don't react to light). Until
+#   the vital signs are taken, none of them is an answer, and pupils=unequal only ever points.
 #
 # Every single-answer question that is not a decision also offers "not sure" (not_sure).
 
@@ -140,7 +141,7 @@ page poisoning
   points what=swallowed | seen=swallowed | count=more & what=by_itself
 
 page head danger
-  points head_hit=yes | avpu=voice | avpu=pain | avpu=none | confused=yes | move=no | body=head.* | body=neck.* | body=back.* | body=arms.numb | body=legs.numb
+  points head_hit=yes | avpu=voice | avpu=pain | avpu=none | confused=yes | move=no | body=head.* | body=neck.* | body=back.* | body=arms.numb | body=legs.numb | pupils=unequal
   rules head_hit=no & avpu=alert & confused=no & move=yes
 
 page heat danger

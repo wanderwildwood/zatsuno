@@ -105,8 +105,8 @@ class KeyState(
 
     fun write(field: String, text: String) = change { Incident.Text(it, field, text) }
     fun done(text: String) = change { Incident.Done(it, text.trim()) }
-    fun check(avpu: String?, pulse: Int?, breaths: Int?, skin: List<String>, rhythm: String?, quality: String?) {
-        change { Incident.Check(it, avpu, pulse, breaths, skin, rhythm, quality) }
+    fun check(avpu: String?, pulse: Int?, breaths: Int?, skin: List<String>, rhythm: String?, quality: String?, pupils: String?) {
+        change { Incident.Check(it, avpu, pulse, breaths, skin, rhythm, quality, pupils) }
         if (avpu != null && answers.single("avpu") != avpu) answer("avpu", avpu)
         Recheck.seen(context)
     }
@@ -176,6 +176,10 @@ private val SKIN = listOf(listOf("pink", "pale", "grey", "flushed", "blue"), lis
 /** HR rhythm and RR quality, one of each. */
 private val RHYTHM = listOf("regular", "irregular")
 private val QUALITY = listOf("easy", "labored", "noisy")
+
+/** The pupils: equal and reacting (PERRL), or not. "Not checked" is the third choice, and saves nothing. */
+private val PUPILS = listOf(Incident.EQUAL, Incident.UNEQUAL)
+private const val PUPILS_NOT_CHECKED = "not_checked"
 
 /**
  * Patient assessment: the Patient Assessment System, one stage on screen at a time under a
@@ -622,14 +626,15 @@ class VitalsDraft {
     var breaths by mutableStateOf("")
     var quality by mutableStateOf<String?>(null)
     var skin by mutableStateOf(listOf<String>())
+    var pupils by mutableStateOf<String?>(null)
     var counting by mutableStateOf(false)
 
-    fun clear() { avpu = null; pulse = ""; rhythm = null; breaths = ""; quality = null; skin = emptyList() }
+    fun clear() { avpu = null; pulse = ""; rhythm = null; breaths = ""; quality = null; skin = emptyList(); pupils = null }
 }
 
 /**
  * The vital signs: one column per set, the newest on the right, and the next set entered under
- * "now": LOR, HR with its rhythm, RR with its quality, and SCTM. HR and RR are counted for 15
+ * "now": LOR, HR with its rhythm, RR with its quality, SCTM and the pupils. HR and RR are counted for 15
  * seconds and multiplied by four; "Count 15 s" buzzes once at the end, and nothing on screen
  * moves while it counts. A row to an item, so the list can turn a page between them. The
  * secondary assessment takes the first set; Monitoring takes each one after.
@@ -673,15 +678,22 @@ private fun LazyListScope.vitals(state: KeyState, draft: VitalsDraft) {
             draft.skin = if (s in draft.skin) draft.skin - s else draft.skin.filterNot { it in row } + s
         }
     }
+    item(key = "v:pupils") {
+        TextMMD(text = stringResource(R.string.key_pupils), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(start = 20.dp, top = 6.dp, bottom = 4.dp))
+    }
+    choiceRows("v:pupils", PUPILS.map { it to w.answer("pupils", it) } + (PUPILS_NOT_CHECKED to w.get("key_pupils_not_checked")),
+        { setOf(draft.pupils ?: PUPILS_NOT_CHECKED) }) {
+        draft.pupils = if (it == PUPILS_NOT_CHECKED) null else it
+    }
     item(key = "v:buttons") {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) {
             WideButton(stringResource(if (draft.counting) R.string.key_counting else R.string.key_count), Modifier.weight(1f)) { if (!draft.counting) draft.counting = true }
             WideButton(stringResource(R.string.key_save_check), Modifier.weight(1f)) {
                 val p = draft.pulse.toIntOrNull()?.times(4)
                 val b = draft.breaths.toIntOrNull()?.times(4)
-                if (draft.avpu != null || p != null || b != null || draft.skin.isNotEmpty() || draft.rhythm != null || draft.quality != null) {
+                if (draft.avpu != null || p != null || b != null || draft.skin.isNotEmpty() || draft.rhythm != null || draft.quality != null || draft.pupils != null) {
                     val order = SKIN.flatten()
-                    state.check(draft.avpu, p, b, draft.skin.sortedBy(order::indexOf), draft.rhythm, draft.quality)
+                    state.check(draft.avpu, p, b, draft.skin.sortedBy(order::indexOf), draft.rhythm, draft.quality, draft.pupils)
                     draft.clear()
                 }
             }
