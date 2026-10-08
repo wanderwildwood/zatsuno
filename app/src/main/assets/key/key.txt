@@ -1,157 +1,186 @@
-# "Work through it": the questions, in the order they are asked, and which first-aid pages
+# Patient assessment: the questions, in the order they are asked, and which first-aid pages
 # each answer points to or rules out. Ids only; every word shown lives in strings.xml
 # (key_q_<question>, key_a_<question>_<answer>, key_n_<question>), so this file never needs
 # translating, and each line can be checked against its page.
 #
-#   stage <name>                     the response chain: scene threats call look treat watch
-#   ask <id> [options] : <answers>   a question, in chain order
-#       label=X        the small letter in the margin (X, A, B, C, D, E)
+#   stage <name>                     the Patient Assessment System, in order:
+#                                    scene (size-up) primary call secondary treat monitor
+#   part <name>                      a part of the secondary assessment: chief, exam, sample, focused
+#   ask <id> [options] : <answers>   a question, in assessment order
+#       label=X        the small letter in the margin (X, A, B, C, D, E; F, A, S for the stroke check)
 #       tag=AVPU       a small word at the right of the question
 #       many           pick all that apply; nothing picked says nothing. Never in a rules line.
 #       after=<when>   shown only once <when> holds (a follow-up)
 #       settle         asked only to settle a page still to check
-#   grid <id> places <p…> findings <f…>   head to toe: one tap per finding at each place
+#       decision       the rescuer's own decision, not a finding: offers "Not decided yet" in
+#                      place of "not sure", and no page reads it
+#   grid <id> places <p…> findings <f…>   head-to-toe exam: one tap per finding at each place.
+#                      A finding written f:p,q is offered only at those places.
 #
 #   page <id> [danger]
-#     points <when>    any one clause puts the page under Fits
+#     points <when>    any one clause puts the page under the problem list
 #     rules <when>     danger pages only: any one clause, every part of it a sure answer,
 #                      rules the page out. "Not sure" is no answer and rules out nothing.
 #
 #   <when>: clauses split by " | ", each a list of q=a split by " & ". A "*" in a grid answer
-#   stands for any place or finding. Two answers come from the vitals rather than a question:
-#   pulse=fast (over 100 a minute) and vskin=pale_cool (pale or grey, cool or clammy).
+#   stands for any place or finding. Some answers come from the latest vital signs rather than
+#   a question: pulse=fast (HR over 100 a minute), pulse=normal (HR 100 or under),
+#   resp=fast (RR over 30 a minute), vskin=pale_cool (pale or grey, cool or clammy) and
+#   vskin=blue (blue lips). Until the vital signs are taken, none of them is an answer.
 #
-# Every single-answer question also offers "not sure" (not_sure).
+# Every single-answer question that is not a decision also offers "not sure" (not_sure).
 
 stage scene
 ask safe : yes no
-ask what many : fall water cold heat bite_sting lightning swallowed by_itself dont_know
+ask what many : fall water cold heat burn bite_sting lightning swallowed by_itself dont_know
+ask storm after=what=dont_know|what=by_itself|what=fall : yes no
 ask count : one more
 
-stage threats
+# Responsiveness first, then X-ABCDE.
+stage primary
+ask avpu tag=AVPU : alert voice pain none
 ask bleeding label=X : none some heavy
-ask avpu label=A tag=AVPU : alert voice pain none
+ask airway label=A : clear noisy blocked
 ask breathing label=B : normal struggling gasping
 ask skin label=C : yes no
-ask move label=D : yes no
 ask head_hit label=D : yes no
+ask move label=D : yes no
 ask confused label=D : yes no
 ask cold label=E : yes no
 ask hot label=E : yes no
 
 stage call
-ask plan : called walk carry stay
+ask called decision : called sent not_yet
 
-stage look
-ask seen many : hurt_limb pain hard_breathe chest_pain choking wound cold_shiver overheated face_speech bite_sting rash_swelling burn fit numb_white thirsty water high_up swallowed diabetic blister tick
+stage secondary
+part chief
+ask seen many : hurt_limb pain hard_breathe chest_pain choking wound cold_shiver overheated face_speech bite_sting rash_swelling lips_tongue burn fit numb_white thirsty vomit_diarrhea water high_up swallowed diabetic blister tick
 ask deformed after=seen=hurt_limb : yes no
+ask tender after=seen=hurt_limb : yes no
 ask use_limb after=seen=hurt_limb : yes no
-ask bite_kind after=seen=bite_sting|what=bite_sting : snake insect tick other
-ask face after=seen=face_speech|confused=yes settle : droops even
-ask arm after=seen=face_speech|confused=yes settle : drifts level
-ask speech after=seen=face_speech|confused=yes settle : slurred clear
-ask chest settle : yes no
-ask diabetic settle : yes no
-grid body places head neck chest belly back pelvis arms legs findings hurt bleeding deformed numb
+ask bite_kind after=seen=bite_sting|what=bite_sting : snake insect tick animal other
+ask burn_kind many after=seen=burn|what=burn : heat electric chemical smoke
+ask burn_serious after=seen=burn|what=burn : yes no
+ask frozen after=seen=numb_white : yes no
+part exam
+grid body places head neck chest belly back pelvis arms legs findings deformed bleeding hurt swelling burned numb:head,arms,legs
+part sample
 ask you : yes no
+ask allergy_known label=A : yes no
+ask diabetic label=P : yes no
+ask seizure_hx after=avpu=voice|avpu=pain|avpu=none|confused=yes : yes no
+ask altitude label=E settle : yes no
+part focused
+ask face label=F after=seen=face_speech|confused=yes|avpu=voice settle : droops even
+ask arm label=A after=seen=face_speech|confused=yes|avpu=voice settle : drifts level
+ask speech label=S after=seen=face_speech|confused=yes|avpu=voice settle : slurred clear
+ask befast after=seen=face_speech|confused=yes|avpu=voice|avpu=pain settle : yes no
+ask walk after=altitude=yes|seen=high_up settle : straight stumbles
+ask chest after=seen=pain|seen=hard_breathe|breathing=struggling|skin=yes settle : yes no
+
+stage treat
+ask plan decision : stay walk carry rescue
 
 # ---------------------------------------------------------------------------------------
 # Pages, in the order the First aid list shows them.
 
-# Reached from the Scene stage as well.
+# Reached from the scene size-up as well.
 page scene
-  points safe=no | count=more
+  points safe=no | count=more | avpu=pain | avpu=none
 
 # The red flags: what the Call stage lists as reasons to call. Reached from that stage.
 page call
-  points safe=no | count=more | bleeding=heavy | avpu=voice | avpu=pain | avpu=none | breathing=struggling | breathing=gasping | skin=yes | move=no | head_hit=yes | confused=yes | seen=chest_pain | chest=yes | seen=choking | seen=hard_breathe | seen=face_speech | face=droops | arm=drifts | speech=slurred | seen=fit | seen=diabetic | seen=swallowed | what=swallowed | what=lightning | what=water | seen=water | bite_kind=snake | deformed=yes | use_limb=no | body=*.deformed | body=*.numb | seen=overheated & confused=yes | seen=cold_shiver & confused=yes | pulse=fast & vskin=pale_cool
+  points safe=no | count=more | bleeding=heavy | avpu=voice | avpu=pain | avpu=none | airway=blocked | breathing=struggling | breathing=gasping | resp=fast | vskin=blue | skin=yes | move=no | head_hit=yes | confused=yes | seen=chest_pain | chest=yes | seen=choking | seen=hard_breathe | seen=lips_tongue | seen=face_speech | face=droops | arm=drifts | speech=slurred | befast=yes | seen=fit | seen=diabetic | seen=swallowed | what=swallowed | what=lightning | what=water | seen=water | bite_kind=snake | burn_kind=electric | burn_kind=chemical | burn_kind=smoke | burn_serious=yes | frozen=yes | deformed=yes | use_limb=no | body=*.deformed | body=*.numb | body=neck.* | body=head.* & what=fall | body=back.* & what=fall | body=chest.* & what=fall | body=belly.* & what=fall | body=pelvis.* & what=fall | body=head.burned | body=neck.burned | body=pelvis.burned | seen=overheated & confused=yes | seen=cold_shiver & confused=yes | pulse=fast & vskin=pale_cool
 
+# CPR needs both: unresponsive, and not breathing normally. Labored breathing rules it out
+# only while they still respond to you.
 page cpr danger
-  points breathing=gasping
-  rules breathing=normal | breathing=struggling
+  points breathing=gasping | avpu=none & airway=blocked
+  rules breathing=normal | breathing=struggling & avpu=alert | breathing=struggling & avpu=voice
 
 page choking danger
-  points seen=choking
-  rules breathing=normal
+  points seen=choking | airway=blocked
+  rules airway=clear & breathing=normal
 
 page bleeding danger
-  points bleeding=heavy
+  points bleeding=heavy | bleeding=some & pulse=fast & vskin=pale_cool | body=*.bleeding & pulse=fast & vskin=pale_cool | seen=wound & pulse=fast & vskin=pale_cool
   rules bleeding=none | bleeding=some
 
 page drowning
   points what=water | seen=water
 
 page anaphylaxis danger
-  points seen=rash_swelling & breathing=struggling | seen=rash_swelling & seen=hard_breathe | seen=rash_swelling & skin=yes | bite_kind=insect & breathing=struggling | bite_kind=insect & seen=hard_breathe | bite_kind=insect & skin=yes | what=bite_sting & breathing=struggling | what=bite_sting & seen=hard_breathe
-  rules breathing=normal & skin=no
+  points seen=lips_tongue | seen=rash_swelling & breathing=struggling | seen=rash_swelling & seen=hard_breathe | seen=rash_swelling & skin=yes | seen=rash_swelling & avpu=voice | seen=rash_swelling & avpu=pain | seen=rash_swelling & avpu=none | seen=rash_swelling & pulse=fast & vskin=pale_cool | bite_kind=insect & breathing=struggling | bite_kind=insect & seen=hard_breathe | bite_kind=insect & skin=yes | bite_kind=insect & avpu=voice | bite_kind=insect & avpu=pain | bite_kind=insect & avpu=none | what=bite_sting & breathing=struggling | what=bite_sting & seen=hard_breathe | what=bite_sting & skin=yes | what=bite_sting & avpu=voice | what=bite_sting & avpu=pain | what=bite_sting & avpu=none | seen=bite_sting & breathing=struggling | seen=bite_sting & seen=hard_breathe | seen=bite_sting & skin=yes | allergy_known=yes & breathing=struggling | allergy_known=yes & seen=hard_breathe | allergy_known=yes & skin=yes
+  rules breathing=normal & skin=no & avpu=alert & confused=no
 
 page breathing danger
-  points breathing=struggling | seen=hard_breathe
+  points breathing=struggling | seen=hard_breathe | breathing=gasping & avpu=alert | breathing=gasping & avpu=voice | resp=fast | vskin=blue
   rules breathing=normal
 
 page chest danger
   points seen=chest_pain | chest=yes
-  rules chest=no
+  rules chest=no & breathing=normal & skin=no
 
 page stroke danger
-  points seen=face_speech | face=droops | arm=drifts | speech=slurred
-  rules face=even & arm=level & speech=clear
+  points seen=face_speech | face=droops | arm=drifts | speech=slurred | befast=yes
+  rules face=even & arm=level & speech=clear & befast=no & confused=no & avpu=alert
 
 page shock danger
-  points skin=yes | bleeding=heavy | vskin=pale_cool
-  rules skin=no & avpu=alert & confused=no
+  points skin=yes | bleeding=heavy | vskin=pale_cool | burn_serious=yes | avpu=voice & pulse=fast | avpu=pain & pulse=fast | avpu=none & pulse=fast | confused=yes & pulse=fast & vskin=pale_cool
+  rules skin=no & avpu=alert & confused=no & pulse=normal
 
 page seizure
-  points seen=fit
+  points seen=fit | seizure_hx=yes
 
 page sugar danger
-  points seen=diabetic | diabetic=yes & confused=yes | diabetic=yes & avpu=voice | diabetic=yes & avpu=pain | diabetic=yes & avpu=none
-  rules diabetic=no | avpu=alert & confused=no
+  points seen=diabetic | diabetic=yes & confused=yes | diabetic=yes & avpu=voice | diabetic=yes & avpu=pain | diabetic=yes & avpu=none | diabetic=yes & seen=fit | diabetic=yes & seizure_hx=yes | diabetic=yes & vskin=pale_cool | diabetic=yes & pulse=fast
+  rules avpu=alert & confused=no
 
 page poisoning
-  points what=swallowed | seen=swallowed
+  points what=swallowed | seen=swallowed | count=more & what=by_itself
 
 page head danger
-  points head_hit=yes | avpu=voice | avpu=pain | avpu=none | confused=yes | move=no | body=head.* | body=neck.*
+  points head_hit=yes | avpu=voice | avpu=pain | avpu=none | confused=yes | move=no | body=head.* | body=neck.* | body=back.* | body=arms.numb | body=legs.numb
   rules head_hit=no & avpu=alert & confused=no & move=yes
 
 page heat danger
   points hot=yes | seen=overheated | what=heat
-  rules hot=no
+  rules hot=no & avpu=alert & confused=no
 
 page hypothermia danger
   points cold=yes | seen=cold_shiver | what=cold | what=water
-  rules cold=no
+  rules cold=no & avpu=alert & confused=no
 
-page altitude
-  points seen=high_up
+page altitude danger
+  points seen=high_up | altitude=yes & walk=stumbles | altitude=yes & confused=yes | altitude=yes & avpu=voice | altitude=yes & avpu=pain | altitude=yes & avpu=none | altitude=yes & breathing=struggling | altitude=yes & seen=hard_breathe | altitude=yes & what=by_itself | walk=stumbles & seen=high_up
+  rules altitude=no
 
 page lightning
-  points what=lightning
+  points what=lightning | storm=yes
 
 page burns
-  points seen=burn
+  points seen=burn | what=burn | body=*.burned
 
 page snakebite
   points bite_kind=snake
 
 page allergy
-  points seen=rash_swelling | bite_kind=insect
+  points seen=rash_swelling | bite_kind=insect | allergy_known=yes | seen=lips_tongue
 
 page fracture
-  points seen=hurt_limb | deformed=yes | body=*.deformed
+  points seen=hurt_limb | deformed=yes | use_limb=no | tender=yes | body=*.deformed | body=arms.hurt | body=legs.hurt | body=pelvis.hurt | body=arms.swelling | body=legs.swelling | body=pelvis.swelling
 
 page frostbite
-  points seen=numb_white
+  points seen=numb_white | body=*.numb & what=cold | body=*.numb & cold=yes | seen=cold_shiver & body=*.numb | seen=blister & what=cold | seen=blister & cold=yes
 
 page dehydration
-  points seen=thirsty | what=heat
+  points seen=thirsty | seen=vomit_diarrhea | what=heat | hot=yes | seen=overheated
 
 page sprain
-  points seen=hurt_limb
+  points seen=hurt_limb | body=arms.hurt | body=legs.hurt | body=arms.swelling | body=legs.swelling
 
 page wounds
-  points seen=wound | bleeding=some | body=*.bleeding
+  points seen=wound | bleeding=some | bleeding=heavy | body=*.bleeding | bite_kind=animal | bite_kind=other
 
 page ticks
   points seen=tick | bite_kind=tick

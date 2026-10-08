@@ -18,19 +18,23 @@ and it will install on any Android 12 device.
   dispatcher, with how close it is and how old. Share it as text to Messaging or anything else
   (decimal, degrees-minutes-seconds, a `geo:` address and a map link), or open the dialler with
   911 or 112 filled in. What to tell the call-taker, and what to do with no signal.
-- **Work through it.** A second way into the first-aid pages, for when you don't know yet
-  what's wrong. It walks the response chain (scene, life threats, call, look, treat, watch) one
-  plain question at a time, with ABCDE, SAMPLE and OPQRST in small letters at the edge for
-  anyone trained in them. As you answer, the pages that fit gather on one screen, the danger
-  pages not yet ruled out stay in view with the one question that would settle each, and
-  "not sure" never rules anything out. It writes a timed SOAP note as you go, to read out to a
-  call-taker or send to Messaging, and reminds you to recheck every 15 minutes, or 5 while a
-  danger page fits. It names pages; it never says someone is fine.
-- **First aid.** Twenty-nine short pages: checking the scene and the person, hands-only CPR,
-  choking, severe bleeding and tourniquets, drowning, anaphylaxis, trouble breathing and
-  asthma, chest pain, stroke, shock, seizures, low blood sugar, poisoning and carbon monoxide,
-  head injury, heat illness, hypothermia, altitude sickness, lightning, burns, snakebite,
-  allergic reactions, fractures, frostbite, dehydration, sprains, wounds, ticks and blisters.
+- **Patient assessment.** A second way into the first-aid pages, for when you don't know yet
+  what's wrong. It walks the Patient Assessment System as wilderness first aid courses (NOLS,
+  WMI, WMA, SOLO) teach it: scene size-up, primary assessment (responsiveness, then X-ABCDE),
+  call for help, secondary assessment (chief complaint, head-to-toe exam, vital signs, SAMPLE
+  history and OPQRST, focused checks such as BE-FAST), treatment and the evacuation decision,
+  and monitoring. Each question is in the course's words with a plain gloss. As you answer,
+  the problem list gathers on one screen, the danger pages not yet ruled out stay in view with
+  the one question that would settle each, and "not sure" never rules anything out. It writes
+  a timed SOAP note as you go, to give as a verbal report or send to Messaging, and reminds you
+  to reassess every 15 minutes, or 5 while a danger page is on the problem list. It names
+  pages; it never says the patient is stable.
+- **First aid.** Twenty-nine short pages: scene size-up and primary assessment, hands-only
+  CPR, choking, severe bleeding and tourniquets, drowning, anaphylaxis, respiratory distress
+  and asthma, chest pain, stroke, shock, seizures, low blood sugar (hypoglycemia), poisoning
+  and carbon monoxide, head injury, heat illness, hypothermia, altitude illness (AMS, HACE,
+  HAPE), lightning, burns, snakebite, allergic reactions, fractures and splinting, frostbite,
+  dehydration, sprains and strains, wounds, ticks and blisters.
   Each opens on what to do now: the warnings and the first steps. The why, when to get care,
   what not to do and the sources wait under More, a tap away. Each is written for this screen
   from current guidance and names its sources. Where the advice has changed (tourniquets,

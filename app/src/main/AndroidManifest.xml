@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Location: for true north, and for the position the compass, the "Calling for help"
-         page and the note in "Work through it" show. Only while one of those screens is
+         page and the SOAP note in "Patient assessment" show. Only while one of those screens is
          open. No internet. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <!-- "Work through it": a buzz at the end of a 15-second count, and the recheck reminder,
+    <!-- "Patient assessment": a buzz at the end of a 15-second count, and the reassessment reminder,
          one alarm at a time while a note is open. -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -81,7 +81,7 @@
             </intent-filter>
         </activity>
 
-        <!-- The recheck reminder for "Work through it". Only the app's own alarm reaches it. -->
+        <!-- The reassessment reminder for "Patient assessment". Only the app's own alarm reaches it. -->
         <receiver
             android:name=".key.RecheckReceiver"
             android:exported="false" />

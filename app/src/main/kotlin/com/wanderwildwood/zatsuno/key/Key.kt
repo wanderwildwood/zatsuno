@@ -1,8 +1,8 @@
 package com.wanderwildwood.zatsuno.key
 
 /**
- * "Work through it": the response chain as questions, and which first-aid pages each answer
- * points to or rules out. Read from `assets/key/key.txt`, which holds ids only; the words
+ * Patient assessment: the Patient Assessment System as questions, and which first-aid pages
+ * each answer points to or rules out. Read from `assets/key/key.txt`, which holds ids only; the words
  * are in strings.xml.
  *
  * The shape is the mushroom key's (an [Answers] of sure answers and a not-sure set, and a
@@ -16,7 +16,8 @@ package com.wanderwildwood.zatsuno.key
  * sure answer, and an answer that points to it wins over one that rules it out. Nor is it ruled
  * out while a "not sure" might be the answer that points to it.
  */
-enum class Stage { SCENE, THREATS, CALL, LOOK, TREAT, WATCH }
+/** Scene size-up, primary assessment, call for help, secondary assessment, treatment and plan, monitoring. */
+enum class Stage { SCENE, PRIMARY, CALL, SECONDARY, TREAT, MONITOR }
 
 /** One `q=a`. A `*` in [answer] matches any part of a grid answer (`*.deformed`, `head.*`). */
 data class Atom(val question: String, val answer: String) {
@@ -46,11 +47,18 @@ data class Question(
     val after: List<Clause> = emptyList(),
     /** Asked only to settle a page still to check. */
     val settle: Boolean = false,
-    /** Head to toe: [answers] are `place.finding`. */
+    /** The rescuer's own decision: "Not decided yet" in place of "not sure", and no page reads it. */
+    val decision: Boolean = false,
+    /** Which part of its stage it is asked in: chief, exam, sample, focused. */
+    val part: String? = null,
+    /** Head-to-toe exam: [answers] are `place.finding`. */
     val places: List<String> = emptyList(),
     val findings: List<String> = emptyList(),
 ) {
     val grid: Boolean get() = places.isNotEmpty()
+
+    /** The findings offered at [place]: some are only at a few. */
+    fun findingsAt(place: String): List<String> = findings.filter { "$place.$it" in answers }
 }
 
 data class KeyPage(
@@ -70,13 +78,14 @@ data class Key(val questions: List<Question>, val pages: List<KeyPage>) {
     companion object {
         const val NOT_SURE = "not_sure"
 
-        /** Answers that come from the vitals rather than a question. */
-        val DERIVED = mapOf("pulse" to listOf("fast"), "vskin" to listOf("pale_cool"))
+        /** Answers that come from the vital signs rather than a question. */
+        val DERIVED = mapOf("pulse" to listOf("fast", "normal"), "resp" to listOf("fast"), "vskin" to listOf("pale_cool", "blue"))
 
         fun parse(text: String): Key {
             val questions = mutableListOf<Question>()
             val pages = mutableListOf<KeyPage>()
             var stage: Stage? = null
+            var part: String? = null
             var page: KeyPage? = null
             fun flush() { page?.let { pages += it }; page = null }
             for ((n, raw) in text.lines().withIndex()) {
@@ -87,7 +96,9 @@ data class Key(val questions: List<Question>, val pages: List<KeyPage>) {
                 when (words[0]) {
                     "stage" -> {
                         stage = Stage.entries.firstOrNull { it.name.equals(words.getOrNull(1), true) } ?: fail("no stage ${words.getOrNull(1)}")
+                        part = null
                     }
+                    "part" -> part = words.getOrNull(1) ?: fail("part needs a name")
                     "ask" -> {
                         val st = stage ?: fail("ask before any stage")
                         val head = line.substringBefore(" : ").split(Regex("\\s+"))
@@ -104,17 +115,22 @@ data class Key(val questions: List<Question>, val pages: List<KeyPage>) {
                             many = "many" in opts,
                             after = opt("after")?.let(::clauses).orEmpty(),
                             settle = "settle" in opts,
+                            decision = "decision" in opts,
+                            part = part,
                         )
                     }
                     "grid" -> {
                         val st = stage ?: fail("grid before any stage")
                         val p = words.indexOf("places"); val f = words.indexOf("findings")
                         if (p < 0 || f < p) fail("grid needs places then findings")
-                        val places = words.subList(p + 1, f); val findings = words.drop(f + 1)
+                        val places = words.subList(p + 1, f)
+                        // "numb:head,arms,legs" is offered only at those places.
+                        val findings = words.drop(f + 1).map { it.substringBefore(':') to it.substringAfter(':', "").split(',').filter(String::isNotEmpty) }
+                        for ((_, only) in findings) for (pl in only) if (pl !in places) fail("no place $pl")
                         questions += Question(
-                            id = words[1], stage = st, many = true,
-                            answers = places.flatMap { pl -> findings.map { "$pl.$it" } },
-                            places = places, findings = findings,
+                            id = words[1], stage = st, many = true, part = part,
+                            answers = places.flatMap { pl -> findings.filter { (_, only) -> only.isEmpty() || pl in only }.map { (fi, _) -> "$pl.$fi" } },
+                            places = places, findings = findings.map { it.first },
                         )
                     }
                     "page" -> {

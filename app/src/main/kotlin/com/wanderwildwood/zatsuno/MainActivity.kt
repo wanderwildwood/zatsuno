@@ -36,8 +36,8 @@ class MainActivity : ComponentActivity() {
         intent ?: return
         // Reopened from the recent apps, the old request would come round again.
         if (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return
-        if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_WATCH, false)) {
-            request.value = Opening.Request.Watch
+        if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_MONITOR, false)) {
+            request.value = Opening.Request.Monitor
             return
         }
         Opening.read(

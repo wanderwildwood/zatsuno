@@ -31,8 +31,8 @@ object Opening {
     sealed interface Request {
         data class Aid(val page: String) : Request
         data class Call(val given: Given?) : Request
-        /** The recheck reminder: the key at Watch. Only Field Kit's own notification sends it. */
-        data object Watch : Request
+        /** The reassessment reminder: the key at Monitoring. Only Field Kit's own notification sends it. */
+        data object Monitor : Request
     }
 
     /**

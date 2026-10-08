@@ -16,9 +16,9 @@ source: CDC, "Signs and Symptoms of Stroke"; MedlinePlus (NIH), "Stroke"; NINDS 
 1. Write down when it started, or when they were last seen normal.
 2. Nothing to eat or drink, not even aspirin. Swallowing may be weak.
 3. Rest them lying down, head and shoulders a little raised. Keep them warm and calm.
-4. Drowsy, vomiting or drooling: roll them onto their side. See Check the scene and the person.
+4. Drowsy, vomiting or drooling: roll them onto their side. See Scene size-up and primary assessment.
 5. Not breathing normally: start CPR. See Hands-only CPR.
-- Diabetes: low blood sugar can look like a stroke. Use their meter if they carry one. Low, or no meter, and they can sit up and swallow normally: give sugar (see Low blood sugar).
+- Diabetes: low blood sugar can look like a stroke. Use their meter if they carry one. Low, or no meter, and they can sit up and swallow normally: give sugar. See Low blood sugar (hypoglycemia).
 +++
 # Getting out
 - It can't be treated out here. Speed to a hospital is everything.

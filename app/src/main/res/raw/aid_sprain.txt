@@ -1,12 +1,12 @@
-title: Sprains
-keywords: sprain, strain, twisted ankle, ligament, swelling, RICE, rest, ice, compression, elevation, wrist, knee
+title: Sprains and strains
+keywords: sprain, strain, twisted ankle, ligament, swelling, RICE, rest, ice, compression, elevation, wrist, knee, sprains
 source: NIAMS (NIH), "Sprains and Strains"; MedlinePlus (NIH), "Sprains and Strains" and "Ankle sprain - aftercare"; NHS, "Sprains and strains"; NOLS Wilderness Medicine (usable vs. unusable injuries).
 ---
 # Treat it as a break if
 - It is out of shape, or bone may be showing
 - They can't put any weight on it, or can't move the joint
 - It is numb, cold or pale beyond the injury, or pain is severe over the bone
-- See Fractures and splints.
+- See Fractures and splinting.
 # For the first two days
 1. Rest: keep weight off it.
 2. Ice: a cold pack, or snow or cold water in a bag, wrapped in cloth. 15 to 20 minutes, every few hours.

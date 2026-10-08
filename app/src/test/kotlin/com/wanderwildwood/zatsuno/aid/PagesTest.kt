@@ -36,8 +36,13 @@ class PagesTest {
         // "See Severe bleeding", "see Burns or Frostbite": a capital after "see" is a page title.
         val see = Regex("""\b[Ss]ee ([A-Z][^.;:)\n]*)""")
         var checked = 0
+        val byTitle = pages.associate { it.title to it.id }
         for (p in pages) for (m in see.findAll(p.searchText())) {
             checked++
+            // A title with a gloss in brackets, "Low blood sugar (hypoglycemia)": the regex stops
+            // at its ")", so it is checked the way the screen links it, whole.
+            val whole = SeeLinks.find(p.searchText(), byTitle).firstOrNull { it.start == m.groups[1]!!.range.first }
+            if (whole != null && '(' in p.searchText().substring(whole.start, whole.end)) continue
             val named = m.groupValues[1].trim()
             val parts = if (named in titles) listOf(named) else named.split(", or ", " or ", ", ").map { it.trim() }
             for (t in parts) assertTrue("${p.id}: \"See $t\" is no page's title", t in titles)

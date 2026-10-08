@@ -57,6 +57,7 @@ import com.wanderwildwood.zatsuno.key.Recheck
 import com.wanderwildwood.zatsuno.key.Stage
 import com.wanderwildwood.zatsuno.key.Words
 import com.wanderwildwood.zatsuno.key.rank
+import com.wanderwildwood.zatsuno.key.vitalRows
 import kotlinx.coroutines.delay
 
 /**
@@ -104,8 +105,8 @@ class KeyState(
 
     fun write(field: String, text: String) = change { Incident.Text(it, field, text) }
     fun done(text: String) = change { Incident.Done(it, text.trim()) }
-    fun check(avpu: String?, pulse: Int?, breaths: Int?, skin: List<String>) {
-        change { Incident.Check(it, avpu, pulse, breaths, skin) }
+    fun check(avpu: String?, pulse: Int?, breaths: Int?, skin: List<String>, rhythm: String?, quality: String?) {
+        change { Incident.Check(it, avpu, pulse, breaths, skin, rhythm, quality) }
         if (avpu != null && answers.single("avpu") != avpu) answer("avpu", avpu)
         Recheck.seen(context)
     }
@@ -127,6 +128,7 @@ class KeyState(
     /** The words for why a page is there, in the person's own answers. */
     fun say(atom: Atom): String = when {
         atom.question == "pulse" -> incident?.checks()?.lastOrNull()?.pulse?.let { words.get("note_pulse", it.toString()) } ?: atom.toString()
+        atom.question == "resp" -> incident?.checks()?.lastOrNull()?.breaths?.let { words.get("note_breaths", it.toString()) } ?: atom.toString()
         atom.question == "vskin" -> incident?.checks()?.lastOrNull()?.skin?.joinToString(", ") { words.get("key_skin_$it") } ?: atom.toString()
         key.question(atom.question)?.grid == true -> {
             val picks = answers.sure[atom.question].orEmpty().filter { atom.holds(Answers(mapOf(atom.question to setOf(it)))) }
@@ -139,7 +141,15 @@ class KeyState(
     }
 }
 
-/** The bold lines a life threat puts at the top of every stage, each with its page under it. */
+/**
+ * The bold lines a life threat puts at the top of every stage, each with its page under it.
+ * CPR's is for someone unresponsive: while they are alert or answer to voice, gasping is
+ * respiratory distress, and that line shows in its place.
+ */
+private fun alarms(ranking: Ranking, answers: Answers) = ALARMS.filter { (page, _) ->
+    ranking.fits.any { it.page == page } && !(page == "cpr" && answers.single("avpu") in setOf("alert", "voice"))
+}
+
 private val ALARMS = listOf(
     "cpr" to R.string.key_alarm_cpr,
     "bleeding" to R.string.key_alarm_bleeding,
@@ -148,18 +158,29 @@ private val ALARMS = listOf(
     "breathing" to R.string.key_alarm_breathing,
 )
 
+/** Short, for the strip. */
 private val STAGE_NAMES = listOf(
-    R.string.key_stage_scene, R.string.key_stage_threats, R.string.key_stage_call,
-    R.string.key_stage_look, R.string.key_stage_treat, R.string.key_stage_watch,
+    R.string.key_stage_scene, R.string.key_stage_primary, R.string.key_stage_call,
+    R.string.key_stage_secondary, R.string.key_stage_treat, R.string.key_stage_monitor,
 )
 
-/** Skin words for the vitals, in three rows: colour, warmth, moisture. */
-private val SKIN = listOf(listOf("pink", "pale", "grey", "flushed"), listOf("warm", "cool", "hot"), listOf("dry", "clammy", "sweaty"))
+/** In full, for the heading of each stage and the button to it. */
+private val STAGE_FULL = listOf(
+    R.string.key_stage_scene_full, R.string.key_stage_primary_full, R.string.key_stage_call_full,
+    R.string.key_stage_secondary_full, R.string.key_stage_treat_full, R.string.key_stage_monitor_full,
+)
+
+/** SCTM words for the vital signs, in three rows: color, temperature, moisture. */
+private val SKIN = listOf(listOf("pink", "pale", "grey", "flushed", "blue"), listOf("warm", "cool", "hot"), listOf("dry", "clammy", "sweaty"))
+
+/** HR rhythm and RR quality, one of each. */
+private val RHYTHM = listOf("regular", "irregular")
+private val QUALITY = listOf("easy", "labored", "noisy")
 
 /**
- * "Work through it": the response chain, one stage on screen at a time under a strip that
- * names all six. Nothing is locked; tapping a stage goes there. Answers gather the pages that
- * fit as they go, and every page opens at its "Do this now" part.
+ * Patient assessment: the Patient Assessment System, one stage on screen at a time under a
+ * strip that names all six. Nothing is locked; tapping a stage goes there. Answers gather the
+ * problem list as they go, and every page opens at its "Do this now" part.
  */
 @Composable
 fun KeyScreen(
@@ -189,7 +210,7 @@ fun KeyScreen(
             StageStrip(stage, onStage)
             HorizontalDividerMMD()
             val ranking = state.ranking
-            val alarms = ALARMS.filter { (page, _) -> ranking.fits.any { it.page == page } }
+            val alarms = alarms(ranking, state.answers)
             // A new life threat goes to the top of the list, and the list goes to it at once.
             LaunchedEffect(alarms.map { it.first }) { if (alarms.isNotEmpty()) list.scrollToItem(0) }
             LazyColumnMMD(modifier = Modifier.fillMaxWidth().weight(1f), state = list) {
@@ -203,18 +224,22 @@ fun KeyScreen(
                         }
                     }
                 }
+                item(key = "stage-head") { Heading(stringResource(STAGE_FULL[stage.ordinal])) }
                 when (stage) {
                     Stage.SCENE -> scene(state, onOpenPage)
-                    Stage.THREATS -> questions(state, Stage.THREATS)
+                    Stage.PRIMARY -> {
+                        questions(state, Stage.PRIMARY)
+                        item(key = "expose") { Reminder(stringResource(R.string.key_expose)) }
+                    }
                     Stage.CALL -> call(state, ranking, onOpenPage, onReadOut)
-                    Stage.LOOK -> look(state, ranking)
-                    Stage.TREAT -> treat(state, ranking, onOpenPage)
-                    Stage.WATCH -> watch(state, draft, onStage)
+                    Stage.SECONDARY -> secondary(state, ranking, draft)
+                    Stage.TREAT -> treat(state, ranking, onOpenPage, onStage)
+                    Stage.MONITOR -> monitor(state, draft, onStage)
                 }
                 val next = Stage.entries.getOrNull(stage.ordinal + 1)
                 if (next != null && !(stage == Stage.SCENE && state.answers.single("safe") == "no")) {
                     item(key = "next") {
-                        WideButton(stringResource(R.string.key_next, stringResource(STAGE_NAMES[next.ordinal])),
+                        WideButton(stringResource(R.string.key_next, stringResource(STAGE_FULL[next.ordinal])),
                             Modifier.fillMaxWidth().padding(20.dp)) { onStage(next) }
                     }
                 }
@@ -240,7 +265,7 @@ private fun BarText(label: String, onClick: () -> Unit) {
     )
 }
 
-/** Scene · Threats · Call · Look · Treat · Watch, the current one in bold. Two rows if need be. */
+/** Scene · Primary · Call · Secondary · Treat · Monitor, the current one in bold. Two rows if need be. */
 @Composable
 private fun StageStrip(current: Stage, onStage: (Stage) -> Unit) {
     Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -285,6 +310,23 @@ private fun Heading(text: String) {
         modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 4.dp))
 }
 
+/** A step with no answer: gloves on, expose. */
+@Composable
+private fun Reminder(text: String) {
+    TextMMD(text = text, style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp))
+}
+
+/** The answers on a question's buttons: "Not sure" last, or "Not decided yet" on a decision. */
+private fun choices(state: KeyState, q: Question): List<Pair<String, String>> {
+    val w = state.words
+    return q.answers.map { it to w.answer(q.id, it) } + when {
+        q.many -> emptyList()
+        q.decision -> listOf(Key.NOT_SURE to w.decided(q.id, Key.NOT_SURE))
+        else -> listOf(Key.NOT_SURE to w.answer(q.id, Key.NOT_SURE))
+    }
+}
+
 /** One question: its margin letter, the words, and the answers as tiles, "Not sure" last. */
 @Composable
 private fun QuestionView(state: KeyState, q: Question) {
@@ -300,35 +342,32 @@ private fun QuestionView(state: KeyState, q: Question) {
             }
             if (q.many) TextMMD(text = stringResource(R.string.key_pick_all), style = MaterialTheme.typography.labelSmall)
             Spacer(Modifier.height(6.dp))
-            val choices = q.answers.map { it to w.answer(q.id, it) } + if (q.many) emptyList() else listOf(Key.NOT_SURE to w.answer(q.id, Key.NOT_SURE))
             val chosen = a.sure[q.id].orEmpty() + if (q.id in a.notSure) setOf(Key.NOT_SURE) else emptySet()
-            ChoiceGrid(choices, chosen, dotted = setOf(Key.NOT_SURE)) { pick ->
+            ChoiceGrid(choices(state, q), chosen, dotted = setOf(Key.NOT_SURE)) { pick ->
                 if (q.many) state.toggle(q.id, pick) else state.answer(q.id, pick)
             }
         }
     }
 }
 
-/** The questions of a stage that are showing: follow-ups once what they follow holds. */
-private fun shown(state: KeyState, stage: Stage, ranking: Ranking? = null): List<Question> {
+/** The questions of a stage (and part) that are showing: follow-ups once what they follow holds. */
+private fun shown(state: KeyState, stage: Stage, ranking: Ranking? = null, part: String? = null): List<Question> {
     val a = state.answers
     val settling = ranking?.still?.mapNotNull { it.ask }?.toSet().orEmpty()
     return state.key.questions.filter { q ->
-        q.stage == stage && !q.grid && q.id != "you" &&
+        q.stage == stage && !q.grid && q.id != "you" && (part == null || q.part == part) &&
             (q.after.isEmpty() && !q.settle || q.after.any { it.holds(a) } || q.id in settling || q.id in a.sure || q.id in a.notSure)
     }
 }
 
-private fun LazyListScope.questions(state: KeyState, stage: Stage, ranking: Ranking? = null) {
-    for (q in shown(state, stage, ranking)) question(state, q)
+private fun LazyListScope.questions(state: KeyState, stage: Stage, ranking: Ranking? = null, part: String? = null) {
+    for (q in shown(state, stage, ranking, part)) question(state, q)
 }
 
 /** A question as list items: its words, then a row of answers to an item. */
 private fun LazyListScope.question(state: KeyState, q: Question) {
     item(key = "q:${q.id}") { QuestionHead(state, q) }
-    val w = state.words
-    val choices = q.answers.map { it to w.answer(q.id, it) } + if (q.many) emptyList() else listOf(Key.NOT_SURE to w.answer(q.id, Key.NOT_SURE))
-    choiceRows("a:${q.id}", choices, { chosen(state, q) }, dotted = setOf(Key.NOT_SURE), start = 20.dp) { pick ->
+    choiceRows("a:${q.id}", choices(state, q), { chosen(state, q) }, dotted = setOf(Key.NOT_SURE), start = 20.dp) { pick ->
         if (q.many) state.toggle(q.id, pick) else state.answer(q.id, pick)
     }
 }
@@ -356,6 +395,7 @@ private fun QuestionHead(state: KeyState, q: Question) {
 private fun LazyListScope.scene(state: KeyState, onOpenPage: (String) -> Unit) {
     val safe = state.key.question("safe")!!
     question(state, safe)
+    item(key = "bsi") { Reminder(stringResource(R.string.key_bsi)) }
     if (state.answers.single("safe") == "no") {
         item(key = "unsafe") {
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
@@ -366,7 +406,8 @@ private fun LazyListScope.scene(state: KeyState, onOpenPage: (String) -> Unit) {
         }
         return
     }
-    for (q in state.key.questions.filter { it.stage == Stage.SCENE && it.id != "safe" }) question(state, q)
+    for (q in shown(state, Stage.SCENE).filter { it.id != "safe" }) question(state, q)
+    item(key = "f:${Fields.RESOURCES}") { TextLine(state, Fields.RESOURCES, null) }
     item(key = "scene-page") {
         Column(Modifier.padding(horizontal = 20.dp)) { PageRow(state.titles["scene"] ?: "", null) { onOpenPage("scene") } }
     }
@@ -390,41 +431,78 @@ private fun LazyListScope.call(state: KeyState, ranking: Ranking, onOpenPage: (S
     questions(state, Stage.CALL)
 }
 
-private fun LazyListScope.look(state: KeyState, ranking: Ranking) {
+/**
+ * The secondary assessment: chief complaint, head-to-toe exam, vital signs, SAMPLE history
+ * (OPQRST under its S), then the focused checks. For an alert patient with an illness rather
+ * than an injury, the history comes before the exam, as courses teach.
+ */
+private fun LazyListScope.secondary(state: KeyState, ranking: Ranking, draft: VitalsDraft) {
     val a = state.answers
+    val medical = a.sure["what"]?.contains("by_itself") == true && a.single("avpu") == "alert"
+    item(key = "chief-head") { Heading(stringResource(R.string.key_look_see)) }
+    questions(state, Stage.SECONDARY, ranking, "chief")
+    if (medical) { sample(state, ranking); exam(state); vitals(state, draft) }
+    else { exam(state); vitals(state, draft); sample(state, ranking) }
+    val focused = shown(state, Stage.SECONDARY, ranking, "focused")
+    if (focused.isNotEmpty()) {
+        item(key = "focused-head") { Heading(stringResource(R.string.key_focused)) }
+        for (q in focused) {
+            if (q.id == "face" || q.id == "befast" && focused.none { it.id == "face" }) {
+                item(key = "stroke-head") {
+                    TextMMD(text = stringResource(R.string.key_stroke_check), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 20.dp, top = 6.dp))
+                }
+            }
+            question(state, q)
+        }
+    }
+}
+
+/** The head-to-toe exam: a row of findings at each place, DOTS and the rest. */
+private fun LazyListScope.exam(state: KeyState) {
     val inc = state.incident
-    questions(state, Stage.LOOK, ranking)
     val body = state.key.questions.first { it.grid }
     item(key = "body-head") {
         Heading(stringResource(R.string.key_look_body))
         TextMMD(text = stringResource(R.string.key_look_body_hint), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 20.dp))
     }
+    // The place over its findings, so each finding has the full width: "deformed" fits on one line.
     for (place in body.places) item(key = "body:$place") {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 3.dp), verticalAlignment = Alignment.CenterVertically) {
-            TextMMD(text = state.words.place(place), style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(50.dp))
-            Box(Modifier.weight(1f)) {
-                val picked = inc?.picked(body.id).orEmpty()
-                ChoiceGrid(
-                    choices = body.findings.map { "$place.$it" to state.words.finding(it) },
-                    chosen = picked,
-                    across = body.findings.size,
-                ) { state.toggle(body.id, it) }
-            }
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 3.dp)) {
+            TextMMD(text = state.words.place(place), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 3.dp))
+            val picked = inc?.picked(body.id).orEmpty()
+            ChoiceGrid(
+                choices = body.findingsAt(place).map { "$place.$it" to state.words.finding(it) },
+                chosen = picked,
+                across = 3,
+            ) { state.toggle(body.id, it) }
         }
     }
+}
+
+/** The SAMPLE history: whether the patient is the phone's owner, then each letter, with OPQRST under S. */
+private fun LazyListScope.sample(state: KeyState, ranking: Ranking) {
+    val a = state.answers
     item(key = "sample-head") { Heading(stringResource(R.string.key_sample)) }
     question(state, state.key.question("you")!!)
     if (a.single("you") == "yes") item(key = "card") { CardOffer(state) }
     item(key = "f:who") { TextLine(state, Fields.WHO, null) }
-    for ((f, letter) in Fields.SAMPLE) item(key = "f:$f") { TextLine(state, f, letter) }
     val pain = a.sure["seen"].orEmpty().any { it in setOf("pain", "chest_pain", "hurt_limb") }
-    if (pain) {
-        item(key = "opqrst-head") { Heading(stringResource(R.string.key_opqrst)) }
-        for ((f, letter) in Fields.OPQRST) item(key = "f:$f") { TextLine(state, f, letter) }
+    for ((f, _) in Fields.SAMPLE) {
+        item(key = "f:$f") { TextLine(state, f, null) }
+        if (f == "symptoms" && pain) {
+            item(key = "opqrst-head") {
+                TextMMD(text = stringResource(R.string.key_opqrst), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 20.dp, top = 6.dp))
+            }
+            for ((o, _) in Fields.OPQRST) item(key = "f:$o") { TextLine(state, o, null) }
+        }
     }
+    questions(state, Stage.SECONDARY, ranking, "sample")
 }
 
-/** The emergency card's allergies and medicines, offered only when the hurt person is its owner. */
+/** The emergency card's allergies and medications, offered only when the patient is its owner. */
 @Composable
 private fun CardOffer(state: KeyState) {
     val context = LocalContext.current
@@ -469,7 +547,7 @@ private fun TextLine(state: KeyState, field: String, letter: String?) {
     }
 }
 
-private fun LazyListScope.treat(state: KeyState, ranking: Ranking, onOpenPage: (String) -> Unit) {
+private fun LazyListScope.treat(state: KeyState, ranking: Ranking, onOpenPage: (String) -> Unit, onStage: (Stage) -> Unit) {
     val skip = setOf("call", "scene")
     val fits = ranking.fits.filter { it.page !in skip }
     item(key = "fits-head") { Heading(stringResource(R.string.key_fits)) }
@@ -487,11 +565,13 @@ private fun LazyListScope.treat(state: KeyState, ranking: Ranking, onOpenPage: (
             var asking by rememberSaveable(s.page) { mutableStateOf(false) }
             Column(Modifier.padding(horizontal = 20.dp)) {
                 val ask = s.ask?.let { state.key.question(it) }
+                // Settled by the vital signs rather than a question: say which, and go there.
+                val vital = s.ask?.takeIf { it in Key.DERIVED }
                 PageRow(
                     state.titles[s.page] ?: s.page,
-                    ask?.let { state.words.question(it.id) } ?: stringResource(R.string.key_cannot_settle),
+                    ask?.let { state.words.question(it.id) } ?: vital?.let { state.words.question(it) } ?: stringResource(R.string.key_cannot_settle),
                     dotted = true,
-                ) { if (ask != null) asking = !asking else onOpenPage(s.page) }
+                ) { if (ask != null) asking = !asking else if (vital != null) onStage(Stage.MONITOR) else onOpenPage(s.page) }
                 if (asking && ask != null) Box(Modifier.padding(bottom = 6.dp)) { QuestionView(state, ask) }
             }
         }
@@ -512,6 +592,10 @@ private fun LazyListScope.treat(state: KeyState, ranking: Ranking, onOpenPage: (
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp))
     }
     item(key = "done") { DoneLine(state) }
+    item(key = "decided") {
+        TextMMD(text = stringResource(R.string.key_decided), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp))
+    }
+    questions(state, Stage.TREAT)
 }
 
 @Composable
@@ -534,20 +618,23 @@ private fun DoneLine(state: KeyState) {
 class VitalsDraft {
     var avpu by mutableStateOf<String?>(null)
     var pulse by mutableStateOf("")
+    var rhythm by mutableStateOf<String?>(null)
     var breaths by mutableStateOf("")
+    var quality by mutableStateOf<String?>(null)
     var skin by mutableStateOf(listOf<String>())
     var counting by mutableStateOf(false)
 
-    fun clear() { avpu = null; pulse = ""; breaths = ""; skin = emptyList() }
+    fun clear() { avpu = null; pulse = ""; rhythm = null; breaths = ""; quality = null; skin = emptyList() }
 }
 
 /**
- * The vitals: one column per check, the newest on the right, and the next one entered under
- * "now". Pulse and breaths are counted for 15 seconds and multiplied by four; "Count 15 s"
- * buzzes once at the end, and nothing on screen moves while it counts. A row to an item, so
- * the list can turn a page between them.
+ * The vital signs: one column per set, the newest on the right, and the next set entered under
+ * "now": LOR, HR with its rhythm, RR with its quality, and SCTM. HR and RR are counted for 15
+ * seconds and multiplied by four; "Count 15 s" buzzes once at the end, and nothing on screen
+ * moves while it counts. A row to an item, so the list can turn a page between them. The
+ * secondary assessment takes the first set; Monitoring takes each one after.
  */
-private fun LazyListScope.watch(state: KeyState, draft: VitalsDraft, onStage: (Stage) -> Unit) {
+private fun LazyListScope.vitals(state: KeyState, draft: VitalsDraft) {
     val w = state.words
     val checks = state.incident?.checks().orEmpty().takeLast(3)
     item(key = "v:head") {
@@ -556,14 +643,7 @@ private fun LazyListScope.watch(state: KeyState, draft: VitalsDraft, onStage: (S
                 modifier = Modifier.padding(bottom = 6.dp))
             if (checks.isNotEmpty()) {
                 val mono = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace)
-                val rows = listOf(
-                    "" to checks.map { state.note.time(it.at) },
-                    w.get("note_avpu") to checks.map { c -> c.avpu?.let { w.get("key_avpu_short_$it") } ?: "–" },
-                    w.get("note_pulse_row") to checks.map { it.pulse?.toString() ?: "–" },
-                    w.get("note_breaths_row") to checks.map { it.breaths?.toString() ?: "–" },
-                    w.get("note_skin_row") to checks.map { c -> c.skin.joinToString(",") { w.get("key_skin_$it") }.ifEmpty { "–" } },
-                )
-                for ((name, cells) in rows) Row(Modifier.fillMaxWidth()) {
+                for ((name, cells) in vitalRows(w, checks) { state.note.time(it) }) Row(Modifier.fillMaxWidth()) {
                     TextMMD(text = name, style = mono, modifier = Modifier.width(64.dp))
                     for (c in cells) TextMMD(text = c, style = mono, modifier = Modifier.weight(1f))
                 }
@@ -577,7 +657,13 @@ private fun LazyListScope.watch(state: KeyState, draft: VitalsDraft, onStage: (S
         draft.avpu = if (draft.avpu == it) null else it
     }
     item(key = "v:pulse") { Box(Modifier.padding(horizontal = 20.dp)) { CountField(stringResource(R.string.key_pulse_15), draft.pulse) { draft.pulse = it } } }
+    choiceRows("v:rhythm", RHYTHM.map { it to w.get("key_rhythm_$it") }, { setOfNotNull(draft.rhythm) }) {
+        draft.rhythm = if (draft.rhythm == it) null else it
+    }
     item(key = "v:breaths") { Box(Modifier.padding(horizontal = 20.dp)) { CountField(stringResource(R.string.key_breaths_15), draft.breaths) { draft.breaths = it } } }
+    choiceRows("v:quality", QUALITY.map { it to w.get("key_quality_$it") }, { setOfNotNull(draft.quality) }) {
+        draft.quality = if (draft.quality == it) null else it
+    }
     item(key = "v:skin") {
         TextMMD(text = stringResource(R.string.key_skin), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(start = 20.dp, top = 6.dp, bottom = 4.dp))
     }
@@ -593,14 +679,19 @@ private fun LazyListScope.watch(state: KeyState, draft: VitalsDraft, onStage: (S
             WideButton(stringResource(R.string.key_save_check), Modifier.weight(1f)) {
                 val p = draft.pulse.toIntOrNull()?.times(4)
                 val b = draft.breaths.toIntOrNull()?.times(4)
-                if (draft.avpu != null || p != null || b != null || draft.skin.isNotEmpty()) {
+                if (draft.avpu != null || p != null || b != null || draft.skin.isNotEmpty() || draft.rhythm != null || draft.quality != null) {
                     val order = SKIN.flatten()
-                    state.check(draft.avpu, p, b, draft.skin.sortedBy(order::indexOf))
+                    state.check(draft.avpu, p, b, draft.skin.sortedBy(order::indexOf), draft.rhythm, draft.quality)
                     draft.clear()
                 }
             }
         }
     }
+}
+
+/** Monitoring: the vital signs again, when the next reassessment is due, and the way back to the primary assessment. */
+private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: (Stage) -> Unit) {
+    vitals(state, draft)
     state.incident?.let { inc ->
         item(key = "v:next") {
             TextMMD(text = stringResource(R.string.key_next_check, state.note.time(inc.nextCheck(state.key))),
@@ -608,7 +699,7 @@ private fun LazyListScope.watch(state: KeyState, draft: VitalsDraft, onStage: (S
         }
     }
     item(key = "recheck") {
-        WideButton(stringResource(R.string.key_recheck), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) { onStage(Stage.THREATS) }
+        WideButton(stringResource(R.string.key_recheck), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) { onStage(Stage.PRIMARY) }
     }
 }
 
@@ -632,7 +723,7 @@ private fun CountField(label: String, value: String, onChange: (String) -> Unit)
 }
 
 /**
- * The SOAP note, top to bottom, with Send and "What to read out" in the bar. At its foot an
+ * The SOAP note, top to bottom, with Send and "Verbal report" in the bar. At its foot an
  * armed row: "Start over", tapped twice. It clears the note and is the only way to.
  */
 @Composable
@@ -680,7 +771,7 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
     }
 }
 
-/** The note in the order a call-taker asks for it, large enough to read out. */
+/** The verbal report: the note in the order a call-taker asks for it, large enough to read out. */
 @Composable
 fun ReadOutScreen(state: KeyState, model: CompassModel, onBack: () -> Unit) {
     val context = LocalContext.current
@@ -704,7 +795,7 @@ fun ReadOutScreen(state: KeyState, model: CompassModel, onBack: () -> Unit) {
     }
 }
 
-/** The open note on "Calling for help", under the position: what to read out, in a box. */
+/** The open note on "Calling for help", under the position: the verbal report, in a box. */
 @Composable
 fun ReadOutBox(text: String) {
     Column(

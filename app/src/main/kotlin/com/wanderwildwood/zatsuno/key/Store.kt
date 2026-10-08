@@ -56,14 +56,14 @@ object IncidentStore {
 }
 
 /**
- * The recheck reminder: one alarm, set for the next check whenever the incident changes. When
- * it goes off the phone buzzes and a notification says a recheck is due; tapping it opens the
- * key at Watch.
+ * The reassessment reminder: one alarm, set for the next reassessment whenever the incident
+ * changes. When it goes off the phone buzzes and a notification says a reassessment is due;
+ * tapping it opens the key at Monitoring.
  */
 object Recheck {
     private const val CHANNEL = "recheck"
     private const val NOTIFICATION = 1
-    const val EXTRA_WATCH = "com.wanderwildwood.zatsuno.extra.WATCH"
+    const val EXTRA_MONITOR = "com.wanderwildwood.zatsuno.extra.MONITOR"
 
     private fun pending(context: Context) = PendingIntent.getBroadcast(
         context, 0, Intent(context, RecheckReceiver::class.java),
@@ -83,7 +83,7 @@ object Recheck {
         context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
     }
 
-    /** Dismisses the reminder once the recheck is under way. */
+    /** Dismisses the reminder once the reassessment is under way. */
     fun seen(context: Context) {
         context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
     }
@@ -97,7 +97,7 @@ object Recheck {
         )
         val open = PendingIntent.getActivity(
             context, 0,
-            Intent(context, MainActivity::class.java).putExtra(EXTRA_WATCH, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, MainActivity::class.java).putExtra(EXTRA_MONITOR, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val n = android.app.Notification.Builder(context, CHANNEL)
@@ -111,7 +111,7 @@ object Recheck {
         buzz(context, 600)
     }
 
-    /** One buzz: the end of the 15-second count, or a recheck due. */
+    /** One buzz: the end of the 15-second count, or a reassessment due. */
     fun buzz(context: Context, millis: Long = 400) {
         val vibrator: Vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
         vibrator.vibrate(VibrationEffect.createOneShot(millis, VibrationEffect.DEFAULT_AMPLITUDE))

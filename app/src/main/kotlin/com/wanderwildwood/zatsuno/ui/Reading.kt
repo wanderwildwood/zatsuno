@@ -69,7 +69,7 @@ private fun Readable(content: @Composable () -> Unit) {
  * [openMore] opens it ready open, for a search that found its words under More.
  *
  * A "See Shock" in the text is a link to that page ([titles], [onOpenPage]): the title
- * underlined, nothing more. [readOut] is the open note from "Work through it", shown under
+ * underlined, nothing more. [readOut] is the verbal report from "Patient assessment", shown under
  * the position on "Calling for help" so it can be read to the call-taker.
  */
 @Composable

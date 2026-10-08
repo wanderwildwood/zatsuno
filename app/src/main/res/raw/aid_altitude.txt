@@ -1,5 +1,5 @@
-title: Altitude sickness
-keywords: altitude sickness, mountain sickness, AMS, altitude, high altitude, elevation, mountains, headache, nausea, dizzy, can't sleep, short of breath, cough, confused, stumbling, HACE, HAPE
+title: Altitude illness (AMS, HACE, HAPE)
+keywords: altitude sickness, mountain sickness, AMS, altitude, high altitude, elevation, mountains, headache, nausea, dizzy, can't sleep, short of breath, cough, confused, stumbling, HACE, HAPE, altitude illness
 source: CDC Yellow Book (2026), "High-Altitude Travel and Altitude Illness"; MedlinePlus (NIH), "High altitude illness"; Wilderness Medical Society, "Clinical Practice Guidelines for the Prevention and Treatment of Acute Altitude Illness" (2024 update).
 ---
 ! Confused, very drowsy, or stumbling like they are drunk: brain swelling (HACE). Test: have them walk heel to toe in a straight line. If they can't, treat it as brain swelling.

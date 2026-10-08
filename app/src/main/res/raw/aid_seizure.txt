@@ -14,7 +14,7 @@ No signal: try 911 anyway (see Calling for help); if it fails, send someone out 
 2. Ease them to the ground. Move rocks, gear and people away.
 3. Put something soft under the head. Take off glasses. Loosen anything at the neck.
 4. If you can do it gently, turn them onto their side. Don't force it.
-5. In water: if you can reach them safely, hold the face above water, then get them out once it stops. See Drowning.
+5. In water: if you can reach them safely, hold the face above water, then get them out once it stops. See Drowning (submersion).
 # After it stops
 1. Roll them onto their side, mouth toward the ground.
 2. Not breathing, or only gasping: call 911 or your local emergency number and start CPR. See Hands-only CPR.
@@ -28,8 +28,8 @@ No signal: try 911 anyway (see Calling for help); if it fails, send someone out 
 - No food or water until fully awake.
 # Think about why
 - Hot and confused: see Heat exhaustion and heat stroke.
-- Diabetic: once fully awake and able to swallow, give sugar. See Low blood sugar.
+- Diabetic: once fully awake and able to swallow, give sugar. See Low blood sugar (hypoglycemia).
 - Drank lots of plain water on a long, hot day: no more water. See Dehydration.
-- High up a mountain: go down. See Altitude sickness.
+- High up a mountain: go down. See Altitude illness (AMS, HACE, HAPE).
 - Recent fall or blow: see Head injury.
 - No help coming: once fully back to normal, walk out together, away from edges and water.

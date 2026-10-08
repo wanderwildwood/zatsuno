@@ -1,4 +1,4 @@
-title: Low blood sugar
+title: Low blood sugar (hypoglycemia)
 keywords: low blood sugar, diabetes, diabetic, insulin, hypoglycemia, sugar low, shaky, sweaty, confused, acting drunk, passed out, glucose, juice, candy, glucagon
 source: NIDDK (NIH), "Low Blood Glucose (Hypoglycemia)"; CDC, "Low Blood Sugar (Hypoglycemia)"; MedlinePlus (NIH), "Low blood sugar - self-care"; AHA and American Red Cross, "2024 Guidelines for First Aid".
 ---

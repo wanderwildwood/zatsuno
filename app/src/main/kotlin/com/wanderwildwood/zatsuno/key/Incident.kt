@@ -15,16 +15,22 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
     /** A question answered: an answer id, [Key.NOT_SURE], several ids joined by commas for a pick-all, or "" for none. */
     data class Answer(override val at: Long, val question: String, val value: String) : Event
 
-    /** A line written in: who they are, SAMPLE, OPQRST. */
+    /** A line written in: the patient, resources, SAMPLE, OPQRST. */
     data class Text(override val at: Long, val field: String, val text: String) : Event
 
-    /** One check of the vitals. Pulse and breaths are per minute. */
+    /**
+     * One set of vital signs: LOR (AVPU), HR and RR per minute, the heart's rhythm (regular,
+     * irregular), the breathing's quality (easy, labored, noisy) and SCTM (skin color,
+     * temperature, moisture).
+     */
     data class Check(
         override val at: Long,
         val avpu: String?,
         val pulse: Int?,
         val breaths: Int?,
         val skin: List<String>,
+        val rhythm: String? = null,
+        val quality: String? = null,
     ) : Event
 
     /** Something done for them: "Splinted the leg". */
@@ -35,7 +41,7 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
 
     operator fun plus(e: Event) = copy(events = events + e)
 
-    /** The answers as they stand now, with the two read off the latest vitals. */
+    /** The answers as they stand now, with those read off the latest vital signs. */
     fun answers(): Answers {
         var a = Answers()
         for (e in events) if (e is Answer) {
@@ -48,8 +54,12 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
             }
         }
         val last = checks().lastOrNull() ?: return a
-        last.pulse?.let { if (it > FAST_PULSE) a = a.copy(sure = a.sure + ("pulse" to setOf("fast")), times = a.times + ("pulse" to last.at)) }
-        if (last.skin.any { it in PALE_COOL }) a = a.copy(sure = a.sure + ("vskin" to setOf("pale_cool")), times = a.times + ("vskin" to last.at))
+        fun derive(q: String, values: Set<String>) {
+            if (values.isNotEmpty()) a = a.copy(sure = a.sure + (q to values), times = a.times + (q to last.at))
+        }
+        last.pulse?.let { derive("pulse", setOf(if (it > FAST_PULSE) "fast" else "normal")) }
+        last.breaths?.let { if (it > FAST_BREATHS) derive("resp", setOf("fast")) }
+        derive("vskin", setOfNotNull("pale_cool".takeIf { last.skin.any { it in PALE_COOL } }, "blue".takeIf { "blue" in last.skin }))
         return a
     }
 
@@ -77,13 +87,13 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
     /** When anything last happened: the end of the note's time span. */
     val last: Long get() = events.maxOfOrNull { it.at } ?: started
 
-    /** Every 5 minutes while a danger page fits, every 15 otherwise. */
+    /** Reassess every 5 minutes while a danger page fits (unstable), every 15 otherwise. */
     fun recheckMinutes(key: Key): Int {
         val danger = key.pages.filter { it.danger }.map { it.id }.toSet()
         return if (rank(key, answers()).fits.any { it.page in danger }) 5 else 15
     }
 
-    /** When the next recheck is due: from the last check, or from the start. */
+    /** When the next reassessment is due: from the last set of vital signs, or from the start. */
     fun nextCheck(key: Key): Long = (checks().lastOrNull()?.at ?: started) + recheckMinutes(key) * 60_000L
 
     /** As text, a line to an event, for keeping on the phone. */
@@ -93,7 +103,7 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
             when (e) {
                 is Answer -> append("A\t${e.at}\t${esc(e.question)}\t${esc(e.value)}")
                 is Text -> append("T\t${e.at}\t${esc(e.field)}\t${esc(e.text)}")
-                is Check -> append("C\t${e.at}\t${e.avpu.orEmpty()}\t${e.pulse ?: ""}\t${e.breaths ?: ""}\t${e.skin.joinToString(",")}")
+                is Check -> append("C\t${e.at}\t${e.avpu.orEmpty()}\t${e.pulse ?: ""}\t${e.breaths ?: ""}\t${e.skin.joinToString(",")}\t${e.rhythm.orEmpty()}\t${e.quality.orEmpty()}")
                 is Done -> append("D\t${e.at}\t${esc(e.text)}")
                 is Where -> append("W\t${e.at}\t${e.lat}\t${e.lon}\t${e.accuracy ?: ""}")
             }
@@ -103,7 +113,9 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
 
     companion object {
         const val FAST_PULSE = 100
-        /** Skin words from the vitals that point to Shock. */
+        /** Over this many breaths a minute is a red flag (START triage, WMA/SOLO). */
+        const val FAST_BREATHS = 30
+        /** Skin words from the vital signs that point to Shock. */
         val PALE_COOL = setOf("pale", "grey", "cool", "clammy")
 
         /** Back from [encode]; a line that can't be read is left out rather than losing the rest. */
@@ -117,7 +129,8 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
                     when (f[0]) {
                         "A" -> Answer(at, unesc(f[2]), unesc(f[3]))
                         "T" -> Text(at, unesc(f[2]), unesc(f[3]))
-                        "C" -> Check(at, f[2].ifEmpty { null }, f[3].toIntOrNull(), f[4].toIntOrNull(), f[5].split(',').filter { it.isNotEmpty() })
+                        "C" -> Check(at, f[2].ifEmpty { null }, f[3].toIntOrNull(), f[4].toIntOrNull(), f[5].split(',').filter { it.isNotEmpty() },
+                            f.getOrNull(6)?.ifEmpty { null }, f.getOrNull(7)?.ifEmpty { null })
                         "D" -> Done(at, unesc(f[2]))
                         "W" -> Where(at, f[2].toDouble(), f[3].toDouble(), f[4].toFloatOrNull())
                         else -> null

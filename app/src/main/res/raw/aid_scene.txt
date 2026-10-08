@@ -1,12 +1,12 @@
-title: Check the scene and the person
-keywords: ABC, CAB, airway, breathing, circulation, unresponsive, unconscious, recovery position, first steps, scene safety, primary survey
+title: Scene size-up and primary assessment
+keywords: ABC, CAB, airway, breathing, circulation, unresponsive, unconscious, recovery position, first steps, scene safety, primary survey, check the scene and the person, scene size-up, primary assessment, AVPU, mechanism of injury, MOI, BSI
 source: MedlinePlus (NIH), "CPR" and "Shock"; NHLBI (NIH), "Cardiac Arrest: Treatment"; AHA, "Adult Basic and Advanced Life Support" and AHA/Red Cross "First Aid Guidelines"; Wilderness Medical Society, "Accidental Hypothermia" guidelines.
 ---
-# The scene first
+# Scene size-up
 1. Look before you go in: traffic, falling rock, moving water, fire, wires, animals.
 2. Not safe: stay back and call from there.
 3. Put on gloves if you have them.
-# Then the person
+# Primary assessment (ABCDE)
 1. Tap their shoulder and shout. Do they answer?
 2. No answer: shout for help. Have someone call 911 or your local emergency number and bring an AED. Alone: call on speaker and stay. No signal: try 911 anyway (see Calling for help); if it fails, send others.
 3. Watch the chest for up to 10 seconds, a full minute if they are very cold (see Hypothermia). Gasping is not normal breathing.

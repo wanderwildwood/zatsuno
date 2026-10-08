@@ -79,11 +79,11 @@ fun FieldKitApp(
                 givenSaved = r.given?.save()
                 stack.add(Route.aid(Pages.CALL))
             }
-            // The recheck reminder, tapped: the key at Watch, over the home screen.
-            Opening.Request.Watch -> {
+            // The reassessment reminder, tapped: the key at Monitoring, over the home screen.
+            Opening.Request.Monitor -> {
                 stack.add(Route.HOME)
                 stack.add(Route.KEY)
-                keyStage = Stage.WATCH.name
+                keyStage = Stage.MONITOR.name
             }
         }
         onRequestHandled()

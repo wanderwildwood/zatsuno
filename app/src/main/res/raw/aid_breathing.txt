@@ -1,11 +1,11 @@
-title: Trouble breathing and asthma
-keywords: asthma, asthma attack, can't breathe, cannot breathe, short of breath, out of breath, breathless, wheezing, wheeze, tight chest, chest tightness, coughing, gasping, inhaler, puffer, rescue inhaler, albuterol, spacer
+title: Respiratory distress and asthma
+keywords: asthma, asthma attack, can't breathe, cannot breathe, short of breath, out of breath, breathless, wheezing, wheeze, tight chest, chest tightness, coughing, gasping, inhaler, puffer, rescue inhaler, albuterol, spacer, trouble breathing and asthma, difficulty breathing, respiratory distress
 source: MedlinePlus (NIH), "Asthma" and "Breathing difficulties"; NHLBI (NIH), "Asthma: Treatment and Action Plan"; AHA/Red Cross Guidelines for First Aid (2024); Wilderness Medical Society Clinical Practice Guidelines.
 ---
 ! Can't speak more than a few words, too breathless to walk, blue or gray lips, or drowsy or confused: call 911 or your local emergency number now. No signal: try 911 anyway (see Calling for help); if it fails, send someone for help.
 ! Swollen lips or tongue, hives, or a sting or food just before: see Stings and anaphylaxis.
 ! Chest pain or pressure with the breathlessness: see Chest pain.
-! At altitude, breathless at rest or a wet cough: go down now, with others helping them. See Altitude sickness.
+! At altitude, breathless at rest or a wet cough: go down now, with others helping them. See Altitude illness (AMS, HACE, HAPE).
 # Do this
 1. Help them sit up, leaning forward. Don't make them lie down or walk until breathing is easy again.
 2. Help them use their own reliever inhaler, with a spacer if they have one. Follow their asthma plan or the label.

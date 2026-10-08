@@ -18,6 +18,8 @@ fun interface Words {
     /** The short name a question goes under in the note: "Breathing". */
     fun short(q: String) = get("key_n_$q")
     fun answer(q: String, a: String) = if (a == Key.NOT_SURE) get("key_not_sure") else get("key_a_${q}_$a")
+    /** A decision's answer: "Not decided yet" where another question has "Not sure". */
+    fun decided(q: String, a: String) = if (a == Key.NOT_SURE) get("key_not_decided") else get("key_a_${q}_$a")
     fun place(p: String) = get("key_place_$p")
     fun finding(f: String) = get("key_find_$f")
 }
@@ -25,16 +27,19 @@ fun interface Words {
 /** The written fields, in the order the note lists them, and the letter each goes beside. */
 object Fields {
     const val WHO = "who"
-    /** SAMPLE, after the symptoms: allergies, medicines, past, last in, events. */
+    /** Scene size-up: who and what you have to work with. */
+    const val RESOURCES = "resources"
+    /** SAMPLE: signs and symptoms, allergies, medications, pertinent history, last intake and output, events. */
     val SAMPLE = listOf("symptoms" to "S", "allergies" to "A", "medicines" to "M", "past" to "P", "last" to "L", "events" to "E")
     val OPQRST = listOf("onset" to "O", "provokes" to "P", "quality" to "Q", "radiates" to "R", "severity" to "S", "time" to "T")
 }
 
 /**
  * The SOAP note, built from the incident as it stands. Nobody fills in a form: every line
- * comes from an answer, a check or a line written in, with its time. The "A" part uses no
- * diagnosis words: it names the pages that fit and the danger still open, which is what the
- * person actually knows.
+ * comes from an answer, a set of vital signs or a line written in, with its time. S is the
+ * patient, the mechanism, the chief complaint and the history; O the exam and the vital signs;
+ * A the problem list and what is not yet ruled out, named by page, which is what the person
+ * actually knows; P the treatment given, the call, the evacuation decision and the monitoring.
  */
 class Note(
     private val key: Key,
@@ -61,7 +66,7 @@ class Note(
         return out.joinToString("\n").trimEnd()
     }
 
-    /** The same note in the order "What to tell them" uses: where, who, what happened, how they are, what's been done. */
+    /** The verbal report, in the order a call-taker asks: where, the patient, the mechanism, their condition, the problem list, the treatment. */
     fun readOut(incident: Incident): String {
         val a = incident.answers()
         val out = mutableListOf<String>()
@@ -69,7 +74,7 @@ class Note(
         incident.texts()[Fields.WHO]?.let { out += words.get("note_who", it.text) }
         what(incident)?.let { out += it }
         val how = buildList {
-            for (q in listOf("avpu", "breathing", "bleeding")) a.single(q)?.let { add("${words.short(q)}: ${words.answer(q, it)}") }
+            for (q in listOf("avpu", "airway", "breathing", "bleeding")) a.single(q)?.let { add("${words.short(q)}: ${words.answer(q, it)}") }
             incident.checks().lastOrNull()?.let { c ->
                 c.pulse?.let { add(words.get("note_pulse", it.toString())) }
                 c.breaths?.let { add(words.get("note_breaths", it.toString())) }
@@ -99,17 +104,28 @@ class Note(
         return words.get("note_what", h.value.split(',').joinToString(", ") { words.answer("what", it) }, time(h.at))
     }
 
+    /** Subjective: what the patient and bystanders say happened, the chief complaint, and the history. */
+    private fun isSubjective(q: Question) = q.id == "storm" || q.id == "seen" || q.part == "sample"
+
     private fun subjective(incident: Incident): List<String> = buildList {
         val texts = incident.texts()
-        texts[Fields.WHO]?.let { add("${it.text} ${time(it.at)}") }
+        texts[Fields.WHO]?.let { add(words.get("note_who", it.text) + " " + time(it.at)) }
         what(incident)?.let { add(it) }
+        addAll(answered(incident) { isSubjective(it) })
         for ((f, _) in Fields.SAMPLE + Fields.OPQRST) texts[f]?.let { add("${words.get("key_field_$f")}: ${it.text} ${time(it.at)}") }
+        texts[Fields.RESOURCES]?.let { add("${words.get("key_field_resources")}: ${it.text} ${time(it.at)}") }
     }
 
     private fun objective(incident: Incident): List<String> = buildList {
+        addAll(answered(incident) { !isSubjective(it) })
+        addAll(vitals(incident.checks()))
+    }
+
+    /** Each answered question that [take] keeps, in assessment order, one line to a question. */
+    private fun answered(incident: Incident, take: (Question) -> Boolean): List<String> = buildList {
         for (q in key.questions) {
-            if (q.stage == Stage.CALL || q.id == "what" || q.id == "you") continue
-            // A pick-all keeps only what stands now; a single answer keeps each change, so a recheck shows.
+            if (q.decision || q.id == "what" || q.id == "you" || !take(q)) continue
+            // A pick-all keeps only what stands now; a single answer keeps each change, so a reassessment shows.
             val h = incident.history(q.id).let { if (q.many) it.takeLast(1) else it }
             if (h.isEmpty()) continue
             val said = h.joinToString(", ") { e ->
@@ -122,19 +138,12 @@ class Note(
             }
             add("${words.short(q.id)}: $said")
         }
-        addAll(vitals(incident.checks()))
     }
 
-    /** The checks as a table, one column per check, the newest on the right. */
+    /** The sets of vital signs as a table, one column per set, the newest on the right. */
     private fun vitals(checks: List<Incident.Check>): List<String> {
         if (checks.isEmpty()) return emptyList()
-        val rows = listOf(
-            "" to checks.map { time(it.at) },
-            words.get("note_avpu") to checks.map { c -> c.avpu?.let { words.get("key_avpu_short_$it") } ?: "–" },
-            words.get("note_pulse_row") to checks.map { it.pulse?.toString() ?: "–" },
-            words.get("note_breaths_row") to checks.map { it.breaths?.toString() ?: "–" },
-            words.get("note_skin_row") to checks.map { c -> c.skin.joinToString(",") { words.get("key_skin_$it") }.ifEmpty { "–" } },
-        )
+        val rows = vitalRows(words, checks) { time(it) }
         val label = rows.maxOf { it.first.length }
         val widths = checks.indices.map { i -> rows.maxOf { it.second[i].length } }
         return rows.map { (name, cells) ->
@@ -154,10 +163,12 @@ class Note(
         }
     }
 
-    /** What was done and what was decided, in the order it happened. */
+    /** The treatment given and what was decided, in the order it happened. "Not decided yet" writes nothing. */
     private fun doneLines(incident: Incident): List<String> =
         (incident.done().map { it.at to it.text.trim().trimEnd('.') } +
-            incident.history("plan").map { it.at to words.answer("plan", it.value) })
+            key.questions.filter { it.decision }.flatMap { q ->
+                incident.history(q.id).filter { it.value != Key.NOT_SURE }.map { it.at to words.decided(q.id, it.value) }
+            })
             .sortedBy { it.first }
             .map { (at, text) -> "$text ${time(at)}." }
 
@@ -165,4 +176,19 @@ class Note(
         addAll(doneLines(incident))
         add(words.get("note_recheck", incident.recheckMinutes(key).toString()))
     }
+}
+
+/**
+ * The vital signs as rows of a table, a name and one cell per set: the time, LOR, HR, RR,
+ * SCTM, and the HR rhythm and RR quality when any set has them. The note and the Monitoring
+ * screen both show it.
+ */
+fun vitalRows(words: Words, checks: List<Incident.Check>, time: (Long) -> String): List<Pair<String, List<String>>> = buildList {
+    add("" to checks.map { time(it.at) })
+    add(words.get("note_avpu") to checks.map { c -> c.avpu?.let { words.get("key_avpu_short_$it") } ?: "–" })
+    add(words.get("note_pulse_row") to checks.map { it.pulse?.toString() ?: "–" })
+    if (checks.any { it.rhythm != null }) add(words.get("note_rhythm_row") to checks.map { c -> c.rhythm?.let { words.get("key_rhythm_$it") } ?: "–" })
+    add(words.get("note_breaths_row") to checks.map { it.breaths?.toString() ?: "–" })
+    if (checks.any { it.quality != null }) add(words.get("note_quality_row") to checks.map { c -> c.quality?.let { words.get("key_quality_$it") } ?: "–" })
+    add(words.get("note_skin_row") to checks.map { c -> c.skin.joinToString(",") { words.get("key_skin_$it") }.ifEmpty { "–" } })
 }
