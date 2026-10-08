@@ -19,6 +19,7 @@ source: 911.gov (NHTSA), "Calling 911"; FCC, "Text to 911"; FCC, 911 call rules 
 - Still failing: if safe, try from higher ground or open sky nearby. A call can get through where data cannot.
 - Can't call? Text 911 (many US areas take it) or someone who can call for you. Position first.
 - Signal in threes: three whistle blasts, shouts or flashes.
+@sos
 - Still nothing: send two people out to call if you can, with the position and what happened written down. The rest stay with the injured.
 - Alone with them: make them as safe as you can, then go. Not if you are doing CPR or they are choking: stay and keep going.
 - Lost: stay put unless the spot is unsafe (rising water, rockfall, fire). You are easier to find standing still.

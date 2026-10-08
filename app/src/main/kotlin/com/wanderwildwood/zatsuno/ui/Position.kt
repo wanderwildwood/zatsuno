@@ -51,6 +51,7 @@ import com.wanderwildwood.zatsuno.compass.Live
 import com.wanderwildwood.zatsuno.compass.Place
 import com.wanderwildwood.zatsuno.coord.CoordinateFormatter
 import com.wanderwildwood.zatsuno.coord.Maidenhead
+import com.wanderwildwood.zatsuno.coord.Mgrs
 import kotlinx.coroutines.delay
 import java.util.Date
 
@@ -123,9 +124,10 @@ fun LocationPrompt(live: Live, onChanged: () -> Unit) {
 }
 
 /**
- * The position three ways, and how far it can be trusted: within how many metres, and how
- * old it is. Each line copies itself when pressed. An old fix is shown as old rather than
- * hidden, since an old position is still worth reading out.
+ * The position four ways (decimal, DMS, the US National Grid / MGRS reference, and the
+ * Maidenhead locator), and how far it can be trusted: within how many metres, and how old it
+ * is. Each line copies itself when pressed. An old fix is shown as old rather than hidden,
+ * since an old position is still worth reading out.
  */
 @Composable
 fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
@@ -139,6 +141,7 @@ fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
     val decimal = CoordinateFormatter.decimal(fix.lat, fix.lon)
     val dms = CoordinateFormatter.dms(fix.lat, fix.lon)
     val locator = Maidenhead.encode(fix.lat, fix.lon)
+    val grid = Mgrs.format(fix.lat, fix.lon)
     Column(Modifier.fillMaxWidth()) {
         TextMMD(
             text = decimal,
@@ -150,6 +153,11 @@ fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
             text = dms,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.fillMaxWidth().clickable { copy(dms) }.padding(vertical = 2.dp),
+        )
+        if (grid != null) TextMMD(
+            text = "${stringResource(R.string.label_grid)} $grid",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.fillMaxWidth().clickable { copy(grid) }.padding(vertical = 2.dp),
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             // A position sent by another app comes with no accuracy or time to show.

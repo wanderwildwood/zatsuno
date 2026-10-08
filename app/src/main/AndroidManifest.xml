@@ -15,6 +15,9 @@
     <!-- The compass works from the rotation sensor; a phone without one still gets the rest. -->
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <!-- "Flash SOS" on "Calling for help" blinks the camera flash as a torch, which needs no
+         permission; a phone without one does not get the button. -->
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
 
     <!-- The other apps that act on selected text (Define and the rest), for the ⋮ in the
          selection menu; and the map and dialler apps the position is handed to. -->

@@ -8,6 +8,7 @@
     <string name="cd_search">Search</string>
     <string name="cd_share">Send</string>
     <string name="cd_clear">Clear</string>
+    <string name="cd_more">More</string>
 
     <!-- ============================================================ -->
     <!-- Home -->
@@ -42,6 +43,27 @@
     <string name="aid_sources">Sources:</string>
     <!-- The row a first-aid page keeps the rest under (why, when to get care, what not to do, sources). Tapping it opens the rest in place. -->
     <string name="aid_more">More</string>
+    <!-- Behind the ⋮ on a checklist page: unticks every box -->
+    <string name="ticks_clear">Clear ticks</string>
+    <!-- A line that opens another page. %1$s is its title -->
+    <string name="see_page">See %1$s</string>
+
+    <!-- "Flash SOS" on "Calling for help": the camera flash blinks · · · – – – · · · until stopped -->
+    <string name="sos_start">Flash SOS</string>
+    <string name="sos_stop">Stop SOS</string>
+    <string name="sos_running">Flashing SOS. The screen stays on until you stop it.</string>
+    <string name="sos_failed">The flash could not be used. Close the camera and try again.</string>
+
+    <!-- The flash-to-thunder counter on "Lightning" -->
+    <string name="lightning_how">Tap Flash when you see the lightning, Thunder when you hear it.</string>
+    <string name="lightning_flash">Flash</string>
+    <string name="lightning_thunder">Thunder</string>
+    <string name="lightning_counting">Counting. Tap Thunder when you hear it.</string>
+    <!-- %1$s seconds, %2$s miles, %3$s kilometres -->
+    <string name="lightning_result">%1$s s: about %2$s mi (%3$s km) away</string>
+    <string name="lightning_row">%1$s s · %2$s mi (%3$s km)</string>
+    <!-- NWS: "If you hear thunder, lightning is close enough to strike you." and 30 minutes after the last thunder -->
+    <string name="lightning_in_range">If you can hear thunder, lightning is close enough to strike you. Get to a safe place now, and stay there 30 minutes after the last thunder.</string>
     <!-- Read aloud by a screen reader for the More row once it is open: tapping closes it -->
     <string name="aid_less">Less</string>
 
@@ -116,6 +138,8 @@
     <string name="label_decimal">Decimal</string>
     <string name="label_dms">DMS</string>
     <string name="label_locator">Locator</string>
+    <!-- Before the US National Grid / MGRS reference: "USNG 17S LV 59477 40147" -->
+    <string name="label_grid">USNG</string>
 
     <!-- ============================================================ -->
     <!-- Knots -->
@@ -594,6 +618,8 @@
     <string name="note_where">Where: %1$s (±%2$s m, %3$s)</string>
     <string name="note_where_no_accuracy">Where: %1$s (%2$s)</string>
     <string name="note_where_none">Where: not recorded</string>
+    <!-- The same position as a US National Grid reference. %1$s is it -->
+    <string name="note_grid">USNG: %1$s</string>
     <string name="note_nothing">–</string>
     <string name="note_who">Patient: %1$s</string>
     <!-- %1$s what happened, %2$s when it was answered -->

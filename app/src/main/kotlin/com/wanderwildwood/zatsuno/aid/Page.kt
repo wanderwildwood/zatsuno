@@ -9,6 +9,7 @@ package com.wanderwildwood.zatsuno.aid
  * title: Severe bleeding
  * keywords: blood, tourniquet
  * source: DHS, "Applying a Tourniquet" · MedlinePlus, "Bleeding"
+ * checklist: yes                                  points become tick boxes, kept on the phone
  * ---
  * ! Call 911 or your local emergency number.     a line that must not be missed
  * # Press on it                                   a heading
@@ -16,6 +17,8 @@ package com.wanderwildwood.zatsuno.aid
  * - a point                                       a point under a step or heading
  * > Older advice kept the tourniquet for last.    a note set apart: what changed, and who says so
  * @position                                       the live position block ("Calling for help")
+ * @sos                                            the Flash SOS button (phones with a flash)
+ * @lightning                                      the flash-to-thunder counter
  * +++                                             where More starts
  * Anything else is a paragraph.
  * ```
@@ -32,26 +35,34 @@ data class Page(
     val blocks: List<Block>,
     /** Where More starts in [blocks]: the size of [blocks] when everything shows at once. */
     val more: Int = blocks.size,
+    /** Points are tick boxes, and the ticks are kept on the phone (a kit list). */
+    val checklist: Boolean = false,
 ) {
+    /** The points, in order: what a checklist ticks. */
+    val points: List<String> get() = blocks.filterIsInstance<Block.Point>().map { it.text }
+
     /** What the page opens on. */
     val now: List<Block> get() = blocks.subList(0, more)
 
     /** What waits under More. */
     val rest: List<Block> get() = blocks.subList(more, blocks.size)
 
-    /** The page as plain text, for sending to Notes or a message. */
-    fun asText(sourceLabel: String, disclaimer: String): String = buildString {
+    /**
+     * The page as plain text, for sending to Notes or a message. A checklist's points go as
+     * `- [ ]` and `- [x]` lines ([ticked]), which Notes reads back as a checklist.
+     */
+    fun asText(sourceLabel: String, disclaimer: String, ticked: Set<String> = emptySet()): String = buildString {
         appendLine(title)
         appendLine()
         for (b in blocks) {
             when (b) {
                 is Block.Heading -> { appendLine(); appendLine(b.text) }
                 is Block.Step -> appendLine("${b.number}. ${b.text}")
-                is Block.Point -> appendLine("• ${b.text}")
+                is Block.Point -> appendLine(if (checklist) "- [${if (b.text in ticked) "x" else " "}] ${b.text}" else "• ${b.text}")
                 is Block.Urgent -> appendLine(b.text)
                 is Block.Note -> appendLine(b.text)
                 is Block.Para -> appendLine(b.text)
-                Block.Position -> {}
+                Block.Position, Block.Sos, Block.Lightning -> {}
             }
         }
         appendLine()
@@ -76,7 +87,7 @@ data class Page(
             is Block.Urgent -> it.text
             is Block.Note -> it.text
             is Block.Para -> it.text
-            Block.Position -> ""
+            Block.Position, Block.Sos, Block.Lightning -> ""
         }
     }
 }
@@ -89,6 +100,10 @@ sealed interface Block {
     data class Note(val text: String) : Block
     data class Para(val text: String) : Block
     data object Position : Block
+    /** The Flash SOS button, on "Calling for help". Nothing on a phone without a flash. */
+    data object Sos : Block
+    /** The flash-to-thunder counter, on "Lightning". */
+    data object Lightning : Block
 }
 
 object Markup {
@@ -126,6 +141,8 @@ object Markup {
             when {
                 m != null -> Block.Step(m.groupValues[1].toInt(), m.groupValues[2].trim())
                 line == "@position" -> Block.Position
+                line == "@sos" -> Block.Sos
+                line == "@lightning" -> Block.Lightning
                 line.startsWith("# ") -> Block.Heading(line.drop(2).trim())
                 line.startsWith("- ") -> Block.Point(line.drop(2).trim())
                 line.startsWith("! ") -> Block.Urgent(line.drop(2).trim())
@@ -140,6 +157,7 @@ object Markup {
             source = requireNotNull(header["source"]) { "$id: no source" },
             blocks = blocks,
             more = if (cut < 0) blocks.size else cut,
+            checklist = header["checklist"]?.lowercase() == "yes",
         )
     }
 }

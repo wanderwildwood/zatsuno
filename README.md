@@ -15,9 +15,11 @@ and it will install on any Android 12 device.
 ## What it does
 
 - **Calling for help.** Your position read off the satellites, ready to read out to a
-  dispatcher, with how close it is and how old. Share it as text to Messaging or anything else
-  (decimal, degrees-minutes-seconds, a `geo:` address and a map link), or open the dialler with
-  911 or 112 filled in. What to tell the call-taker, and what to do with no signal.
+  dispatcher, with how close it is and how old: decimal, degrees-minutes-seconds and the US
+  National Grid (MGRS) reference search and rescue teams work in. Share it as text to
+  Messaging or anything else (the same three, a `geo:` address and a map link), or open the
+  dialler with 911 or 112 filled in. What to tell the call-taker, and what to do with no
+  signal, with a Flash SOS button that blinks the camera flash in Morse until you stop it.
 - **Patient assessment.** A second way into the first-aid pages, for when you don't know yet
   what's wrong. It walks the Patient Assessment System as wilderness first aid courses (NOLS,
   WMI, WMA, SOLO) teach it: scene size-up, primary assessment (responsiveness, then X-ABCDE),
@@ -36,7 +38,10 @@ and it will install on any Android 12 device.
   HAPE), lightning, burns, snakebite, allergic reactions, fractures and splinting, frostbite,
   dehydration, sprains and strains, wounds, ticks and blisters.
   Each opens on what to do now: the warnings and the first steps. The why, when to get care,
-  what not to do and the sources wait under More, a tap away. Each is written for this screen
+  what not to do and the sources wait under More, a tap away. Lightning carries a flash-to-thunder
+  counter: tap at the flash and at the thunder, and it says how far that strike was and keeps
+  the last few counts so a storm coming closer shows. A page can be a checklist (`checklist: yes`
+  in its header): its points become tick boxes, kept on the phone until "Clear ticks". Each is written for this screen
   from current guidance and names its sources. Where the advice has changed (tourniquets,
   CPR, choking, snakebite) the page says what changed and who says so.
 - **Knots.** Overhand, figure-eight, figure-eight loop, bowline, clove hitch, two half hitches,
@@ -44,7 +49,7 @@ and it will install on any Android 12 device.
   each is for in a line, and each step drawn, the rope's working end marked with an arrow and
   over-and-under shown by a gap in the lower strand.
 - **Compass.** The heading in degrees and points, magnetic or true north, your position in
-  decimal, degrees-minutes-seconds and as a Maidenhead locator, and Freeze to hold the screen
+  decimal, degrees-minutes-seconds, US National Grid and as a Maidenhead locator, and Freeze to hold the screen
   still while you read or copy it. Open your position in any map app on the phone (Topo
   answers), or share it.
 - **In case of emergency.** A card you fill in: name, blood type, allergies, medicines,

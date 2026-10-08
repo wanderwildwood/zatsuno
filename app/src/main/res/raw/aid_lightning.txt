@@ -11,6 +11,8 @@ source: NWS (NOAA), "Lightning Safety"; NPS, "Lightning Safety"; Wilderness Medi
 5. Several people hurt: help first anyone not breathing. Someone moaning or moving is breathing.
 6. Look for burns, broken bones and head injury. Keep them warm.
 7. Anyone struck needs a doctor, even if they seem fine. Get them out or send for help.
+# How far off it is
+@lightning
 +++
 # Staying safe
 - When thunder roars, go indoors. No place outside is safe in a thunderstorm.
@@ -18,3 +20,4 @@ source: NWS (NOAA), "Lightning Safety"; NPS, "Lightning Safety"; Wilderness Medi
 - Wait 30 minutes after the last thunder before going back out.
 - Caught out: get off peaks and ridges, away from lone trees, water and metal. Do not lie flat. Spread a group at least 20 feet (6 m) apart.
 > Crouching was once taught as safe. The National Weather Service no longer calls it safe; it only lowers the risk a little.
+> The 30-30 rule said to take shelter when thunder came within 30 seconds of the flash. The National Weather Service has dropped that half: lightning reaches 10 to 12 miles out from a storm, farther than thunder carries, so thunder you can hear at all means you are in range. The other half stands: wait 30 minutes after the last thunder.

@@ -42,6 +42,7 @@ class NoteTest {
         val expected = listOf(
             "SOAP note 14:02–14:27 · Field Kit",
             "Where: 44.42800, -110.58850 (±8 m, 14:03)",
+            "USNG: 12T WQ 32753 19493",
             "",
             "S  Patient: Woman about 40 14:11",
             "   MOI/NOI: Fall 14:02",
@@ -84,6 +85,7 @@ class NoteTest {
         assertEquals(
             listOf(
                 "Where: 44.42800, -110.58850 (±8 m, 14:03)",
+                "USNG: 12T WQ 32753 19493",
                 "Patient: Woman about 40",
                 "MOI/NOI: Fall 14:02",
                 "Condition: LOR (AVPU): A: Alert. Breathing: Normal. Severe bleeding: None. HR 96. RR 18. SCTM pink, warm, dry. Pupils PERRL.",

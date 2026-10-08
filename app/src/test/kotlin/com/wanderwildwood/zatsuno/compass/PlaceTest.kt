@@ -31,6 +31,7 @@ class PlaceTest {
                 "My position at 14:05, to within 8 m:",
                 "51.47793, -0.00148",
                 "51°28'40.5\"N  0°00'05.3\"W",
+                "USNG 30U YC 08214 07239",
                 "geo:51.47793,-0.00148",
                 "https://www.openstreetmap.org/?mlat=51.47793&mlon=-0.00148#map=16/51.47793/-0.00148",
             ),

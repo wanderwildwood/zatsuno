@@ -1,5 +1,6 @@
 package com.wanderwildwood.zatsuno.key
 
+import com.wanderwildwood.zatsuno.coord.Mgrs
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -58,6 +59,7 @@ class Note(
         val out = mutableListOf<String>()
         out += words.get("note_head", time(incident.started), time(incident.last))
         out += where(incident)
+        grid(incident)?.let { out += it }
         out += ""
         out += part("S", subjective(incident))
         out += part("O", objective(incident))
@@ -71,6 +73,7 @@ class Note(
         val a = incident.answers()
         val out = mutableListOf<String>()
         out += where(incident)
+        grid(incident)?.let { out += it }
         incident.texts()[Fields.WHO]?.let { out += words.get("note_who", it.text) }
         what(incident)?.let { out += it }
         val how = buildList {
@@ -95,6 +98,12 @@ class Note(
         val pos = String.format(Locale.ROOT, "%.5f, %.5f", w.lat, w.lon)
         return if (w.accuracy != null) words.get("note_where", pos, Math.round(w.accuracy).toString(), time(w.at))
         else words.get("note_where_no_accuracy", pos, time(w.at))
+    }
+
+    /** The same position as a US National Grid reference, the form a SAR team takes down. */
+    private fun grid(incident: Incident): String? {
+        val w = incident.where() ?: return null
+        return Mgrs.format(w.lat, w.lon)?.let { words.get("note_grid", it) }
     }
 
     private fun part(letter: String, lines: List<String>): List<String> =

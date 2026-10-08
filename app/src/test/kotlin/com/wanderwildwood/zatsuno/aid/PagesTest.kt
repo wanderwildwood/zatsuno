@@ -76,6 +76,8 @@ class PagesTest {
     @Test
     fun onlyTheCallPageCarriesThePosition() {
         assertEquals(listOf("call"), pages.filter { Block.Position in it.blocks }.map { it.id })
+        assertEquals(listOf("call"), pages.filter { Block.Sos in it.blocks }.map { it.id })
+        assertEquals(listOf("lightning"), pages.filter { Block.Lightning in it.blocks }.map { it.id })
     }
 
     @Test
@@ -85,7 +87,7 @@ class PagesTest {
                 when (b) {
                     is Block.Heading -> b.text; is Block.Step -> b.text; is Block.Point -> b.text
                     is Block.Urgent -> b.text; is Block.Note -> b.text; is Block.Para -> b.text
-                    Block.Position -> ""
+                    Block.Position, Block.Sos, Block.Lightning -> ""
                 }.split(Regex("\\s+")).count { it.isNotEmpty() }
             }
             assertTrue("${p.id} opens on $words words", words <= 400)
@@ -113,12 +115,14 @@ class PagesTest {
             - Point
             > Note
             @position
+            @sos
+            @lightning
             Para
         """.trimIndent())
         assertEquals(listOf("a", "b"), page.keywords)
         assertEquals(
             listOf(Block.Urgent("Urgent"), Block.Heading("Head"), Block.Step(1, "One continued"), Block.Point("Point"),
-                Block.Note("Note"), Block.Position, Block.Para("Para")),
+                Block.Note("Note"), Block.Position, Block.Sos, Block.Lightning, Block.Para("Para")),
             page.blocks,
         )
         assertEquals(page.blocks.size, page.more)

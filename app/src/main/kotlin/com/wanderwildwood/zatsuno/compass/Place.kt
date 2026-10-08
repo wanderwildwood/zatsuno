@@ -1,6 +1,7 @@
 package com.wanderwildwood.zatsuno.compass
 
 import com.wanderwildwood.zatsuno.coord.CoordinateFormatter
+import com.wanderwildwood.zatsuno.coord.Mgrs
 import java.util.Locale
 
 /**
@@ -31,13 +32,15 @@ object Place {
 
     /**
      * The message sent from "Share position": a first line in the reader's language (given
-     * already worded, with the time and accuracy in it), then the position three ways, then
+     * already worded, with the time and accuracy in it), then the position three ways
+     * (decimal, DMS, and the US National Grid / MGRS reference where there is one), then
      * the two addresses.
      */
-    fun shareText(heading: String, lat: Double, lon: Double): String = listOf(
+    fun shareText(heading: String, lat: Double, lon: Double): String = listOfNotNull(
         heading,
         CoordinateFormatter.decimal(lat, lon),
         CoordinateFormatter.dms(lat, lon),
+        Mgrs.format(lat, lon)?.let { "USNG $it" },
         geoText(lat, lon),
         webLink(lat, lon),
     ).joinToString("\n")

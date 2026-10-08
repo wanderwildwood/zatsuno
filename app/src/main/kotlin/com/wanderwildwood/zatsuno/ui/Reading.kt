@@ -50,6 +50,9 @@ import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.aid.Block
 import com.wanderwildwood.zatsuno.aid.Page
 import com.wanderwildwood.zatsuno.aid.SeeLinks
+import com.wanderwildwood.zatsuno.aid.TickStore
+import com.mudita.mmd.components.checkbox.CheckboxMMD
+import java.io.File
 import com.wanderwildwood.zatsuno.compass.CompassModel
 import com.wanderwildwood.zatsuno.compass.Fix
 import com.wanderwildwood.zatsuno.knots.Knot
@@ -71,6 +74,9 @@ private fun Readable(content: @Composable () -> Unit) {
  * A "See Shock" in the text is a link to that page ([titles], [onOpenPage]): the title
  * underlined, nothing more. [readOut] is the verbal report from "Patient assessment", shown under
  * the position on "Calling for help" so it can be read to the call-taker.
+ *
+ * On a checklist page (`checklist: yes`) the points are tick boxes. The ticks are kept on the
+ * phone and come back after a restart; "Clear ticks" sits behind the ⋮ in the bar.
  */
 @Composable
 fun AidScreen(
@@ -92,13 +98,18 @@ fun AidScreen(
     if (hasPosition) RunWhileShown(model)
     var moreOpen by rememberSaveable(page.id) { mutableStateOf(openMore) }
     val list = rememberLazyListState()
+    val ticks = remember { TickStore(File(context.noBackupFilesDir, "ticks")) }
+    var ticked by remember(page.id) { mutableStateOf(if (page.checklist) ticks.load(page.id) else emptySet()) }
+    var menuOpen by remember { mutableStateOf(false) }
+    val onTick: (String) -> Unit = { ticked = ticks.toggle(page.id, it) }
     Screen(
         title = page.title,
         onBack = onBack,
         actions = {
             BarButton(Icons.Share, stringResource(R.string.cd_share)) {
-                shareText(context, page.title, page.asText(sources, disclaimer))
+                shareText(context, page.title, page.asText(sources, disclaimer, ticked))
             }
+            if (page.checklist) BarButton(Icons.More, stringResource(R.string.cd_more)) { menuOpen = true }
         },
     ) { modifier ->
         val card = remember { if (hasPosition) CardStore.load(context) else null }
@@ -114,7 +125,7 @@ fun AidScreen(
             }
             page.now.forEachIndexed { i, block ->
                 item(key = i) {
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link) }
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link, page.checklist, ticked, onTick, titles, onOpenPage) }
                 }
                 // The open note, right under the position it starts with.
                 if (block == Block.Position && readOut != null) {
@@ -127,7 +138,7 @@ fun AidScreen(
             if (moreOpen || !hasMore) {
                 page.rest.forEachIndexed { i, block ->
                     item(key = page.more + i) {
-                        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link) }
+                        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link, page.checklist, ticked, onTick, titles, onOpenPage) }
                     }
                 }
                 item(key = "sources") {
@@ -141,6 +152,19 @@ fun AidScreen(
                     TextMMD(text = disclaimer, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                 }
             }
+        }
+    }
+    if (menuOpen) {
+        EInkDialog(onDismiss = { menuOpen = false }) {
+            TextMMD(
+                text = stringResource(R.string.ticks_clear),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth().clickable {
+                    menuOpen = false
+                    ticks.clear(page.id)
+                    ticked = emptySet()
+                }.padding(vertical = 12.dp),
+            )
         }
     }
 }
@@ -178,7 +202,10 @@ private fun linked(text: String, titles: Map<String, String>, from: String, onOp
 }
 
 @Composable
-private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGiven: () -> Unit, link: (String) -> AnnotatedString) {
+private fun BlockView(
+    block: Block, model: CompassModel, given: Given?, onDropGiven: () -> Unit, link: (String) -> AnnotatedString,
+    checklist: Boolean, ticked: Set<String>, onTick: (String) -> Unit, titles: Map<String, String>, onOpenPage: (String) -> Unit,
+) {
     val body = MaterialTheme.typography.bodyMedium
     when (block) {
         is Block.Heading -> Readable {
@@ -189,7 +216,15 @@ private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGi
             TextMMD(text = "${block.number}.", style = body, fontWeight = FontWeight.Bold, modifier = Modifier.width(26.dp))
             Readable { TextMMD(text = link(block.text), style = body) }
         }
-        is Block.Point -> Row(Modifier.padding(vertical = 3.dp)) {
+        // A checklist's point: a box and the words, the whole row taking the tap.
+        is Block.Point -> if (checklist) Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().clickable { onTick(block.text) }.padding(vertical = 3.dp),
+        ) {
+            CheckboxMMD(checked = block.text in ticked, onCheckedChange = null)
+            Spacer(Modifier.width(8.dp))
+            TextMMD(text = link(block.text), style = body)
+        } else Row(Modifier.padding(vertical = 3.dp)) {
             TextMMD(text = "–", style = body, modifier = Modifier.width(26.dp))
             Readable { TextMMD(text = link(block.text), style = body) }
         }
@@ -209,6 +244,8 @@ private fun BlockView(block: Block, model: CompassModel, given: Given?, onDropGi
         }
         is Block.Para -> Readable { TextMMD(text = link(block.text), style = body, modifier = Modifier.padding(vertical = 3.dp)) }
         Block.Position -> PositionCard(model, given, onDropGiven)
+        Block.Sos -> SosBlock(titles, onOpenPage)
+        Block.Lightning -> LightningBlock()
     }
 }
 
