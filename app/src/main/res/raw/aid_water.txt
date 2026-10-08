@@ -1,0 +1,29 @@
+title: Water disinfection
+keywords: water, drinking water, disinfect, purify, treat, boil, boiling, filter, purifier, chlorine dioxide, iodine, bleach, tablets, drops, UV, pen, Giardia, Cryptosporidium, diarrhea, stomach bug, sick from water
+source: CDC, "Water treatment while hiking, camping, and traveling" (backcountry water treatment guide); EPA, "Emergency Disinfection of Drinking Water"; MedlinePlus (NIH), "Diarrhea" and "Dehydration".
+---
+! Sick after untreated water, with blood or black in the stool, fever of 102°F (38.9°C) or higher, or fluids not staying down: get care today.
+! Confused, fainting, or no urine for many hours: Call 911 or your local emergency number.
+  No signal: try 911 anyway (see Calling for help); if it fails, send someone for help.
+# Make water safe
+- Cloudy? Let it settle, then pour through a clean cloth or coffee filter.
+1. Boil: a rolling boil for 1 minute. Above 6,500 ft (2,000 m), 3 minutes. Kills all germs.
+2. No stove: filter, then add a chemical.
+- Filter: 0.3 micron or smaller, certified for "cyst" reduction. Most filters don't remove viruses; a "purifier" does.
+- Chlorine dioxide tablets or drops: follow the label. Usually 30 minutes; 4 hours for Cryptosporidium, cold or cloudy water.
+- Iodine, 2% tincture: 5 drops per quart or liter, 10 if cloudy or very cold. Wait 30 minutes; 1 hour if the water is very cold.
+- Plain unscented bleach: 2 drops per quart or liter, 8 per gallon. Wait 30 minutes. Double it for cloudy or very cold water. It should smell faintly of chlorine; if not, add the same dose again and wait 15 more minutes.
+- UV pen: clear water only. Stir for the time the label says.
++++
+> Iodine and bleach don't kill Cryptosporidium. Filter first, then disinfect, or just boil. Rinse the bottle's lid and threads with treated water too.
+# Sick from the water
+- Diarrhea, cramps, nausea or vomiting, often days later
+1. Rest. Sip fluids often; small amounts stay down better.
+2. With diarrhea or vomiting, use oral rehydration salts in safe water, or safe water plus salty food. See Dehydration.
+3. Not better in 1 day (child) or 2 days (adult), or any red flag above: get care.
+# Don't
+- Don't use iodine if pregnant, allergic to iodine, with a thyroid problem, or for more than a few weeks.
+- Don't use scented, splashless or color-safe bleach, or bleach with added cleaners.
+- Don't trust clear, cold or fast water. It can still carry Giardia.
+- Don't use water that smells of fuel or chemicals, or has an oily sheen. Boiling and disinfecting can't make it safe; find another source.
+- Don't take loperamide (Imodium) with bloody stool or a fever, and don't give it to a child under 2.

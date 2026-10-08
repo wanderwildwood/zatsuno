@@ -6,7 +6,7 @@ import com.wanderwildwood.zatsuno.R
 /**
  * The first-aid pages, in the order the list shows them: what to do first, then what
  * threatens life soonest (no breath, no pulse, blood loss), then what can turn bad within the
- * hour, then the rest.
+ * hour, then the rest, and the kit checklist last.
  */
 object Pages {
 
@@ -16,6 +16,7 @@ object Pages {
     private val order = listOf(
         "scene" to R.raw.aid_scene,
         CALL to R.raw.aid_call,
+        "signals" to R.raw.aid_signals,
         "cpr" to R.raw.aid_cpr,
         "choking" to R.raw.aid_choking,
         "bleeding" to R.raw.aid_bleeding,
@@ -35,14 +36,20 @@ object Pages {
         "lightning" to R.raw.aid_lightning,
         "burns" to R.raw.aid_burns,
         "snakebite" to R.raw.aid_snakebite,
+        "bites" to R.raw.aid_bites,
         "allergy" to R.raw.aid_allergy,
         "fracture" to R.raw.aid_fracture,
         "frostbite" to R.raw.aid_frostbite,
         "dehydration" to R.raw.aid_dehydration,
+        "water" to R.raw.aid_water,
         "sprain" to R.raw.aid_sprain,
         "wounds" to R.raw.aid_wounds,
+        "eye" to R.raw.aid_eye,
+        "nose" to R.raw.aid_nose,
         "ticks" to R.raw.aid_ticks,
         "blisters" to R.raw.aid_blisters,
+        "poisonivy" to R.raw.aid_poisonivy,
+        "kit" to R.raw.aid_kit,
     )
 
     /** Every page's id, without reading the pages: what another app may ask to open. */

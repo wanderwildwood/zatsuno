@@ -25,7 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import com.mudita.mmd.components.divider.HorizontalDividerMMD
@@ -97,7 +97,8 @@ fun AidScreen(
     val hasPosition = page.blocks.any { it == Block.Position }
     if (hasPosition) RunWhileShown(model)
     var moreOpen by rememberSaveable(page.id) { mutableStateOf(openMore) }
-    val list = rememberLazyListState()
+    // Its own per page: a page opened from a "See" link starts at its top, not where the last one was.
+    val list = rememberSaveable(page.id, saver = LazyListState.Saver) { LazyListState() }
     val ticks = remember { TickStore(File(context.noBackupFilesDir, "ticks")) }
     var ticked by remember(page.id) { mutableStateOf(if (page.checklist) ticks.load(page.id) else emptySet()) }
     var menuOpen by remember { mutableStateOf(false) }

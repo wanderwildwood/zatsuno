@@ -23,7 +23,12 @@ class KeyIntegrityTest {
 
     @Test
     fun everyPageAndAnswerIdExists() {
-        assertEquals("the key names every page once, in the list's order", KeyFixtures.pageIds, key.pages.map { it.id })
+        // Not every page is reached from the assessment (signalling, water, the kit list): the
+        // ones the key names it names once, in the list's order.
+        val named = key.pages.map { it.id }
+        assertEquals("the key names a page once", named.toSet().size, named.size)
+        assertEquals("the key's pages in the list's order", KeyFixtures.pageIds.filter { it in named }, named)
+        for (id in named) assertTrue("$id is no page", id in KeyFixtures.pageIds)
         for (p in key.pages) for (c in p.points + p.rules) for (a in c.atoms) assertTrue("${p.id}: $a", valid(a))
         for (q in key.questions) for (c in q.after) for (a in c.atoms) assertTrue("${q.id} after $a", valid(a))
     }
@@ -473,7 +478,7 @@ class ReachableTest {
 
     @Test
     fun everyClauseOfEveryPageCanBeBroughtUnderTheProblemList() {
-        assertEquals(KeyFixtures.pageIds.toSet(), key.pages.map { it.id }.toSet())
+        assertTrue(KeyFixtures.pageIds.containsAll(key.pages.map { it.id }))
         for (p in key.pages) for (clause in p.points) {
             var a = Answers()
             for (atom in clause.atoms) {
@@ -550,7 +555,7 @@ class WalkthroughTest {
 
     @Test fun dogBite() = check("dog bite",
         arrayOf("what=bite_sting", *calmThreats, "seen=bite_sting", "bite_kind=animal"),
-        setOf("wounds"))
+        setOf("wounds", "bites"))
 
     @Test fun carbonMonoxideInATent() = check("CO in a tent",
         arrayOf("what=swallowed", "avpu=voice", "bleeding=none", "breathing=normal", "confused=yes"),

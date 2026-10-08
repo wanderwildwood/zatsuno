@@ -1,0 +1,50 @@
+title: First-aid kit checklist
+keywords: kit, first aid kit, checklist, supplies, gloves, gauze, tape, bandage, tourniquet, splint, SAM splint, medicine, epinephrine, inhaler, shears, tweezers, tick remover, whistle, headlamp, blanket, SOAP note, expiry, expired
+source: American Red Cross, "Anatomy of a First Aid Kit" (base contents); NPS, "The Ten Essentials" (headlamp, emergency shelter, personal medicines, check expiry dates); NOLS, "27 Considerations for a Wilderness First Aid Kit" (irrigation syringe, SAM splint, trauma shears, SOAP note, facts only); Wilderness Medical Society, basic wound management guidelines (2014 update, wound irrigation); AHA and American Red Cross, "2024 Guidelines for First Aid" (aspirin dose, hemostatic dressing); FDA, "neffy (epinephrine nasal spray)".
+checklist: yes
+---
+Check off what is in your kit. Restock the rest before you go.
+# Wound care
+- Nitrile gloves, 2 pairs or more
+- Sterile gauze pads, 4x4 inch
+- Rolled gauze
+- Adhesive bandages, assorted
+- Cloth tape, 1 inch
+- Irrigation syringe, 10 to 20 ml
+- Antiseptic wipes, for skin around a wound and for tools
+- Moleskin or blister pads
+# Bleeding
+- Tourniquet, commercial, windlass type
+- Trauma dressing, 5x9 inch
+- Hemostatic gauze, for packing a deep wound
+# Bone and joint
+- SAM splint
+- Elastic bandage, 3 or 4 inch
+- Triangular bandages, 2
+# Medicines
+- Ibuprofen and acetaminophen
+- Antihistamine
+- Aspirin, chewable: 1 regular (325 mg) or 4 low-dose (81 mg), for chest pain in adults only. See Chest pain.
+- Oral rehydration salts
+- Glucose tablets or gel
+- Your own epinephrine (auto-injector or nasal spray), 2 doses
+- Your own inhaler
+- Your own prescriptions, extra days
+# Tools
+- Trauma shears
+- Tweezers, fine point
+- Safety pins
+- Headlamp, spare batteries
+- Whistle
+- Emergency blanket
+- Notebook and pencil for a SOAP note
+# Upkeep
+- Check expiry dates before each trip
+- Replace anything opened, wet or used
++++
+# Notes
+- Size it to the group and days out.
+- Everyone carries their own epinephrine, inhaler and prescriptions, and says where. See Stings and anaphylaxis.
+- A commercial tourniquet beats an improvised one. See Severe bleeding.
+- Write times, vital signs and what you did in the notebook, for rescuers. See Scene size-up and primary assessment.
+- Waterproof bag, top of the pack, and the group knows where.

@@ -16,9 +16,9 @@ class PagesTest {
     private val titles = pages.map { it.title }.toSet()
 
     @Test
-    fun allTwentyNinePagesAreThere() {
-        assertEquals(29, pages.size)
-        for (id in listOf("chest", "breathing", "sugar", "seizure", "stroke", "drowning", "altitude", "poisoning")) {
+    fun allThirtySixPagesAreThere() {
+        assertEquals(36, pages.size)
+        for (id in listOf("chest", "breathing", "sugar", "seizure", "stroke", "drowning", "altitude", "poisoning", "signals", "poisonivy", "bites", "eye", "nose", "water", "kit")) {
             assertTrue("$id is there", pages.any { it.id == id })
         }
     }
@@ -57,7 +57,8 @@ class PagesTest {
             // Calling for help shows whole: other pages send readers to its No signal part.
             if (p.id == "call") assertTrue("call shows whole", p.rest.isEmpty())
             else assertTrue("${p.id} has a More part", p.rest.isNotEmpty())
-            assertTrue("${p.id} opens on steps or warnings", p.now.any { it is Block.Step || it is Block.Urgent })
+            // A checklist opens on its boxes.
+            assertTrue("${p.id} opens on steps or warnings", p.checklist || p.now.any { it is Block.Step || it is Block.Urgent })
             assertTrue("${p.id}: a ! line under More", p.rest.none { it is Block.Urgent })
             assertTrue("${p.id}: a note left above More", p.now.none { it is Block.Note })
         }
@@ -71,6 +72,11 @@ class PagesTest {
                 listOf("MedlinePlus", "CDC", "NIOSH", "NIH", "NPS", "NWS", "DHS", "911.gov", "FCC", "NIAMS", "NHLBI").any { it in p.source })
             assertTrue("${p.id} has steps or points", p.blocks.any { it is Block.Step || it is Block.Point })
         }
+    }
+
+    @Test
+    fun onlyTheKitPageIsAChecklist() {
+        assertEquals(listOf("kit"), pages.filter { it.checklist }.map { it.id })
     }
 
     @Test

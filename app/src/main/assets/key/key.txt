@@ -83,7 +83,8 @@ stage treat
 ask plan decision : stay walk carry rescue
 
 # ---------------------------------------------------------------------------------------
-# Pages, in the order the First aid list shows them.
+# Pages, in the order the First aid list shows them. A page the assessment never reaches
+# (signalling, water, the kit list) is left out.
 
 # Reached from the scene size-up as well.
 page scene
@@ -164,6 +165,10 @@ page burns
 
 page snakebite
   points bite_kind=snake
+
+# Points only: a bite from an animal is a wound first, and rabies is settled at a clinic.
+page bites
+  points bite_kind=animal
 
 page allergy
   points seen=rash_swelling | bite_kind=insect | allergy_known=yes | seen=lips_tongue

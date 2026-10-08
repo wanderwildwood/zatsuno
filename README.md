@@ -19,7 +19,8 @@ and it will install on any Android 12 device.
   National Grid (MGRS) reference search and rescue teams work in. Share it as text to
   Messaging or anything else (the same three, a `geo:` address and a map link), or open the
   dialler with 911 or 112 filled in. What to tell the call-taker, and what to do with no
-  signal, with a Flash SOS button that blinks the camera flash in Morse until you stop it.
+  signal, with a Flash SOS button that blinks the camera flash in Morse until you stop it,
+  and a line to Signalling for rescue.
 - **Patient assessment.** A second way into the first-aid pages, for when you don't know yet
   what's wrong. It walks the Patient Assessment System as wilderness first aid courses (NOLS,
   WMI, WMA, SOLO) teach it: scene size-up, primary assessment (responsiveness, then X-ABCDE),
@@ -31,17 +32,20 @@ and it will install on any Android 12 device.
   a timed SOAP note as you go, to give as a verbal report or send to Messaging, and reminds you
   to reassess every 15 minutes, or 5 while a danger page is on the problem list. It names
   pages; it never says the patient is stable.
-- **First aid.** Twenty-nine short pages: scene size-up and primary assessment, hands-only
-  CPR, choking, severe bleeding and tourniquets, drowning, anaphylaxis, respiratory distress
-  and asthma, chest pain, stroke, shock, seizures, low blood sugar (hypoglycemia), poisoning
-  and carbon monoxide, head injury, heat illness, hypothermia, altitude illness (AMS, HACE,
-  HAPE), lightning, burns, snakebite, allergic reactions, fractures and splinting, frostbite,
-  dehydration, sprains and strains, wounds, ticks and blisters.
+- **First aid.** Thirty-six short pages: scene size-up and primary assessment, signalling
+  for rescue, hands-only CPR, choking, severe bleeding and tourniquets, drowning, anaphylaxis,
+  respiratory distress and asthma, chest pain, stroke, shock, seizures, low blood sugar
+  (hypoglycemia), poisoning and carbon monoxide, head injury, heat illness, hypothermia,
+  altitude illness (AMS, HACE, HAPE), lightning, burns, snakebite, animal bites and rabies,
+  allergic reactions, fractures and splinting, frostbite, dehydration, water disinfection,
+  sprains and strains, wounds, eye injuries, nosebleeds and dental injuries, ticks, blisters,
+  poison ivy, oak and sumac, and a first-aid kit checklist.
   Each opens on what to do now: the warnings and the first steps. The why, when to get care,
   what not to do and the sources wait under More, a tap away. Lightning carries a flash-to-thunder
   counter: tap at the flash and at the thunder, and it says how far that strike was and keeps
-  the last few counts so a storm coming closer shows. A page can be a checklist (`checklist: yes`
-  in its header): its points become tick boxes, kept on the phone until "Clear ticks". Each is written for this screen
+  the last few counts so a storm coming closer shows. The kit checklist's points are tick
+  boxes, kept on the phone until "Clear ticks" (any page with `checklist: yes` in its header
+  works that way, and sent to Notes it goes as a checklist). Each is written for this screen
   from current guidance and names its sources. Where the advice has changed (tourniquets,
   CPR, choking, snakebite) the page says what changed and who says so.
 - **Knots.** Overhand, figure-eight, figure-eight loop, bowline, clove hitch, two half hitches,
@@ -79,9 +83,10 @@ and it will install on any Android 12 device.
 
 Each page was written for this app from current guidance: US government sources (MedlinePlus
 and other NIH pages, the CDC, the National Park Service, the National Weather Service, DHS's
-Stop the Bleed material, 911.gov and the FCC), the AHA and American Red Cross first-aid
+Stop the Bleed material, 911.gov, the FCC, the FAA's ground-to-air signals, the EPA's
+emergency water disinfection and the FDA), the AHA and American Red Cross first-aid
 guidelines, the Wilderness Medical Society's practice guidelines, and a few others where they
-say it best. The sources are named at the foot of each page. The pages live in `app/src/main/res/raw/aid_*.txt` in a small plain-text markup, so a
+say it best (the American Dental Association, NASAR, NOLS, the NWCG helicopter guides). The sources are named at the foot of each page. The pages live in `app/src/main/res/raw/aid_*.txt` in a small plain-text markup, so a
 translation is a copy of that folder (`raw-de/`, `raw-es/` …) and Android picks the reader's
 language.
 
@@ -108,9 +113,11 @@ Kit is installed, and should offer the link only when it is.
 
 **A first-aid page:** action `com.wanderwildwood.zatsuno.action.FIRST_AID`, with the page's id
 as the string extra `com.wanderwildwood.zatsuno.extra.PAGE`. The ids are `scene`, `call`,
-`cpr`, `choking`, `bleeding`, `shock`, `anaphylaxis`, `allergy`, `head`, `fracture`, `sprain`,
-`burns`, `hypothermia`, `frostbite`, `heat`, `lightning`, `snakebite`, `ticks`, `wounds`,
-`blisters` and `dehydration`. An id that is not one of these opens nothing.
+`signals`, `cpr`, `choking`, `bleeding`, `drowning`, `anaphylaxis`, `breathing`, `chest`,
+`stroke`, `shock`, `seizure`, `sugar`, `poisoning`, `head`, `heat`, `hypothermia`, `altitude`,
+`lightning`, `burns`, `snakebite`, `bites`, `allergy`, `fracture`, `frostbite`, `dehydration`,
+`water`, `sprain`, `wounds`, `eye`, `nose`, `ticks`, `blisters`, `poisonivy` and `kit`. An id
+that is not one of these opens nothing.
 
 ```kotlin
 Intent("com.wanderwildwood.zatsuno.action.FIRST_AID")

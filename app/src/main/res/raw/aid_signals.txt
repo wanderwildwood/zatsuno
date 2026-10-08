@@ -1,0 +1,22 @@
+title: Signalling for rescue
+keywords: signal, signalling, rescue, search and rescue, SAR, lost, found, whistle, three blasts, mirror, signal mirror, SOS, morse, flash, flashlight, light, strobe, helicopter, aircraft, ground to air, V, X, arrow, stay put, visible, bright
+source: FAA, Aeronautical Information Manual, 6-2-6 Search and Rescue (ground-air visual code); NPS, "Outdoor Emergency Plan"; NPS, "Hiking Safety"; NASAR, "Hug-a-Tree and Survive"; NWCG, Incident Response Pocket Guide (PMS 461), "Helicopter Passenger Briefing and PPE" and "Helicopter Landing Area Selection"; NWCG Standards for Helicopter Operations (PMS 510).
+---
+# Be found
+1. Call 911 or your local emergency number.
+  No signal: try 911 anyway (see Calling for help); if it fails, signal as below. Stay put unless the spot is unsafe (rising water, rockfall, fire). Searchers find a still target.
+2. Whistle: 3 blasts, wait a minute, repeat. Hear whistles or shouts back, however many: keep whistling in threes and stay where you are.
+3. At night: the Flash SOS button on Calling for help blinks SOS with the phone's flash. By hand: 3 short, 3 long, 3 short (... --- ...), pause, repeat. Save the phone's battery for calls: flash when you hear or see searchers, not all night.
+4. Use an open spot if one is close by; don't wander off looking for one. Lay out a tent fly, pack cover or spare bright clothing; keep on what you need to stay warm. When searchers come, wave something big: movement shows better than colour.
+5. Waiting can take hours. Put on layers, sit on your pack, get out of wind and rain. See Hypothermia.
++++
+# Signal mirror
+- Any mirror or shiny lid works in sun. Hold it near your eye. Stretch the other arm out, make a V with two fingers, and put the aircraft in the V. Tilt until the sunlight spot lands on your fingers, then sweep it across the target.
+- Flash at aircraft, boats and far ridges even if you see nobody. It carries for miles.
+# Signs for aircraft
+- Big, 10 feet (3 m) or more, in the open, with contrast: logs, rocks, trampled snow, bright clothing.
+- V = need help. X = need medical help. Arrow = travelling this way (leave it if you must move). SOS if in doubt. A pilot who has seen you rocks the wings side to side.
+# Helicopter
+- Stay back. Hold onto hats and anything loose: rotor wash throws things. Don't chase anything that blows away.
+- Don't go toward it until the pilot or crew waves you in. Approach from the front, crouched, where the pilot can see you, never from behind. Walk, don't run. Nothing above your head: carry trekking poles and packs low and level. On a slope, come from the downhill side: the blades dip low uphill.
+- Usually the crew comes to you. Wait.
