@@ -69,19 +69,17 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
             BarButton(Icons.Info, stringResource(R.string.cd_about), onAbout)
         },
     ) { modifier ->
-        Column(modifier) {
-            HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) }
-            HorizontalDividerMMD()
-            HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) }
-            HorizontalDividerMMD()
-            HomeRow(stringResource(R.string.home_key), keyStarted?.let { stringResource(R.string.home_key_started, it) }) { onOpen(Route.KEY) }
-            HorizontalDividerMMD()
-            HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) }
-            HorizontalDividerMMD()
-            HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) }
-            HorizontalDividerMMD()
-            HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) }
-            HorizontalDividerMMD()
+        // A list that pages, not a column: six rows of this size only just fit the Kompakt, and
+        // a larger text size or another row pushes the last off the bottom with no way down.
+        LazyColumnMMD(modifier = modifier) {
+            item(key = "call") { HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) } }
+            item(key = "card") { HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) } }
+            item(key = "key") {
+                HomeRow(stringResource(R.string.home_key), keyStarted?.let { stringResource(R.string.home_key_started, it) }) { onOpen(Route.KEY) }
+            }
+            item(key = "aid") { HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) } }
+            item(key = "knots") { HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) } }
+            item(key = "compass") { HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) } }
         }
     }
 }
@@ -93,11 +91,12 @@ private fun HomeRow(label: String, line: String? = null, onClick: () -> Unit) {
         Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = if (line == null) 26.dp else 14.dp),
+            .padding(horizontal = 20.dp, vertical = if (line == null) 20.dp else 10.dp),
     ) {
         TextMMD(text = label, style = MaterialTheme.typography.headlineSmall)
         if (line != null) TextMMD(text = line, style = MaterialTheme.typography.labelSmall)
     }
+    HorizontalDividerMMD()
 }
 
 /** A plain list of names to choose from, with an optional line under each. */
