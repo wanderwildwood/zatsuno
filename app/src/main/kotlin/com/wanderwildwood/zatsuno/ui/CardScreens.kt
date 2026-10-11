@@ -97,7 +97,7 @@ fun CardScreen(onBack: () -> Unit, onEdit: () -> Unit) {
             }
         },
     ) { modifier ->
-        LazyColumnMMD(modifier = modifier) {
+        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
             item(key = "body") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp)) {
                     if (card.isEmpty) {
@@ -178,7 +178,7 @@ fun CardEditScreen(onDone: () -> Unit) {
         onBack = ::save,
     ) { modifier ->
         androidx.activity.compose.BackHandler { save() }
-        LazyColumnMMD(modifier = modifier, scrollStep = 2) {
+        LazyColumnMMD(modifier = modifier, scrollStep = 2, isScrollbarVisible = false) {
             item(key = "name") { Field(stringResource(R.string.card_name), name) { name = it } }
             item(key = "blood") { Field(stringResource(R.string.card_blood), blood) { blood = it } }
             item(key = "allergies") { Field(stringResource(R.string.card_allergies), allergies, lines = 2) { allergies = it } }

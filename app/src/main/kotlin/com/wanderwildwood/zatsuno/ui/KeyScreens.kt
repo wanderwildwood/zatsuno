@@ -217,7 +217,7 @@ fun KeyScreen(
             val alarms = alarms(ranking, state.answers)
             // A new life threat goes to the top of the list, and the list goes to it at once.
             LaunchedEffect(alarms.map { it.first }) { if (alarms.isNotEmpty()) list.scrollToItem(0) }
-            LazyColumnMMD(modifier = Modifier.fillMaxWidth().weight(1f), state = list) {
+            LazyColumnMMD(modifier = Modifier.fillMaxWidth().weight(1f), state = list, isScrollbarVisible = false) {
                 for ((page, line) in alarms) {
                     run {
                         item(key = "alarm:$page") {
@@ -753,7 +753,7 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
         },
     ) { modifier ->
         val empty = stringResource(R.string.key_note_empty)
-        LazyColumnMMD(modifier = modifier) {
+        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
             val lines = text?.lines() ?: listOf(empty)
             lines.forEachIndexed { i, l ->
                 item(key = i) {
@@ -795,7 +795,7 @@ fun ReadOutScreen(state: KeyState, model: CompassModel, onBack: () -> Unit) {
         onBack = onBack,
         actions = { BarButton(Icons.Share, stringResource(R.string.key_share)) { shareText(context, context.getString(R.string.key_title), text) } },
     ) { modifier ->
-        LazyColumnMMD(modifier = modifier) {
+        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
             text.lines().forEachIndexed { i, l ->
                 item(key = i) {
                     SelectionContainer(Modifier.textActions()) {

@@ -120,7 +120,7 @@ fun AidScreen(
         LaunchedEffect(page.id) {
             if (openMore && hasMore) list.scrollToItem(page.now.size + if (showCard) 1 else 0)
         }
-        LazyColumnMMD(modifier = modifier, state = list) {
+        LazyColumnMMD(modifier = modifier, state = list, isScrollbarVisible = false) {
             if (showCard) {
                 item(key = "card") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { CardLines(card!!, bordered = true) } }
             }
@@ -321,7 +321,7 @@ fun KnotScreen(knot: Knot, onBack: () -> Unit) {
         },
     ) { modifier ->
         // One step to a swipe: each is most of a screen tall.
-        LazyColumnMMD(modifier = modifier, scrollStep = 1) {
+        LazyColumnMMD(modifier = modifier, scrollStep = 1, isScrollbarVisible = false) {
             item(key = "use") {
                 Readable {
                     TextMMD(text = use, style = MaterialTheme.typography.bodyMedium,

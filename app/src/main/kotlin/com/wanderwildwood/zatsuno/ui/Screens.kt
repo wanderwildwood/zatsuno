@@ -71,7 +71,7 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
     ) { modifier ->
         // A list that pages, not a column: six rows of this size only just fit the Kompakt, and
         // a larger text size or another row pushes the last off the bottom with no way down.
-        LazyColumnMMD(modifier = modifier) {
+        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
             item(key = "call") { HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) } }
             item(key = "card") { HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) } }
             item(key = "key") {
@@ -108,7 +108,7 @@ fun ListScreen(
     onPick: (Int) -> Unit,
 ) {
     Screen(title, onBack) { modifier ->
-        LazyColumnMMD(modifier = modifier) {
+        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
             rows.forEachIndexed { i, (name, line) ->
                 item(key = i) {
                     Column(
@@ -157,7 +157,7 @@ fun SearchScreen(
                     modifier = Modifier.padding(20.dp),
                 )
             }
-            LazyColumnMMD(modifier = Modifier.fillMaxSize()) {
+            LazyColumnMMD(modifier = Modifier.fillMaxSize(), isScrollbarVisible = false) {
                 hits.forEach { hit ->
                     item(key = "${hit.entry.kind}:${hit.entry.id}") {
                         val kind = stringResource(
