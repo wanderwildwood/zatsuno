@@ -56,8 +56,9 @@ fun Screen(
 }
 
 /**
- * The home screen. The call for help comes first, because it is what is wanted in a hurry,
- * then the three parts. Search and About sit in the bar.
+ * The home screen. The call for help comes first, because it is what is wanted in a hurry, then
+ * the compass, the one instrument, where it is seen on opening rather than a swipe down; then
+ * the card, the assessment and the two books. Search and About sit in the bar.
  */
 @Composable
 fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Unit, keyStarted: String? = null) {
@@ -73,13 +74,13 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
         // a larger text size or another row pushes the last off the bottom with no way down.
         LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
             item(key = "call") { HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) } }
+            item(key = "compass") { HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) } }
             item(key = "card") { HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) } }
             item(key = "key") {
                 HomeRow(stringResource(R.string.home_key), keyStarted?.let { stringResource(R.string.home_key_started, it) }) { onOpen(Route.KEY) }
             }
             item(key = "aid") { HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) } }
             item(key = "knots") { HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) } }
-            item(key = "compass") { HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) } }
         }
     }
 }
