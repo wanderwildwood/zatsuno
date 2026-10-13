@@ -35,6 +35,10 @@ data class Live(
     val magnetic: Float? = null,
     val trueNorth: Boolean = false,
     val frozen: Boolean = false,
+    /** The magnetometer says it needs a figure-eight before it can be trusted. */
+    val needsCalibrating: Boolean = false,
+    /** Every heading sensor was tried and none gave a reading. */
+    val silent: Boolean = false,
 ) {
     /** The heading to show, or null when there is none to show honestly. */
     val heading: Float?
@@ -51,9 +55,9 @@ data class Live(
  *
  * Adapted from kCompass's CompassViewModel (Ondřej Koloničný, OK1CDJ, GPL-3.0). It runs only
  * while one of those screens is in front ([start] and [stop] follow the screen), and
- * redraws no more than once a second, and the heading only when it has moved more than three
- * degrees: every change is a panel refresh on e-ink. [freeze] stops both, leaving the last
- * reading still on the screen to be read or copied.
+ * redraws the heading no more than twice a second and only when it has moved three degrees or
+ * more, and the position no more than once a second: every change is a panel refresh on e-ink.
+ * [freeze] stops both, leaving the last reading still on the screen to be read or copied.
  */
 class CompassModel(app: Application) : AndroidViewModel(app) {
 
@@ -103,15 +107,27 @@ class CompassModel(app: Application) : AndroidViewModel(app) {
     private var fixesRunning = false
 
     private fun run(ctx: Context) {
+        // The first reading of each run is shown whatever it is, so a heading left from the last
+        // visit is replaced at once rather than only when it is a few degrees out.
+        lastHeading = Float.NaN
+        lastHeadingAt = 0L
+        _live.update { it.copy(silent = false) }
         job = viewModelScope.launch {
             launch {
-                Heading.updates(ctx).collect { deg ->
-                    val now = SystemClock.elapsedRealtime()
-                    val moved = lastHeading.isNaN() || Bearing.apart(deg, lastHeading) > HYSTERESIS
-                    if (!moved || (lastHeadingAt != 0L && now - lastHeadingAt < INTERVAL)) return@collect
-                    lastHeadingAt = now
-                    lastHeading = deg
-                    _live.update { it.copy(magnetic = deg) }
+                Heading.updates(ctx).collect { signal ->
+                    when (signal) {
+                        is HeadingSignal.Calibrated -> _live.update { it.copy(needsCalibrating = !signal.ok) }
+                        HeadingSignal.Silent -> _live.update { it.copy(silent = true, magnetic = null) }
+                        is HeadingSignal.Degrees -> {
+                            val deg = signal.value
+                            val now = SystemClock.elapsedRealtime()
+                            val moved = lastHeading.isNaN() || Bearing.apart(deg, lastHeading) >= HYSTERESIS
+                            if (!moved || (lastHeadingAt != 0L && now - lastHeadingAt < HEADING_INTERVAL)) return@collect
+                            lastHeadingAt = now
+                            lastHeading = deg
+                            _live.update { it.copy(magnetic = deg, silent = false) }
+                        }
+                    }
                 }
             }
             if (Fixes.permitted(ctx)) {
@@ -170,6 +186,7 @@ class CompassModel(app: Application) : AndroidViewModel(app) {
     private companion object {
         const val KEY_TRUE = "true_north"
         const val INTERVAL = 1000L
+        const val HEADING_INTERVAL = 500L
         const val HYSTERESIS = 3f
     }
 }

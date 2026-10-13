@@ -97,6 +97,13 @@ Ondřej Koloničný, OK1CDJ, under GPL-3.0: the smoothed heading from the rotati
 position stream from Android's own location service (no Google services, which the Kompakt
 does not have), the coordinate formats and the Maidenhead locator, with its tests.
 
+kCompass reads only the fused rotation-vector sensor, which Android builds from a gyroscope.
+Here the heading falls back in turn to the geomagnetic rotation vector, the accelerometer and
+magnetometer read directly, and the old orientation sensor, moving on from any that stays
+silent for a few seconds. Held nearer upright than flat, it reads where the back of the phone
+faces. When the magnetometer reports itself uncalibrated the screen asks for a figure eight,
+and when no sensor answers at all it says so rather than leaving the card blank.
+
 ## The knot drawings
 
 Drawn by `tools/make-knots.py`, which writes them as vector drawables. Each knot is one rope

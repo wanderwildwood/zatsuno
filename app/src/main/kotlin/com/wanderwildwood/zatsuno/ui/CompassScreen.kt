@@ -57,7 +57,7 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
             val heading = live.heading
             Rose(heading, listOf(points[0], points[2], points[4], points[6]), Modifier.padding(top = 6.dp).size(176.dp))
             val headingText = when {
-                !live.hasSensor -> null
+                !live.hasSensor || live.silent -> null
                 heading == null -> "—"
                 else -> "${Bearing.whole(heading)}° ${points[Bearing.point(heading)]} " +
                     stringResource(if (live.trueNorth) R.string.heading_true else R.string.heading_magnetic)
@@ -66,14 +66,19 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
                 // A figure the instrument reads out, not type, so it is sized as one.
                 TextMMD(text = headingText, fontSize = 40.sp, fontWeight = FontWeight.Bold)
             } else {
-                TextMMD(text = stringResource(R.string.compass_no_sensor), style = MaterialTheme.typography.bodyMedium)
+                TextMMD(
+                    text = stringResource(if (!live.hasSensor) R.string.compass_no_sensor else R.string.compass_silent),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
             val note = when {
-                live.trueNorth && live.fix == null && live.magnetic != null -> stringResource(R.string.compass_true_needs_fix)
                 live.frozen -> stringResource(R.string.compass_frozen)
+                !live.hasSensor || live.silent -> null
+                live.needsCalibrating -> stringResource(R.string.compass_calibrate)
+                live.trueNorth && live.fix == null && live.magnetic != null -> stringResource(R.string.compass_true_needs_fix)
                 else -> stringResource(R.string.compass_flat)
             }
-            TextMMD(text = note, style = MaterialTheme.typography.labelSmall)
+            if (note != null) TextMMD(text = note, style = MaterialTheme.typography.labelSmall)
 
             // True north is a row with its switch: the row takes the press.
             Row(

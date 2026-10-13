@@ -116,6 +116,8 @@
     <string name="compass_true_needs_fix">True north needs a position fix first.</string>
     <string name="compass_no_sensor">This phone has no compass sensor.</string>
     <string name="compass_flat">Hold the phone flat, away from metal.</string>
+    <string name="compass_calibrate">Not yet calibrated: move the phone through a figure eight a few times.</string>
+    <string name="compass_silent">The compass sensor is giving no reading. Move away from metal and magnets, then open the compass again.</string>
     <string name="compass_freeze">Freeze</string>
     <string name="compass_resume">Resume</string>
     <string name="compass_frozen">Held. Nothing on this screen is updating.</string>
