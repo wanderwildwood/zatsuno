@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.components.divider.HorizontalDividerMMD
-import com.mudita.mmd.components.lazy.LazyColumnMMD
 import com.mudita.mmd.components.text.TextMMD
 import com.mudita.mmd.components.text_field.TextFieldMMD
 import com.mudita.mmd.components.top_app_bar.TopAppBarMMD
@@ -72,7 +71,7 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
     ) { modifier ->
         // A list that pages, not a column: six rows of this size only just fit the Kompakt, and
         // a larger text size or another row pushes the last off the bottom with no way down.
-        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
+        PagedColumn(modifier) {
             item(key = "call") { HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) } }
             item(key = "compass") { HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) } }
             item(key = "card") { HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) } }
@@ -109,7 +108,7 @@ fun ListScreen(
     onPick: (Int) -> Unit,
 ) {
     Screen(title, onBack) { modifier ->
-        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
+        PagedColumn(modifier) {
             rows.forEachIndexed { i, (name, line) ->
                 item(key = i) {
                     Column(
@@ -158,7 +157,7 @@ fun SearchScreen(
                     modifier = Modifier.padding(20.dp),
                 )
             }
-            LazyColumnMMD(modifier = Modifier.fillMaxSize(), isScrollbarVisible = false) {
+            PagedColumn(Modifier.fillMaxSize()) {
                 hits.forEach { hit ->
                     item(key = "${hit.entry.kind}:${hit.entry.id}") {
                         val kind = stringResource(

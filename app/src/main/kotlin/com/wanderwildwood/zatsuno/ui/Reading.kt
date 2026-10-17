@@ -43,7 +43,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.mudita.mmd.components.lazy.LazyColumnMMD
 import com.mudita.mmd.components.text.TextMMD
 import com.wanderwildwood.zatsuno.Given
 import com.wanderwildwood.zatsuno.R
@@ -120,7 +119,7 @@ fun AidScreen(
         LaunchedEffect(page.id) {
             if (openMore && hasMore) list.scrollToItem(page.now.size + if (showCard) 1 else 0)
         }
-        LazyColumnMMD(modifier = modifier, state = list, isScrollbarVisible = false) {
+        PagedColumn(modifier, state = list) {
             if (showCard) {
                 item(key = "card") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { CardLines(card!!, bordered = true) } }
             }
@@ -222,7 +221,7 @@ private fun BlockView(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().clickable { onTick(block.text) }.padding(vertical = 3.dp),
         ) {
-            CheckboxMMD(checked = block.text in ticked, onCheckedChange = null)
+            CheckboxMMD(checked = block.text in ticked, onCheckedChange = { onTick(block.text) })
             Spacer(Modifier.width(8.dp))
             TextMMD(text = link(block.text), style = body)
         } else Row(Modifier.padding(vertical = 3.dp)) {
@@ -320,8 +319,8 @@ fun KnotScreen(knot: Knot, onBack: () -> Unit) {
             }
         },
     ) { modifier ->
-        // One step to a swipe: each is most of a screen tall.
-        LazyColumnMMD(modifier = modifier, scrollStep = 1, isScrollbarVisible = false) {
+        // Whole steps to a swipe: each is most of a screen tall.
+        PagedColumn(modifier) {
             item(key = "use") {
                 Readable {
                     TextMMD(text = use, style = MaterialTheme.typography.bodyMedium,

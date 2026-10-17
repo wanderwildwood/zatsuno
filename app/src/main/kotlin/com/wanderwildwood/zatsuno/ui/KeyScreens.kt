@@ -38,7 +38,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.components.divider.HorizontalDividerMMD
-import com.mudita.mmd.components.lazy.LazyColumnMMD
 import com.mudita.mmd.components.text.TextMMD
 import com.mudita.mmd.components.text_field.TextFieldMMD
 import com.wanderwildwood.zatsuno.R
@@ -217,7 +216,7 @@ fun KeyScreen(
             val alarms = alarms(ranking, state.answers)
             // A new life threat goes to the top of the list, and the list goes to it at once.
             LaunchedEffect(alarms.map { it.first }) { if (alarms.isNotEmpty()) list.scrollToItem(0) }
-            LazyColumnMMD(modifier = Modifier.fillMaxWidth().weight(1f), state = list, isScrollbarVisible = false) {
+            PagedColumn(Modifier.fillMaxWidth().weight(1f), state = list) {
                 for ((page, line) in alarms) {
                     run {
                         item(key = "alarm:$page") {
@@ -753,7 +752,7 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
         },
     ) { modifier ->
         val empty = stringResource(R.string.key_note_empty)
-        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
+        PagedColumn(modifier) {
             val lines = text?.lines() ?: listOf(empty)
             lines.forEachIndexed { i, l ->
                 item(key = i) {
@@ -795,7 +794,7 @@ fun ReadOutScreen(state: KeyState, model: CompassModel, onBack: () -> Unit) {
         onBack = onBack,
         actions = { BarButton(Icons.Share, stringResource(R.string.key_share)) { shareText(context, context.getString(R.string.key_title), text) } },
     ) { modifier ->
-        LazyColumnMMD(modifier = modifier, isScrollbarVisible = false) {
+        PagedColumn(modifier) {
             text.lines().forEachIndexed { i, l ->
                 item(key = i) {
                     SelectionContainer(Modifier.textActions()) {
