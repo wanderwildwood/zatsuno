@@ -42,6 +42,7 @@
     </queries>
 
     <application
+        android:name=".FieldKitApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher_mudita"
         android:roundIcon="@drawable/ic_launcher_mudita"

@@ -338,8 +338,19 @@
     <string name="key_pupils">Pupils (PERRL)</string>
     <string name="key_pupils_not_checked">Not checked</string>
     <string name="key_share">Send the note</string>
-    <string name="key_start_over">Start over</string>
-    <string name="key_start_over_armed">Tap again to clear the note</string>
+    <string name="key_end">End</string>
+    <string name="key_end_assessment">End assessment</string>
+    <string name="key_end_title">End this assessment?</string>
+    <string name="key_end_text">Keep the note and it waits on the home screen as the last note, to copy or share. Either way the next assessment starts fresh and the reminders stop.</string>
+    <string name="key_end_keep">Keep the note</string>
+    <string name="key_end_discard">Discard the note</string>
+    <string name="key_end_discard_armed">Tap again to discard</string>
+    <string name="key_end_cancel">Cancel</string>
+    <string name="home_last">Last assessment</string>
+    <string name="home_last_ended">started %1$s</string>
+    <string name="last_title">Last assessment</string>
+    <string name="last_delete">Delete this note</string>
+    <string name="last_delete_armed">Tap again to delete the note</string>
     <string name="key_note_empty">Nothing written yet.</string>
 
     <!-- Scene size-up -->
@@ -649,6 +660,7 @@
 
     <!-- The reassessment reminder -->
     <string name="recheck_channel">Reassessment reminders</string>
+    <string name="recheck_end">End assessment</string>
     <string name="recheck_title">Time to reassess</string>
     <string name="recheck_text">Reassess LOR, airway, breathing, HR, RR and skin (SCTM). Add a set of vital signs to the note.</string>
 

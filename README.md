@@ -30,7 +30,8 @@ and it will install on any Android 12 device.
   the problem list gathers on one screen, the danger pages not yet ruled out stay in view with
   the one question that would settle each, and "not sure" never rules anything out. It writes
   a timed SOAP note as you go, to give as a verbal report or send to Messaging, and reminds you
-  to reassess every 15 minutes, or 5 while a danger page is on the problem list. It names
+  to reassess every 15 minutes, or 5 while a danger page is on the problem list. "End
+  assessment" asks whether to keep the note or discard it, and starts the next one fresh. It names
   pages; it never says the patient is stable.
 - **First aid.** Thirty-six short pages: scene size-up and primary assessment, signalling
   for rescue, hands-only CPR, choking, severe bleeding and tourniquets, drowning, anaphylaxis,

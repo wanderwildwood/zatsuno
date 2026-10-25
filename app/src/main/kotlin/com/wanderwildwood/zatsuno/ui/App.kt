@@ -39,6 +39,7 @@ object Route {
     const val KEY = "key"
     const val NOTE = "key:note"
     const val READ_OUT = "key:readout"
+    const val LAST = "key:last"
     fun aid(id: String, more: Boolean = false) = if (more) "aid:$id:more" else "aid:$id"
     fun knot(id: String) = "knot:$id"
 }
@@ -58,6 +59,7 @@ fun FieldKitApp(
     val context = LocalContext.current
     val stack = rememberSaveable(saver = stackSaver()) { mutableStateListOf(Route.HOME) }
     var about by rememberSaveable { mutableStateOf(false) }
+    var ending by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     var keyStage by rememberSaveable { mutableStateOf(Stage.SCENE.name) }
     // A position another app sent for "Calling for help", until the reader goes back to the phone's own.
@@ -79,6 +81,12 @@ fun FieldKitApp(
                 givenSaved = r.given?.save()
                 stack.add(Route.aid(Pages.CALL))
             }
+            // The reminder's "End assessment": the key, and the question.
+            Opening.Request.End -> {
+                stack.add(Route.HOME)
+                stack.add(Route.KEY)
+                ending = true
+            }
             // The reassessment reminder, tapped: the key at Monitoring, over the home screen.
             Opening.Request.Monitor -> {
                 stack.add(Route.HOME)
@@ -96,7 +104,8 @@ fun FieldKitApp(
     // A sent position belongs to the visit that brought it; the call page opened later is the phone's own.
     LaunchedEffect(route) { if (route != Route.aid(Pages.CALL) && route != Route.aid(Pages.CALL, more = true)) givenSaved = null }
     when {
-        route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true }, keyState.incident?.let { keyState.note.time(it.started) })
+        route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true }, keyState.incident?.let { keyState.note.time(it.started) },
+            lastNote = keyState.kept?.let { keyState.note.time(it.started) }, onLast = { open(Route.LAST) })
         route == Route.KEY -> KeyScreen(
             state = keyState,
             stage = Stage.valueOf(keyStage),
@@ -105,12 +114,11 @@ fun FieldKitApp(
             onOpenPage = { open(Route.aid(it)) },
             onNote = { open(Route.NOTE) },
             onReadOut = { open(Route.READ_OUT) },
+            onEnd = { ending = true },
             onBack = ::back,
         )
-        route == Route.NOTE -> NoteScreen(keyState, model, onReadOut = { open(Route.READ_OUT) }, onBack = ::back) {
-            keyStage = Stage.SCENE.name
-            back()
-        }
+        route == Route.NOTE -> NoteScreen(keyState, model, onReadOut = { open(Route.READ_OUT) }, onBack = ::back, onEnd = { ending = true })
+        route == Route.LAST -> LastNoteScreen(keyState, ::back)
         route == Route.READ_OUT -> ReadOutScreen(keyState, model, ::back)
         route == Route.AID -> ListScreen(
             title = stringResource(R.string.home_aid),
@@ -167,6 +175,20 @@ fun FieldKitApp(
             }
         }
         else -> back()
+    }
+    if (ending) {
+        if (keyState.incident == null) ending = false
+        else EndAssessmentDialog(
+            keyState,
+            onEnded = {
+                // Fresh: back to the start, at the first stage.
+                ending = false
+                keyStage = Stage.SCENE.name
+                stack.clear()
+                stack.add(Route.HOME)
+            },
+            onDismiss = { ending = false },
+        )
     }
     if (about) AboutDialog(onDismiss = { about = false })
 }

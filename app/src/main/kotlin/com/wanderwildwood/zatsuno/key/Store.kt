@@ -33,46 +33,133 @@ object Keys {
 }
 
 /**
- * Where the open incident is kept: one file in the app's own storage, which is never backed up
- * and never sent. Written after every change; removed only by "Start over".
+ * What the assessment state machine needs from the phone, so the rules can be tested without
+ * one: the two files, and the reminder (an alarm and a notification).
  */
-object IncidentStore {
-    private fun file(context: Context) = File(context.noBackupFilesDir, "incident.txt")
+interface AssessmentPlatform {
+    fun readOpen(): String?
+    fun writeOpen(text: String)
+    fun deleteOpen()
+    fun readKept(): String?
+    fun writeKept(text: String)
+    fun deleteKept()
+    /** Sets the reminder for an open assessment (or takes it away if none is due). */
+    fun remind(incident: Incident)
+    /** Cancels the alarm and any reminder notification showing. */
+    fun cancelReminder()
+}
 
-    fun load(context: Context): Incident? = runCatching { file(context).takeIf { it.isFile }?.readText()?.let(Incident::decode) }.getOrNull()
+/**
+ * The assessment's life: nothing -> open (a first answer starts it) -> ended, by "End
+ * assessment" only. Ending always cancels the alarm and the notification. The open assessment
+ * is saved after every change; the one that was ended with "keep" waits as the last note
+ * until it is deleted or another is kept over it.
+ */
+class Assessments(private val p: AssessmentPlatform) {
+    fun open(): Incident? = runCatching { p.readOpen()?.let(Incident::decode) }.getOrNull()
 
-    fun save(context: Context, incident: Incident) {
-        val f = file(context)
-        val tmp = File(f.parentFile, f.name + ".new")
-        tmp.writeText(incident.encode())
-        tmp.renameTo(f)
-        Recheck.schedule(context, incident)
+    fun kept(): Incident? = runCatching { p.readKept()?.let(Incident::decode) }.getOrNull()
+
+    fun save(incident: Incident) {
+        p.writeOpen(incident.encode())
+        p.remind(incident)
     }
 
-    fun clear(context: Context) {
-        file(context).delete()
-        Recheck.cancel(context)
+    /** Ends the open assessment: [keep] it as the last note, or throw it away. Either way the next one starts fresh. */
+    fun end(keep: Boolean) {
+        val text = p.readOpen()
+        if (keep && text != null && Incident.decode(text) != null) p.writeKept(text)
+        p.deleteOpen()
+        p.cancelReminder()
+    }
+
+    fun deleteKept() = p.deleteKept()
+
+    /**
+     * Run whenever the app's process starts: no open assessment, no alarm and no notification
+     * (whatever left them behind); an open one has its reminder set again.
+     */
+    fun sweep() {
+        val o = open()
+        if (o == null) { p.deleteOpen(); p.cancelReminder() } else p.remind(o)
+    }
+}
+
+/** The phone's side of [Assessments]: one file each in the app's own storage, which is never backed up and never sent. */
+class AndroidAssessmentPlatform(private val context: Context) : AssessmentPlatform {
+    private fun open() = File(context.noBackupFilesDir, "incident.txt")
+    private fun kept() = File(context.noBackupFilesDir, "last-note.txt")
+
+    private fun write(f: File, text: String) {
+        val tmp = File(f.parentFile, f.name + ".new")
+        tmp.writeText(text)
+        tmp.renameTo(f)
+    }
+
+    override fun readOpen() = runCatching { open().takeIf { it.isFile }?.readText() }.getOrNull()
+    override fun writeOpen(text: String) = write(open(), text)
+    override fun deleteOpen() { open().delete() }
+    override fun readKept() = runCatching { kept().takeIf { it.isFile }?.readText() }.getOrNull()
+    override fun writeKept(text: String) = write(kept(), text)
+    override fun deleteKept() { kept().delete() }
+    override fun remind(incident: Incident) = Recheck.schedule(context, incident)
+    override fun cancelReminder() = Recheck.cancel(context)
+}
+
+/** The app's one [Assessments], on the phone. */
+object IncidentStore {
+    fun of(context: Context) = Assessments(AndroidAssessmentPlatform(context.applicationContext))
+    fun load(context: Context): Incident? = of(context).open()
+    fun save(context: Context, incident: Incident) = of(context).save(incident)
+    fun end(context: Context, keep: Boolean) = of(context).end(keep)
+    fun kept(context: Context): Incident? = of(context).kept()
+    fun deleteKept(context: Context) = of(context).deleteKept()
+    fun sweep(context: Context) = of(context).sweep()
+}
+
+/**
+ * When the reminder next goes off, if at all. Once per due time: a reminder already given for
+ * this due time is not given again every time the screen is tapped; and an assessment nobody
+ * has touched for [STALE_MS] is left alone rather than nagged about for ever.
+ */
+object ReminderPlan {
+    const val STALE_MS = 12 * 60 * 60_000L
+
+    /** [due] is Incident.nextCheck; [firedFor] the due time last reminded about (0 for none). Null: no alarm. */
+    fun alarmAt(due: Long, lastActivity: Long, now: Long, firedFor: Long): Long? = when {
+        now - lastActivity > STALE_MS -> null
+        due > now -> due
+        firedFor >= due -> null
+        else -> now
     }
 }
 
 /**
  * The reassessment reminder: one alarm, set for the next reassessment whenever the incident
  * changes. When it goes off the phone buzzes and a notification says a reassessment is due;
- * tapping it opens the key at Monitoring.
+ * tapping it opens the key at Monitoring. The notification can be swiped away, is never
+ * ongoing, takes itself away after an hour, and has an "End assessment" action.
  */
 object Recheck {
     private const val CHANNEL = "recheck"
     private const val NOTIFICATION = 1
+    private const val PREFS = "recheck"
+    private const val FIRED_FOR = "fired_for"
     const val EXTRA_MONITOR = "com.wanderwildwood.zatsuno.extra.MONITOR"
+    /** Only Field Kit's own notification sends it: opens the question "End assessment?". */
+    const val EXTRA_END = "com.wanderwildwood.zatsuno.extra.END"
 
     private fun pending(context: Context) = PendingIntent.getBroadcast(
         context, 0, Intent(context, RecheckReceiver::class.java),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-    fun schedule(context: Context, incident: Incident) {
-        val at = incident.nextCheck(Keys.get(context))
+    private fun firedFor(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong(FIRED_FOR, 0L)
+
+    fun schedule(context: Context, incident: Incident, now: Long = System.currentTimeMillis()) {
         val alarms = context.getSystemService(AlarmManager::class.java)
+        val at = ReminderPlan.alarmAt(incident.nextCheck(Keys.get(context)), incident.last, now, firedFor(context))
+        if (at == null) { alarms.cancel(pending(context)); return }
         // Exact when the phone allows it; otherwise as near as Android will let it be.
         if (alarms.canScheduleExactAlarms()) alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending(context))
         else alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending(context))
@@ -81,6 +168,7 @@ object Recheck {
     fun cancel(context: Context) {
         context.getSystemService(AlarmManager::class.java).cancel(pending(context))
         context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().remove(FIRED_FOR).apply()
     }
 
     /** Dismisses the reminder once the reassessment is under way. */
@@ -88,7 +176,9 @@ object Recheck {
         context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
     }
 
-    fun notify(context: Context) {
+    fun notify(context: Context, incident: Incident) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+            .putLong(FIRED_FOR, incident.nextCheck(Keys.get(context))).apply()
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(
             NotificationChannel(CHANNEL, context.getString(R.string.recheck_channel), NotificationManager.IMPORTANCE_HIGH).apply {
@@ -100,12 +190,21 @@ object Recheck {
             Intent(context, MainActivity::class.java).putExtra(EXTRA_MONITOR, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
+        val end = PendingIntent.getActivity(
+            context, 1,
+            Intent(context, MainActivity::class.java).putExtra(EXTRA_END, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
         val n = android.app.Notification.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.recheck_title))
             .setContentText(context.getString(R.string.recheck_text))
             .setContentIntent(open)
             .setAutoCancel(true)
+            .setOngoing(false)
+            .setOnlyAlertOnce(true)
+            .setTimeoutAfter(60 * 60_000L)
+            .addAction(android.app.Notification.Action.Builder(null, context.getString(R.string.recheck_end), end).build())
             .build()
         manager.notify(NOTIFICATION, n)
         buzz(context, 600)
@@ -120,7 +219,8 @@ object Recheck {
 
 class RecheckReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        // Only while an incident is still open: "Start over" cancels the alarm, this makes sure.
-        if (IncidentStore.load(context) != null) Recheck.notify(context)
+        // Only while an assessment is still open: ending it cancels the alarm, this makes sure.
+        val open = IncidentStore.load(context)
+        if (open != null) Recheck.notify(context, open) else Recheck.cancel(context)
     }
 }

@@ -26,6 +26,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        // The app is open in front of the person: the reminder has done its job.
+        com.wanderwildwood.zatsuno.key.Recheck.seen(this)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -36,6 +42,10 @@ class MainActivity : ComponentActivity() {
         intent ?: return
         // Reopened from the recent apps, the old request would come round again.
         if (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return
+        if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_END, false)) {
+            request.value = Opening.Request.End
+            return
+        }
         if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_MONITOR, false)) {
             request.value = Opening.Request.Monitor
             return

@@ -33,6 +33,8 @@ object Opening {
         data class Call(val given: Given?) : Request
         /** The reassessment reminder: the key at Monitoring. Only Field Kit's own notification sends it. */
         data object Monitor : Request
+        /** The reminder's "End assessment" action: the key, with the question of keeping or discarding the note. */
+        data object End : Request
     }
 
     /**

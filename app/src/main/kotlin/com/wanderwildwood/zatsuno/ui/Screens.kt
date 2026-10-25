@@ -60,7 +60,7 @@ fun Screen(
  * the card, the assessment and the two books. Search and About sit in the bar.
  */
 @Composable
-fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Unit, keyStarted: String? = null) {
+fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Unit, keyStarted: String? = null, lastNote: String? = null, onLast: () -> Unit = {}) {
     Screen(
         title = stringResource(R.string.app_name),
         onBack = null,
@@ -78,6 +78,7 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
             item(key = "key") {
                 HomeRow(stringResource(R.string.home_key), keyStarted?.let { stringResource(R.string.home_key_started, it) }) { onOpen(Route.KEY) }
             }
+            if (lastNote != null) item(key = "last") { HomeRow(stringResource(R.string.home_last), stringResource(R.string.home_last_ended, lastNote), onLast) }
             item(key = "aid") { HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) } }
             item(key = "knots") { HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) } }
         }

@@ -11,8 +11,10 @@ choose.
 
 "Patient assessment" writes a SOAP note as you answer: your answers, what you write in, the
 vital signs and the position, each with its time. It is kept in the app's private storage,
-never backed up, until you press "Start over" twice. While a note is open the app sets one
-alarm for the next reassessment, which buzzes and shows a notification.
+never backed up, until you press "End assessment" and choose to discard it. If you choose "Keep the
+note" it stays in the same private storage as the last note, until you delete it or keep another over it.
+While an assessment is open the app sets one alarm for the next reassessment, which buzzes and shows a
+notification that you can swipe away; ending the assessment cancels the alarm and the notification.
 
 The "In case of emergency" card is kept in the app's private storage and is never backed up by
 the app. If you switch on "Show on the lock screen", the lines you choose are handed to Glance

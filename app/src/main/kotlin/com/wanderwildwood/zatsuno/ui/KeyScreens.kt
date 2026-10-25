@@ -117,9 +117,20 @@ class KeyState(
         if (last == null || at - last.at > 5 * 60_000L) change { Incident.Where(at, lat, lon, accuracy) }
     }
 
-    fun startOver() {
-        IncidentStore.clear(context)
+    /** The note of the last assessment ended with "Keep the note", for the home screen. */
+    var kept by mutableStateOf(IncidentStore.kept(context))
+        private set
+
+    /** Ends the assessment: keep the note as the last one, or discard it. All that belongs to it is cleared, reminder included. */
+    fun end(keep: Boolean) {
+        IncidentStore.end(context, keep)
         incident = null
+        kept = IncidentStore.kept(context)
+    }
+
+    fun deleteKept() {
+        IncidentStore.deleteKept(context)
+        kept = null
     }
 
     fun text(field: String): String = incident?.texts()?.get(field)?.text.orEmpty()
@@ -194,6 +205,7 @@ fun KeyScreen(
     onOpenPage: (String) -> Unit,
     onNote: () -> Unit,
     onReadOut: () -> Unit,
+    onEnd: () -> Unit,
     onBack: () -> Unit,
 ) {
     val list = rememberLazyListState()
@@ -207,7 +219,10 @@ fun KeyScreen(
     Screen(
         title = stringResource(R.string.key_title),
         onBack = onBack,
-        actions = { BarText(stringResource(R.string.key_note), onNote) },
+        actions = {
+            if (state.incident != null) BarText(stringResource(R.string.key_end), onEnd)
+            BarText(stringResource(R.string.key_note), onNote)
+        },
     ) { modifier ->
         Column(modifier) {
             StageStrip(stage, onStage)
@@ -237,7 +252,7 @@ fun KeyScreen(
                     Stage.CALL -> call(state, ranking, onOpenPage, onReadOut)
                     Stage.SECONDARY -> secondary(state, ranking, draft)
                     Stage.TREAT -> treat(state, ranking, onOpenPage, onStage)
-                    Stage.MONITOR -> monitor(state, draft, onStage)
+                    Stage.MONITOR -> monitor(state, draft, onStage, onEnd)
                 }
                 val next = Stage.entries.getOrNull(stage.ordinal + 1)
                 if (next != null && !(stage == Stage.SCENE && state.answers.single("safe") == "no")) {
@@ -532,7 +547,7 @@ private fun CardOffer(state: KeyState) {
 @Composable
 private fun TextLine(state: KeyState, field: String, letter: String?) {
     var value by rememberSaveable(field) { mutableStateOf(state.text(field)) }
-    // Filled from the card, or emptied by Start over: the field follows the note.
+    // Filled from the card, or emptied when the assessment ends: the field follows the note.
     val stored = state.text(field)
     LaunchedEffect(stored) { if (stored != value) value = stored }
     Row(Modifier.fillMaxWidth().padding(start = 4.dp, end = 20.dp, top = 4.dp, bottom = 2.dp)) {
@@ -701,7 +716,7 @@ private fun LazyListScope.vitals(state: KeyState, draft: VitalsDraft) {
 }
 
 /** Monitoring: the vital signs again, when the next reassessment is due, and the way back to the primary assessment. */
-private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: (Stage) -> Unit) {
+private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: (Stage) -> Unit, onEnd: () -> Unit) {
     vitals(state, draft)
     state.incident?.let { inc ->
         item(key = "v:next") {
@@ -711,6 +726,73 @@ private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: 
     }
     item(key = "recheck") {
         WideButton(stringResource(R.string.key_recheck), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) { onStage(Stage.PRIMARY) }
+    }
+    if (state.incident != null) item(key = "end") {
+        WideButton(stringResource(R.string.key_end_assessment), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp), onEnd)
+    }
+}
+
+/**
+ * "End this assessment?": keep the note (it waits on the home screen as the last note, to copy
+ * or share) or discard it (an armed row: tapped twice), or cancel. Either end clears the open
+ * assessment and every reminder, so the next one starts fresh.
+ */
+@Composable
+fun EndAssessmentDialog(state: KeyState, onEnded: () -> Unit, onDismiss: () -> Unit) {
+    var armed by remember { mutableStateOf(false) }
+    LaunchedEffect(armed) { if (armed) { delay(4_000); armed = false } }
+    EInkDialog(onDismiss = onDismiss) {
+        TextMMD(text = stringResource(R.string.key_end_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(8.dp))
+        TextMMD(text = stringResource(R.string.key_end_text), style = MaterialTheme.typography.bodyMedium)
+        Spacer(Modifier.height(14.dp))
+        WideButton(stringResource(R.string.key_end_keep)) { state.end(keep = true); onEnded() }
+        Spacer(Modifier.height(8.dp))
+        WideButton(stringResource(if (armed) R.string.key_end_discard_armed else R.string.key_end_discard)) {
+            if (armed) { state.end(keep = false); onEnded() } else armed = true
+        }
+        Spacer(Modifier.height(8.dp))
+        WideButton(stringResource(R.string.key_end_cancel), onClick = onDismiss)
+    }
+}
+
+/** The note of the last assessment, ended with "Keep the note": read, copy or share; an armed row deletes it. */
+@Composable
+fun LastNoteScreen(state: KeyState, onBack: () -> Unit) {
+    val context = LocalContext.current
+    val inc = state.kept
+    val text = inc?.let { state.note.text(it) }
+    if (inc == null) { LaunchedEffect(Unit) { onBack() }; return }
+    Screen(
+        title = stringResource(R.string.last_title),
+        onBack = onBack,
+        actions = { BarButton(Icons.Share, stringResource(R.string.key_share)) { shareText(context, context.getString(R.string.key_title), text!!) } },
+    ) { modifier ->
+        PagedColumn(modifier) {
+            text!!.lines().forEachIndexed { i, l ->
+                item(key = i) {
+                    SelectionContainer(Modifier.textActions()) {
+                        TextMMD(text = l, style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp))
+                    }
+                }
+            }
+            item(key = "delete") {
+                var armed by remember { mutableStateOf(false) }
+                LaunchedEffect(armed) { if (armed) { delay(4_000); armed = false } }
+                Column(Modifier.padding(top = 20.dp, bottom = 16.dp)) {
+                    HorizontalDividerMMD()
+                    TextMMD(
+                        text = stringResource(if (armed) R.string.last_delete_armed else R.string.last_delete),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = if (armed) FontWeight.Bold else FontWeight.Normal,
+                        modifier = Modifier.fillMaxWidth().clickable { if (armed) { state.deleteKept(); onBack() } else armed = true }
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                    )
+                    HorizontalDividerMMD()
+                }
+            }
+        }
     }
 }
 
@@ -734,11 +816,11 @@ private fun CountField(label: String, value: String, onChange: (String) -> Unit)
 }
 
 /**
- * The SOAP note, top to bottom, with Send and "Verbal report" in the bar. At its foot an
- * armed row: "Start over", tapped twice. It clears the note and is the only way to.
+ * The SOAP note, top to bottom, with Send and "Verbal report" in the bar. At its foot a row,
+ * "End assessment", which asks whether to keep the note or discard it.
  */
 @Composable
-fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBack: () -> Unit, onCleared: () -> Unit) {
+fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBack: () -> Unit, onEnd: () -> Unit) {
     val context = LocalContext.current
     RecordWhere(state, model)
     val inc = state.incident
@@ -762,18 +844,13 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
                     }
                 }
             }
-            if (inc != null) item(key = "start-over") {
-                var armed by remember { mutableStateOf(false) }
-                LaunchedEffect(armed) { if (armed) { delay(4_000); armed = false } }
+            if (inc != null) item(key = "end") {
                 Column(Modifier.padding(top = 20.dp, bottom = 16.dp)) {
                     HorizontalDividerMMD()
                     TextMMD(
-                        text = stringResource(if (armed) R.string.key_start_over_armed else R.string.key_start_over),
+                        text = stringResource(R.string.key_end_assessment),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = if (armed) FontWeight.Bold else FontWeight.Normal,
-                        modifier = Modifier.fillMaxWidth().clickable {
-                            if (armed) { state.startOver(); onCleared() } else armed = true
-                        }.padding(horizontal = 20.dp, vertical = 16.dp),
+                        modifier = Modifier.fillMaxWidth().clickable(onClick = onEnd).padding(horizontal = 20.dp, vertical = 16.dp),
                     )
                     HorizontalDividerMMD()
                 }
