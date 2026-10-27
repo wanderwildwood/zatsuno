@@ -1,6 +1,7 @@
 package com.wanderwildwood.zatsuno.ui
 
 import android.graphics.Paint
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -95,6 +96,7 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
                         TextMMD(text = stringResource(R.string.compass_declination, d), style = MaterialTheme.typography.labelSmall)
                     }
                 }
+                Spacer(Modifier.width(16.dp))
                 SwitchMMD(checked = live.trueNorth, onCheckedChange = null)
             }
 
