@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -120,7 +121,7 @@ fun SosBlock(titles: Map<String, String>, onOpenPage: (String) -> Unit) {
                     append(see.substringAfter(signals))
                 },
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.clickable { onOpenPage(SIGNALS_PAGE) }.padding(vertical = 4.dp),
+                modifier = Modifier.heightIn(min = 48.dp).clickable { onOpenPage(SIGNALS_PAGE) }.padding(vertical = 4.dp),
             )
         }
     }

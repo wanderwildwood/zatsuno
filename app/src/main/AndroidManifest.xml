@@ -11,6 +11,9 @@
          one alarm at a time while a note is open. -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- The reminder as a whole screen over the lock screen, and the alarm set again after a restart. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- The compass works from the magnetometer, by whichever sensor gives it; a phone without one still gets the rest. -->
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
@@ -39,6 +42,8 @@
             <data android:mimeType="vnd.android.cursor.dir/phone_v2" />
         </intent>
         <package android:name="com.wanderwildwood.fukuyaku" />
+        <!-- Glance, the lock-screen panel the emergency card can appear on: only to say whether it is there. -->
+        <package android:name="com.wanderwildwood.hitome" />
     </queries>
 
     <application
@@ -84,6 +89,29 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- The reminder as a whole screen: shown over the lock screen and kept until it is answered.
+             Its own task, out of Recents. key/ReminderActivity.kt. -->
+        <activity
+            android:name=".key.ReminderActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity="com.wanderwildwood.zatsuno.reminder"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <!-- Sets an open assessment's reminder again after a restart or an update. -->
+        <receiver
+            android:name=".key.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
 
         <!-- The reassessment reminder for "Patient assessment". Only the app's own alarm reaches it. -->
         <receiver

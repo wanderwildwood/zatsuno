@@ -26,3 +26,25 @@ fun BarButton(icon: ImageVector, description: String, onClick: () -> Unit) {
         )
     }
 }
+
+/**
+ * When the keyboard goes away the field that was typing is let go, so its cursor stops being
+ * drawn (a focused field keeps the screen redrawing) and the next tap starts fresh. Read from
+ * the window's own insets, since Compose's do not report the keyboard under adjustResize.
+ */
+@androidx.compose.runtime.Composable
+fun ClearFocusWhenKeyboardHides() {
+    val view = androidx.compose.ui.platform.LocalView.current
+    val focus = androidx.compose.ui.platform.LocalFocusManager.current
+    androidx.compose.runtime.DisposableEffect(view) {
+        var was = false
+        val listener = android.view.ViewTreeObserver.OnGlobalLayoutListener {
+            val shown = androidx.core.view.ViewCompat.getRootWindowInsets(view)
+                ?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime()) == true
+            if (was && !shown) focus.clearFocus()
+            was = shown
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+        onDispose { view.viewTreeObserver.removeOnGlobalLayoutListener(listener) }
+    }
+}

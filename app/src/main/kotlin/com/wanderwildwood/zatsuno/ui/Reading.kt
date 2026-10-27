@@ -291,8 +291,10 @@ private fun PositionCard(model: CompassModel, given: Given?, onDropGiven: () -> 
         }
         Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-            WideButton(stringResource(R.string.pos_dial, "911"), Modifier.weight(1f)) { dial(context, "911") }
-            WideButton(stringResource(R.string.pos_dial, "112"), Modifier.weight(1f)) { dial(context, "112") }
+            // 112 first in the EU and most of the world, 911 first in North America.
+            for (number in remember { com.wanderwildwood.zatsuno.help.Emergency.order(context) }) {
+                WideButton(stringResource(R.string.pos_dial, number), Modifier.weight(1f)) { dial(context, number) }
+            }
         }
     }
 }

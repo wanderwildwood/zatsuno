@@ -20,7 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.focus.onFocusChanged
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -107,8 +112,15 @@ fun CardScreen(onBack: () -> Unit, onEdit: () -> Unit) {
                     Spacer(Modifier.height(16.dp))
                     WideButton(stringResource(if (card.isEmpty) R.string.card_fill else R.string.card_edit), onClick = onEdit)
                     Spacer(Modifier.height(12.dp))
+                    val glance = remember { glanceInstalled(context) }
                     TextMMD(
-                        text = stringResource(if (card.onLockScreen) R.string.card_lock_on else R.string.card_lock_off),
+                        text = stringResource(
+                            when {
+                                !glance -> R.string.card_lock_no_glance
+                                card.onLockScreen -> R.string.card_lock_on
+                                else -> R.string.card_lock_off
+                            },
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
@@ -116,6 +128,11 @@ fun CardScreen(onBack: () -> Unit, onEdit: () -> Unit) {
         }
     }
 }
+
+/** Glance, the lock-screen panel, is on the phone. Optional: the card works without it. */
+fun glanceInstalled(context: Context): Boolean = runCatching {
+    context.packageManager.getPackageInfo(com.wanderwildwood.zatsuno.glance.GlanceProvider.READER, 0)
+}.isSuccess
 
 /** The card as text, for sending to someone or to Notes. */
 fun cardText(context: Context, card: Card): String = buildString {
@@ -149,6 +166,13 @@ fun CardEditScreen(onDone: () -> Unit) {
     )
     fun save() { CardStore.save(context, current()); onDone() }
 
+    // The keyboard takes half the screen when a field is tapped, and the list would stay where it
+    // was or jump to wherever it likes; the field tapped is brought to the top instead, once the
+    // keyboard has settled.
+    val list = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    fun toTop(index: Int): () -> Unit = { scope.launch { delay(350); list.scrollToItem(index) } }
+
     // Someone added from Contacts while this page was open underneath joins the list here,
     // so Done does not write the card back without them.
     var stored by remember { mutableStateOf(start.contacts) }
@@ -177,13 +201,13 @@ fun CardEditScreen(onDone: () -> Unit) {
         onBack = ::save,
     ) { modifier ->
         androidx.activity.compose.BackHandler { save() }
-        PagedColumn(modifier) {
-            item(key = "name") { Field(stringResource(R.string.card_name), name) { name = it } }
-            item(key = "blood") { Field(stringResource(R.string.card_blood), blood) { blood = it } }
-            item(key = "allergies") { Field(stringResource(R.string.card_allergies), allergies, lines = 2) { allergies = it } }
+        PagedColumn(modifier, state = list) {
+            item(key = "name") { Field(stringResource(R.string.card_name), name, onFocus = toTop(0)) { name = it } }
+            item(key = "blood") { Field(stringResource(R.string.card_blood), blood, onFocus = toTop(1)) { blood = it } }
+            item(key = "allergies") { Field(stringResource(R.string.card_allergies), allergies, lines = 2, onFocus = toTop(2)) { allergies = it } }
             item(key = "meds") {
                 Column {
-                    Field(stringResource(R.string.card_medications), medications, lines = 3) { medications = it }
+                    Field(stringResource(R.string.card_medications), medications, lines = 3, onFocus = toTop(3)) { medications = it }
                     if (medicine != null) {
                         WideButton(stringResource(R.string.card_from_medicine), Modifier.padding(horizontal = 20.dp).fillMaxWidth()) {
                             runCatching { fromMedicine.launch(medicine) }
@@ -191,7 +215,7 @@ fun CardEditScreen(onDone: () -> Unit) {
                     }
                 }
             }
-            item(key = "conditions") { Field(stringResource(R.string.card_conditions), conditions, lines = 2) { conditions = it } }
+            item(key = "conditions") { Field(stringResource(R.string.card_conditions), conditions, lines = 2, onFocus = toTop(4)) { conditions = it } }
             item(key = "contacts") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
                     TextMMD(text = stringResource(R.string.card_contacts), style = MaterialTheme.typography.labelSmall)
@@ -211,7 +235,7 @@ fun CardEditScreen(onDone: () -> Unit) {
                     }
                 }
             }
-            item(key = "note") { Field(stringResource(R.string.card_note), note, lines = 3) { note = it } }
+            item(key = "note") { Field(stringResource(R.string.card_note), note, lines = 3, onFocus = toTop(6)) { note = it } }
             item(key = "lock") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp)) {
                     SwitchRow(stringResource(R.string.card_on_lock_screen), lock) { lock = it }
@@ -223,7 +247,10 @@ fun CardEditScreen(onDone: () -> Unit) {
                                 shown = if (on) shown + f.name else shown - f.name
                             }
                         }
-                        TextMMD(text = stringResource(R.string.card_lock_glance), style = MaterialTheme.typography.labelSmall)
+                        TextMMD(
+                            text = stringResource(if (glanceInstalled(context)) R.string.card_lock_glance else R.string.card_lock_no_glance),
+                            style = MaterialTheme.typography.labelSmall,
+                        )
                     }
                 }
             }
@@ -235,7 +262,7 @@ fun CardEditScreen(onDone: () -> Unit) {
 }
 
 @Composable
-private fun Field(label: String, value: String, lines: Int = 1, onChange: (String) -> Unit) {
+private fun Field(label: String, value: String, lines: Int = 1, onFocus: () -> Unit = {}, onChange: (String) -> Unit) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) {
         TextMMD(text = label, style = MaterialTheme.typography.labelSmall)
         TextFieldMMD(
@@ -243,7 +270,7 @@ private fun Field(label: String, value: String, lines: Int = 1, onChange: (Strin
             onValueChange = onChange,
             singleLine = lines == 1,
             maxLines = lines,
-            modifier = Modifier.fillMaxWidth().textActions(),
+            modifier = Modifier.fillMaxWidth().onFocusChanged { if (it.isFocused) onFocus() }.textActions(),
         )
     }
 }

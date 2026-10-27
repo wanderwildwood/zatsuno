@@ -47,8 +47,11 @@ class Note(
     private val words: Words,
     private val titles: Map<String, String>,
     private val zone: ZoneId = ZoneId.systemDefault(),
+    /** The phone's clock setting: 14:05, or 2:05 PM. */
+    twentyFourHour: Boolean = true,
 ) {
-    private val clock = DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT)
+    private val clock = if (twentyFourHour) DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT)
+    else DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
 
     fun time(at: Long): String = clock.format(Instant.ofEpochMilli(at).atZone(zone))
 

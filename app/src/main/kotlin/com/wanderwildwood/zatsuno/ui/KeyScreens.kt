@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
@@ -73,7 +74,7 @@ class KeyState(
     var incident by mutableStateOf(IncidentStore.load(context))
         private set
 
-    val note: Note get() = Note(key, words, titles)
+    val note: Note get() = Note(key, words, titles, twentyFourHour = android.text.format.DateFormat.is24HourFormat(context))
     val answers: Answers get() = incident?.answers() ?: Answers()
     val ranking: Ranking get() = rank(key, answers)
 
@@ -217,7 +218,7 @@ fun KeyScreen(
     }
     if (stage == Stage.CALL) RecordWhere(state, model)
     Screen(
-        title = stringResource(R.string.key_title),
+        title = stringResource(R.string.key_title_bar),
         onBack = onBack,
         actions = {
             if (state.incident != null) BarText(stringResource(R.string.key_end), onEnd)
@@ -294,6 +295,7 @@ private fun StageStrip(current: Stage, onStage: (Stage) -> Unit) {
                 fontWeight = if (s == current) FontWeight.Bold else FontWeight.Normal,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .heightIn(min = 48.dp)
                     .clickable { onStage(s) }
                     .then(if (s == current) Modifier.border(BorderStroke(2.dp, Color.Black), RoundedCornerShape(6.dp)) else Modifier)
                     .padding(horizontal = 4.dp, vertical = 8.dp),
@@ -740,7 +742,7 @@ private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: 
 @Composable
 fun EndAssessmentDialog(state: KeyState, onEnded: () -> Unit, onDismiss: () -> Unit) {
     var armed by remember { mutableStateOf(false) }
-    LaunchedEffect(armed) { if (armed) { delay(4_000); armed = false } }
+    LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
     EInkDialog(onDismiss = onDismiss) {
         TextMMD(text = stringResource(R.string.key_end_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
@@ -779,7 +781,7 @@ fun LastNoteScreen(state: KeyState, onBack: () -> Unit) {
             }
             item(key = "delete") {
                 var armed by remember { mutableStateOf(false) }
-                LaunchedEffect(armed) { if (armed) { delay(4_000); armed = false } }
+                LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
                 Column(Modifier.padding(top = 20.dp, bottom = 16.dp)) {
                     HorizontalDividerMMD()
                     TextMMD(
@@ -829,7 +831,7 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
         title = stringResource(R.string.key_note),
         onBack = onBack,
         actions = {
-            BarText(stringResource(R.string.key_read_out), onReadOut)
+            BarText(stringResource(R.string.key_read_out_bar), onReadOut)
             if (text != null) BarButton(Icons.Share, stringResource(R.string.key_share)) { shareText(context, context.getString(R.string.key_title), text) }
         },
     ) { modifier ->

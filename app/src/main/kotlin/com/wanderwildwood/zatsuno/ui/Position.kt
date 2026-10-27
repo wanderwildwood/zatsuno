@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -147,17 +148,17 @@ fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
             text = decimal,
             style = if (big) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().clickable { copy(decimal) }.padding(vertical = 2.dp),
+            modifier = Modifier.fillMaxWidth().clickable { copy(decimal) }.heightIn(min = 48.dp).padding(vertical = 2.dp),
         )
         TextMMD(
             text = dms,
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.fillMaxWidth().clickable { copy(dms) }.padding(vertical = 2.dp),
+            modifier = Modifier.fillMaxWidth().clickable { copy(dms) }.heightIn(min = 48.dp).padding(vertical = 2.dp),
         )
         if (grid != null) TextMMD(
             text = "${stringResource(R.string.label_grid)} $grid",
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.fillMaxWidth().clickable { copy(grid) }.padding(vertical = 2.dp),
+            modifier = Modifier.fillMaxWidth().clickable { copy(grid) }.heightIn(min = 48.dp).padding(vertical = 2.dp),
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             // A position sent by another app comes with no accuracy or time to show.
@@ -165,7 +166,7 @@ fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
             TextMMD(
                 text = "${stringResource(R.string.label_locator)} $locator",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.clickable { copy(locator) },
+                modifier = Modifier.heightIn(min = 48.dp).clickable { copy(locator) },
             )
         }
     }

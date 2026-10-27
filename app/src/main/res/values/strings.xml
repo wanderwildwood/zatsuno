@@ -247,6 +247,7 @@
     <string name="card_on_lock_screen">Show on the lock screen</string>
     <string name="card_lock_warning">Anyone holding the phone can read what is shown there, without unlocking it. That is the point of it for someone helping you, and the cost of it everywhere else.</string>
     <string name="card_lock_glance">The lock screen shows it through the Glance app, when Glance is installed and switched on.</string>
+    <string name="card_lock_no_glance">The lock screen panel comes from the Glance app, which is not installed here. The card works without it.</string>
     <string name="card_lock_on">Shown on the lock screen, through Glance.</string>
     <string name="card_lock_off">Not shown on the lock screen.</string>
     <!-- Someone sent from Contacts ("Add to emergency card") -->
@@ -266,6 +267,7 @@
     <!-- Under the home row while a note is open. %1$s is a time -->
     <string name="home_key_started">started %1$s</string>
     <string name="key_title">Patient assessment</string>
+    <string name="key_title_bar">Assessment</string>
     <!-- The bar button that opens the note -->
     <string name="key_note">Note</string>
     <string name="key_not_sure">Not sure</string>
@@ -300,6 +302,7 @@
     <string name="key_flags">Red flags (reasons to call for help or evacuate):</string>
     <string name="key_flags_none">No red flags so far. That does not mean the patient is stable.</string>
     <string name="key_read_out">Verbal report (SOAP)</string>
+    <string name="key_read_out_bar">Report</string>
     <string name="key_decided">Evacuation decision: it goes in the plan (P) of the note.</string>
     <string name="key_look_see">Chief complaint</string>
     <string name="key_look_body">Head-to-toe exam (DOTS)</string>
@@ -344,13 +347,13 @@
     <string name="key_end_text">Keep the note and it waits on the home screen as the last note, to copy or share. Either way the next assessment starts fresh and the reminders stop.</string>
     <string name="key_end_keep">Keep the note</string>
     <string name="key_end_discard">Discard the note</string>
-    <string name="key_end_discard_armed">Tap again to discard</string>
+    <string name="key_end_discard_armed">Discard — tap again</string>
     <string name="key_end_cancel">Cancel</string>
     <string name="home_last">Last assessment</string>
     <string name="home_last_ended">started %1$s</string>
     <string name="last_title">Last assessment</string>
     <string name="last_delete">Delete this note</string>
-    <string name="last_delete_armed">Tap again to delete the note</string>
+    <string name="last_delete_armed">Delete the note — tap again</string>
     <string name="key_note_empty">Nothing written yet.</string>
 
     <!-- Scene size-up -->
@@ -661,6 +664,10 @@
     <!-- The reassessment reminder -->
     <string name="recheck_channel">Reassessment reminders</string>
     <string name="recheck_end">End assessment</string>
+    <string name="reminder_open">Open the assessment</string>
+    <string name="reminder_later">Later</string>
+    <string name="reminder_none">No assessment is open.</string>
+    <string name="reminder_close">Close</string>
     <string name="recheck_title">Time to reassess</string>
     <string name="recheck_text">Reassess LOR, airway, breathing, HR, RR and skin (SCTM). Add a set of vital signs to the note.</string>
 
@@ -670,6 +677,12 @@
     <string name="about_title">Field Kit %1$s</string>
     <string name="about_what">First aid, knots and a compass that work with no signal. Location is used only for the compass and your position, on this phone. The emergency card stays on this phone too, and goes on the lock screen only if you switch that on. A note you start in Patient assessment stays on the phone until you clear it. The app has no internet access.</string>
     <string name="about_aid">First-aid pages written from current guidance: US government sources (MedlinePlus, CDC, NPS and others), the AHA and Red Cross first-aid guidelines, and the Wilderness Medical Society, each named on its page. They do not replace training.</string>
+    <string name="about_privacy_head">Privacy</string>
+    <string name="about_privacy">Everything you put in this app stays on this phone. It has no internet access, so nothing is sent anywhere, and nothing is collected about you. Location is read only while the compass, your position or a note you started is open, and is used only to show it to you. The emergency card goes on the lock screen only if you switch that on. The reassessment reminder uses the phone\'s alarm, notification and vibration. Anything you share goes only where you send it. There are no ads, no analytics and no tracking. Backups and exports go only where you choose to save them.</string>
+    <string name="about_terms_head">Terms</string>
+    <string name="about_terms">This app is free software under the GNU General Public License v3. It comes with no warranty: use it at your own risk.</string>
+    <string name="about_disclaimer_head">First aid</string>
+    <string name="about_disclaimer">This is a reference for first aid, not training and not a substitute for emergency services. In an emergency, call your local emergency number first.</string>
     <string name="about_licence">GNU General Public License v3</string>
     <string name="about_kcompass">Compass and position code from kCompass by Ondřej Koloničný, OK1CDJ, GPL-3.0</string>
     <string name="about_icons">Icons from Material Symbols, Apache 2.0</string>

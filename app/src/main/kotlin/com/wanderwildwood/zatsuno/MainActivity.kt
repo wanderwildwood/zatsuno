@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalCursorBlinkEnabled
 import com.mudita.mmd.ThemeMMD
 import com.wanderwildwood.zatsuno.aid.Pages
+import com.wanderwildwood.zatsuno.ui.ClearFocusWhenKeyboardHides
 import com.wanderwildwood.zatsuno.ui.FieldKitApp
 import com.wanderwildwood.zatsuno.ui.monochrome
 
@@ -21,7 +24,12 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null) take(intent)
         setContent {
             ThemeMMD(colorScheme = monochrome) {
-                FieldKitApp(request = request.value, onRequestHandled = { request.value = null })
+                // A steady cursor: a blinking one redraws the screen twice a second for as long as
+                // a field has focus, which on e-ink is a refresh each time.
+                CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
+                    ClearFocusWhenKeyboardHides()
+                    FieldKitApp(request = request.value, onRequestHandled = { request.value = null })
+                }
             }
         }
     }

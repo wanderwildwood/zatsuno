@@ -5,10 +5,12 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,28 +41,41 @@ fun AboutDialog(onDismiss: () -> Unit) {
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
         )
+        Spacer(Modifier.height(10.dp))
+        // The text is longer than a screen; it pages by whole rows like every list here.
+        val height = (LocalConfiguration.current.screenHeightDp * 0.62f).dp
+        PagedColumn(Modifier.fillMaxWidth().height(height)) {
+            item(key = "disclaimer") { Section(R.string.about_disclaimer_head, stringResource(R.string.about_disclaimer)) }
+            item(key = "what") { Section(null, stringResource(R.string.about_what)) }
+            item(key = "aid") { Section(null, stringResource(R.string.about_aid)) }
+            item(key = "privacy") { Section(R.string.about_privacy_head, stringResource(R.string.about_privacy)) }
+            item(key = "terms") { Section(R.string.about_terms_head, stringResource(R.string.about_terms)) }
+            item(key = "credits") {
+                Column(Modifier.padding(vertical = 6.dp)) {
+                    TextMMD(text = stringResource(R.string.about_licence), style = MaterialTheme.typography.labelSmall)
+                    TextMMD(text = stringResource(R.string.about_kcompass), style = MaterialTheme.typography.labelSmall)
+                    TextMMD(text = stringResource(R.string.about_icons), style = MaterialTheme.typography.labelSmall)
+                    Spacer(Modifier.height(8.dp))
+                    TextMMD(text = "github.com/wanderwildwood/zatsuno", style = MaterialTheme.typography.labelSmall)
+                }
+            }
+            item(key = "llama") { Column(Modifier.padding(vertical = 4.dp)) { Llama() } }
+        }
 
-        Spacer(Modifier.height(14.dp))
-        TextMMD(text = stringResource(R.string.about_what), style = MaterialTheme.typography.labelSmall)
-        Spacer(Modifier.height(8.dp))
-        TextMMD(text = stringResource(R.string.about_aid), style = MaterialTheme.typography.labelSmall)
-
-        Spacer(Modifier.height(14.dp))
-        TextMMD(text = stringResource(R.string.about_licence), style = MaterialTheme.typography.labelSmall)
-        TextMMD(text = stringResource(R.string.about_kcompass), style = MaterialTheme.typography.labelSmall)
-        TextMMD(text = stringResource(R.string.about_icons), style = MaterialTheme.typography.labelSmall)
-
-        Spacer(Modifier.height(14.dp))
-        TextMMD(text = "github.com/wanderwildwood/zatsuno", style = MaterialTheme.typography.labelSmall)
-
-        Spacer(Modifier.height(14.dp))
-        Llama()
-
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(10.dp))
         OutlinedButtonMMD(
             onClick = onDismiss,
             modifier = Modifier.fillMaxWidth().height(48.dp),
         ) { TextMMD(text = stringResource(R.string.about_close), style = MaterialTheme.typography.bodySmall) }
+    }
+}
+
+/** A short headed paragraph of the About. */
+@Composable
+private fun Section(head: Int?, text: String) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+        if (head != null) TextMMD(text = stringResource(head), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        TextMMD(text = text, style = MaterialTheme.typography.labelSmall)
     }
 }
 
@@ -84,6 +100,7 @@ private fun Llama() {
             style = MaterialTheme.typography.labelSmall,
             // The site's address opens the site, the way the llama beside it opens its page.
             modifier = Modifier
+                .heightIn(min = 48.dp)
                 .clickable {
                     runCatching {
                         context.startActivity(
@@ -99,6 +116,7 @@ private fun Llama() {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
+                .heightIn(min = 48.dp)
                 .clickable {
                     runCatching {
                         context.startActivity(

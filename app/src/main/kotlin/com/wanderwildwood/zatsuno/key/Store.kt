@@ -141,7 +141,9 @@ object ReminderPlan {
  * ongoing, takes itself away after an hour, and has an "End assessment" action.
  */
 object Recheck {
-    private const val CHANNEL = "recheck"
+    private const val CHANNEL = "recheck2"
+    /** The first channel had no sound attributes of its own; its settings cannot be changed once made, so it is replaced. */
+    private const val OLD_CHANNEL = "recheck"
     private const val NOTIFICATION = 1
     private const val PREFS = "recheck"
     private const val FIRED_FOR = "fired_for"
@@ -177,13 +179,28 @@ object Recheck {
     }
 
     fun notify(context: Context, incident: Incident) {
+        val due = incident.nextCheck(Keys.get(context))
+        // Once per due time. Starting the app's process to deliver this alarm sets an alarm again
+        // (FieldKitApplication), which would otherwise buzz a second time a moment after the first.
+        if (firedFor(context) >= due) return
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-            .putLong(FIRED_FOR, incident.nextCheck(Keys.get(context))).apply()
+            .putLong(FIRED_FOR, due).apply()
         val manager = context.getSystemService(NotificationManager::class.java)
+        manager.deleteNotificationChannel(OLD_CHANNEL)
         manager.createNotificationChannel(
             NotificationChannel(CHANNEL, context.getString(R.string.recheck_channel), NotificationManager.IMPORTANCE_HIGH).apply {
-                enableVibration(true)
+                // The buzz is made by [buzz], as an alarm, so a phone in the pocket and a background app both feel it once.
+                enableVibration(false)
+                setSound(null, null)
+                lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
             },
+        )
+        // With the screen off or locked the reminder comes up as a whole screen, which stays
+        // until it is answered; with the phone in use it is a notification at the top.
+        val screen = PendingIntent.getActivity(
+            context, 2,
+            Intent(context, ReminderActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val open = PendingIntent.getActivity(
             context, 0,
@@ -202,6 +219,8 @@ object Recheck {
             .setContentIntent(open)
             .setAutoCancel(true)
             .setOngoing(false)
+            .setCategory(android.app.Notification.CATEGORY_ALARM)
+            .setFullScreenIntent(screen, true)
             .setOnlyAlertOnce(true)
             .setTimeoutAfter(60 * 60_000L)
             .addAction(android.app.Notification.Action.Builder(null, context.getString(R.string.recheck_end), end).build())
@@ -213,7 +232,23 @@ object Recheck {
     /** One buzz: the end of the 15-second count, or a reassessment due. */
     fun buzz(context: Context, millis: Long = 400) {
         val vibrator: Vibrator = context.getSystemService(VibratorManager::class.java).defaultVibrator
-        vibrator.vibrate(VibrationEffect.createOneShot(millis, VibrationEffect.DEFAULT_AMPLITUDE))
+        // Said to be an alarm: Android drops a background app's vibration that says nothing
+        // about what it is for, and the reminder comes from the background.
+        @Suppress("DEPRECATION")
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(millis, VibrationEffect.DEFAULT_AMPLITUDE),
+            android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_ALARM)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build(),
+        )
+    }
+}
+
+/** After a restart or an update the process starts, which sets an open assessment's alarm again (FieldKitApplication); this is what starts it. */
+class BootReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        runCatching { IncidentStore.sweep(context) }
     }
 }
 

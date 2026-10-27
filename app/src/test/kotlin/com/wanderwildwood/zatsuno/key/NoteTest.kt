@@ -169,4 +169,12 @@ class NoteTest {
         assertEquals(5, danger.recheckMinutes(key))
         assertEquals(at(10, 8), danger.nextCheck(key))
     }
+
+    @Test
+    fun timesFollowThePhonesClock() {
+        val twelve = Note(KeyFixtures.key, KeyFixtures.words, KeyFixtures.titles, ZoneOffset.UTC, twentyFourHour = false)
+        val text = twelve.text(incident)
+        assertTrue(text.lines().first(), text.lines().first().contains("2:02") && text.lines().first().contains("PM"))
+        assertEquals("14:02", note.time(at(14, 2)))
+    }
 }
