@@ -19,7 +19,8 @@ const val QR_QUIET = 4
 fun qrModules(text: String): List<BooleanArray>? = runCatching {
     val matrix = QRCodeWriter().encode(
         text, BarcodeFormat.QR_CODE, 0, 0,
-        mapOf<EncodeHintType, Any>(EncodeHintType.MARGIN to 0, EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L),
+        // UTF-8 so a note's dashes and accents come back as written (the default would turn them into "?").
+        mapOf<EncodeHintType, Any>(EncodeHintType.MARGIN to 0, EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L, EncodeHintType.CHARACTER_SET to "UTF-8"),
     )
     List(matrix.height) { y -> BooleanArray(matrix.width) { x -> matrix[x, y] } }
 }.getOrNull()

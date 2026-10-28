@@ -58,4 +58,9 @@ class QrCodeTest {
     @Test fun textThatCannotFitGivesNoCode() {
         assertEquals(null, qrModules("x".repeat(5000)))
     }
+
+    @Test fun aNoteWithDashesAndAccentsComesBackAsWritten() {
+        val note = "SOAP note 14:02–14:27 · Field Kit\nName: Test Zoë\nS  –"
+        assertEquals(note, decode(note))
+    }
 }

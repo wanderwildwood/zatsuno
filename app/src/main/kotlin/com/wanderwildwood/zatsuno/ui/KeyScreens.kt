@@ -817,7 +817,7 @@ private fun LazyListScope.monitor(
         WideButton(stringResource(R.string.key_patients, state.patients.size), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp), onPatients)
     }
     if (state.incident != null) item(key = "reset") {
-        ArmedButton(R.string.key_reset, R.string.key_reset_armed, Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) { state.reset() }
+        ArmedButton(R.string.key_reset, R.string.key_reset_armed, Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) { state.reset(); onStage(Stage.SCENE) }
     }
 }
 
