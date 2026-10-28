@@ -27,6 +27,9 @@ fun interface Words {
 
 /** The written fields, in the order the note lists them, and the letter each goes beside. */
 object Fields {
+    /** The patient's name, if they give it. */
+    const val NAME = "name"
+    /** Age, sex and anything else that matters about them. */
     const val WHO = "who"
     /** Scene size-up: who and what you have to work with. */
     const val RESOURCES = "resources"
@@ -61,6 +64,7 @@ class Note(
     fun text(incident: Incident): String {
         val out = mutableListOf<String>()
         out += words.get("note_head", time(incident.started), time(incident.last))
+        incident.texts()[Fields.NAME]?.let { out += words.get("note_name", it.text.trim()) }
         out += where(incident)
         grid(incident)?.let { out += it }
         out += ""
@@ -75,6 +79,7 @@ class Note(
     fun readOut(incident: Incident): String {
         val a = incident.answers()
         val out = mutableListOf<String>()
+        incident.texts()[Fields.NAME]?.let { out += words.get("note_name", it.text.trim()) }
         out += where(incident)
         grid(incident)?.let { out += it }
         incident.texts()[Fields.WHO]?.let { out += words.get("note_who", it.text) }

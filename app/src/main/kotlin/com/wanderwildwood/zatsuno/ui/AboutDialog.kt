@@ -55,6 +55,7 @@ fun AboutDialog(onDismiss: () -> Unit) {
                     TextMMD(text = stringResource(R.string.about_licence), style = MaterialTheme.typography.labelSmall)
                     TextMMD(text = stringResource(R.string.about_kcompass), style = MaterialTheme.typography.labelSmall)
                     TextMMD(text = stringResource(R.string.about_icons), style = MaterialTheme.typography.labelSmall)
+                    TextMMD(text = stringResource(R.string.about_zxing), style = MaterialTheme.typography.labelSmall)
                     Spacer(Modifier.height(8.dp))
                     TextMMD(text = "github.com/wanderwildwood/zatsuno", style = MaterialTheme.typography.labelSmall)
                 }

@@ -344,7 +344,7 @@
     <string name="key_end">End</string>
     <string name="key_end_assessment">End assessment</string>
     <string name="key_end_title">End this assessment?</string>
-    <string name="key_end_text">Keep the note and it waits on the home screen as the last note, to copy or share. Either way the next assessment starts fresh and the reminders stop.</string>
+    <string name="key_end_text">Keep the note and it waits on the home screen as the last note, to copy or share. Either way the next assessment starts fresh and this patient\'s reminders stop.</string>
     <string name="key_end_keep">Keep the note</string>
     <string name="key_end_discard">Discard the note</string>
     <string name="key_end_discard_armed">Discard — tap again</string>
@@ -588,7 +588,8 @@
     <string name="key_a_plan_rescue">Urgent: wait for rescue (911 / SAR)</string>
 
     <!-- Written lines. SAMPLE and OPQRST carry their letter -->
-    <string name="key_field_who">Patient: age, sex</string>
+    <string name="key_field_who">Age, sex, anything else that matters</string>
+    <string name="key_field_name">Patient name (optional)</string>
     <string name="key_field_resources">Resources (who and what you have)</string>
     <string name="key_field_symptoms">S: Signs and symptoms</string>
     <string name="key_field_allergies">A: Allergies</string>
@@ -638,6 +639,7 @@
     <string name="note_grid">USNG: %1$s</string>
     <string name="note_nothing">–</string>
     <string name="note_who">Patient: %1$s</string>
+    <string name="note_name">Name: %1$s</string>
     <!-- %1$s what happened, %2$s when it was answered -->
     <string name="note_what">MOI/NOI: %1$s %2$s</string>
     <string name="note_how">Condition: %1$s.</string>
@@ -686,7 +688,33 @@
     <string name="about_licence">GNU General Public License v3</string>
     <string name="about_kcompass">Compass and position code from kCompass by Ondřej Koloničný, OK1CDJ, GPL-3.0</string>
     <string name="about_icons">Icons from Material Symbols, Apache 2.0</string>
+    <string name="about_zxing">QR codes drawn with ZXing, Apache 2.0</string>
     <string name="about_feed_the_llamas">feed the llamas</string>
     <string name="about_no_browser">There is no browser on this phone to open that with.</string>
     <string name="about_close">Close</string>
+    <!-- Several patients, undo, QR code and saving the note -->
+    <string name="patient_n">Patient %1$s</string>
+    <string name="patients_title">Patients</string>
+    <!-- %1$s and %2$s are times -->
+    <string name="patients_row">started %1$s · next check %2$s</string>
+    <string name="key_patients">Patients (%1$d)</string>
+    <string name="key_another">Another patient</string>
+    <string name="key_name_card">Use my name from the card</string>
+    <string name="key_reset">Start this patient over</string>
+    <string name="key_reset_armed">Clears this patient — tap again</string>
+    <string name="home_key_several">%1$d patients open</string>
+    <string name="home_undo_note">Undo: note deleted</string>
+    <string name="home_undo_open">Undo: assessment cleared</string>
+    <string name="recheck_text_named">%1$s: reassess LOR, airway, breathing, HR, RR and skin (SCTM). Add a set of vital signs to the note.</string>
+    <string name="note_qr">Show as QR code</string>
+    <string name="note_save">Save as a file</string>
+    <string name="note_saved">Saved.</string>
+    <string name="note_save_failed">Could not save the file.</string>
+    <string name="note_file_name">Field Kit note.txt</string>
+    <string name="qr_title">QR code</string>
+    <string name="qr_n">Code %1$d of %2$d</string>
+    <string name="qr_hint">Hold the phone steady for the scanner. The code holds the text of the note.</string>
+    <string name="qr_hint_many">The note is in several codes. Scan them in order, one after another.</string>
+    <string name="qr_prev">Previous code</string>
+    <string name="qr_next">Next code</string>
 </resources>

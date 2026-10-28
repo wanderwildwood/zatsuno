@@ -45,8 +45,9 @@ class ReminderActivity : ComponentActivity() {
                 CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
                     Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
                         Reminder(
-                            onOpen = { go(Recheck.EXTRA_MONITOR) },
-                            onEnd = { go(Recheck.EXTRA_END) },
+                            patientId = intent.getStringExtra(Recheck.EXTRA_PATIENT),
+                            onOpen = { id -> go(Recheck.EXTRA_MONITOR, id) },
+                            onEnd = { id -> go(Recheck.EXTRA_END, id) },
                             onClose = ::finish,
                         )
                     }
@@ -55,16 +56,17 @@ class ReminderActivity : ComponentActivity() {
         }
     }
 
-    private fun go(extra: String) {
-        startActivity(Intent(this, MainActivity::class.java).putExtra(extra, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    private fun go(extra: String, patient: String?) {
+        startActivity(Intent(this, MainActivity::class.java).putExtra(extra, true).putExtra(Recheck.EXTRA_PATIENT, patient).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         finish()
     }
 }
 
 @Composable
-private fun Reminder(onOpen: () -> Unit, onEnd: () -> Unit, onClose: () -> Unit) {
+private fun Reminder(patientId: String?, onOpen: (String?) -> Unit, onEnd: (String?) -> Unit, onClose: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    val incident = androidx.compose.runtime.remember { IncidentStore.load(context) }
+    val all = androidx.compose.runtime.remember { IncidentStore.patients(context) }
+    val incident = androidx.compose.runtime.remember { all.firstOrNull { it.id == patientId } ?: Recheck.dueFirst(context, all) }
     Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 24.dp)) {
         if (incident == null) {
             TextMMD(text = stringResource(R.string.recheck_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -76,14 +78,17 @@ private fun Reminder(onOpen: () -> Unit, onEnd: () -> Unit, onClose: () -> Unit)
         }
         TextMMD(text = stringResource(R.string.recheck_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(12.dp))
-        TextMMD(text = stringResource(R.string.recheck_text), style = MaterialTheme.typography.bodyLarge)
+        TextMMD(
+            text = if (all.size > 1) stringResource(R.string.recheck_text_named, Patients.label(incident, all, context)) else stringResource(R.string.recheck_text),
+            style = MaterialTheme.typography.bodyLarge,
+        )
         Spacer(Modifier.height(10.dp))
         val due = DateFormat.getTimeFormat(context).format(Date(incident.nextCheck(Keys.get(context))))
         TextMMD(text = stringResource(R.string.key_next_check, due), style = MaterialTheme.typography.labelSmall)
         Spacer(Modifier.height(24.dp))
-        WideButton(stringResource(R.string.reminder_open), Modifier.fillMaxWidth(), onOpen)
+        WideButton(stringResource(R.string.reminder_open), Modifier.fillMaxWidth()) { onOpen(incident.id) }
         Spacer(Modifier.height(10.dp))
-        WideButton(stringResource(R.string.recheck_end), Modifier.fillMaxWidth(), onEnd)
+        WideButton(stringResource(R.string.recheck_end), Modifier.fillMaxWidth()) { onEnd(incident.id) }
         Spacer(Modifier.height(10.dp))
         WideButton(stringResource(R.string.reminder_later), Modifier.fillMaxWidth(), onClose)
     }

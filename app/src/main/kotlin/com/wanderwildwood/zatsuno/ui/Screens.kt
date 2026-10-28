@@ -60,7 +60,16 @@ fun Screen(
  * the card, the assessment and the two books. Search and About sit in the bar.
  */
 @Composable
-fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Unit, keyStarted: String? = null, lastNote: String? = null, onLast: () -> Unit = {}) {
+fun HomeScreen(
+    onOpen: (String) -> Unit,
+    onSearch: () -> Unit,
+    onAbout: () -> Unit,
+    keyLine: String? = null,
+    lastNote: String? = null,
+    onLast: () -> Unit = {},
+    undo: String? = null,
+    onUndo: () -> Unit = {},
+) {
     Screen(
         title = stringResource(R.string.app_name),
         onBack = null,
@@ -72,11 +81,12 @@ fun HomeScreen(onOpen: (String) -> Unit, onSearch: () -> Unit, onAbout: () -> Un
         // A list that pages, not a column: six rows of this size only just fit the Kompakt, and
         // a larger text size or another row pushes the last off the bottom with no way down.
         PagedColumn(modifier) {
+            if (undo != null) item(key = "undo") { HomeRow(undo, null, onUndo) }
             item(key = "call") { HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) } }
             item(key = "compass") { HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) } }
             item(key = "card") { HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) } }
             item(key = "key") {
-                HomeRow(stringResource(R.string.home_key), keyStarted?.let { stringResource(R.string.home_key_started, it) }) { onOpen(Route.KEY) }
+                HomeRow(stringResource(R.string.home_key), keyLine) { onOpen(Route.KEY) }
             }
             if (lastNote != null) item(key = "last") { HomeRow(stringResource(R.string.home_last), stringResource(R.string.home_last_ended, lastNote), onLast) }
             item(key = "aid") { HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) } }

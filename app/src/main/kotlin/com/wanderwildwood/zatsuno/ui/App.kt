@@ -40,6 +40,9 @@ object Route {
     const val NOTE = "key:note"
     const val READ_OUT = "key:readout"
     const val LAST = "key:last"
+    const val PATIENTS = "key:patients"
+    const val QR = "key:qr"
+    const val LAST_QR = "key:last:qr"
     fun aid(id: String, more: Boolean = false) = if (more) "aid:$id:more" else "aid:$id"
     fun knot(id: String) = "knot:$id"
 }
@@ -72,6 +75,10 @@ fun FieldKitApp(
     }
     BackHandler(enabled = stack.size > 1) { back() }
 
+    val pages = remember { Pages.all(context) }
+    val titles = remember(pages) { pages.associate { it.title to it.id } }
+    val keyState = remember { KeyState(context, Keys.get(context), Keys.words(context), pages.associate { it.id to it.title }) }
+
     LaunchedEffect(request) {
         val r = request ?: return@LaunchedEffect
         stack.clear()
@@ -82,13 +89,15 @@ fun FieldKitApp(
                 stack.add(Route.aid(Pages.CALL))
             }
             // The reminder's "End assessment": the key, and the question.
-            Opening.Request.End -> {
+            is Opening.Request.End -> {
+                r.patient?.let { keyState.show(it) }
                 stack.add(Route.HOME)
                 stack.add(Route.KEY)
                 ending = true
             }
             // The reassessment reminder, tapped: the key at Monitoring, over the home screen.
-            Opening.Request.Monitor -> {
+            is Opening.Request.Monitor -> {
+                r.patient?.let { keyState.show(it) }
                 stack.add(Route.HOME)
                 stack.add(Route.KEY)
                 keyStage = Stage.MONITOR.name
@@ -97,15 +106,23 @@ fun FieldKitApp(
         onRequestHandled()
     }
 
-    val pages = remember { Pages.all(context) }
-    val titles = remember(pages) { pages.associate { it.title to it.id } }
-    val keyState = remember { KeyState(context, Keys.get(context), Keys.words(context), pages.associate { it.id to it.title }) }
     val route = stack.last()
     // A sent position belongs to the visit that brought it; the call page opened later is the phone's own.
     LaunchedEffect(route) { if (route != Route.aid(Pages.CALL) && route != Route.aid(Pages.CALL, more = true)) givenSaved = null }
     when {
-        route == Route.HOME -> HomeScreen(::open, { open(Route.SEARCH) }, { about = true }, keyState.incident?.let { keyState.note.time(it.started) },
-            lastNote = keyState.kept?.let { keyState.note.time(it.started) }, onLast = { open(Route.LAST) })
+        route == Route.HOME -> HomeScreen(
+            onOpen = { r -> if (r == Route.KEY && keyState.patients.size > 1) open(Route.PATIENTS) else open(r) },
+            onSearch = { open(Route.SEARCH) },
+            onAbout = { about = true },
+            keyLine = when {
+                keyState.patients.size > 1 -> stringResource(R.string.home_key_several, keyState.patients.size)
+                else -> keyState.incident?.let { stringResource(R.string.home_key_started, keyState.note.time(it.started)) }
+            },
+            lastNote = keyState.kept?.let { keyState.note.time(it.started) },
+            onLast = { open(Route.LAST) },
+            undo = keyState.undoable?.let { stringResource(if (it == "K") R.string.home_undo_note else R.string.home_undo_open) },
+            onUndo = { keyState.undo() },
+        )
         route == Route.KEY -> KeyScreen(
             state = keyState,
             stage = Stage.valueOf(keyStage),
@@ -115,10 +132,29 @@ fun FieldKitApp(
             onNote = { open(Route.NOTE) },
             onReadOut = { open(Route.READ_OUT) },
             onEnd = { ending = true },
+            onPatients = { open(Route.PATIENTS) },
+            onAnother = { keyState.show(null); keyStage = Stage.SCENE.name },
             onBack = ::back,
         )
-        route == Route.NOTE -> NoteScreen(keyState, model, onReadOut = { open(Route.READ_OUT) }, onBack = ::back, onEnd = { ending = true })
-        route == Route.LAST -> LastNoteScreen(keyState, ::back)
+        route == Route.PATIENTS -> PatientsScreen(
+            keyState,
+            onPick = { id ->
+                keyState.show(id); keyStage = Stage.SCENE.name
+                stack.removeAt(stack.lastIndex); stack.add(Route.KEY)
+            },
+            onAnother = { keyState.show(null); keyStage = Stage.SCENE.name; stack.removeAt(stack.lastIndex); stack.add(Route.KEY) },
+            onBack = ::back,
+        )
+        route == Route.NOTE -> NoteScreen(keyState, model, onReadOut = { open(Route.READ_OUT) }, onQr = { open(Route.QR) }, onBack = ::back, onEnd = { ending = true })
+        route == Route.QR -> {
+            val inc = keyState.incident
+            if (inc == null) back() else QrScreen(stringResource(R.string.qr_title), keyState.note.text(inc), ::back)
+        }
+        route == Route.LAST_QR -> {
+            val inc = keyState.kept
+            if (inc == null) back() else QrScreen(stringResource(R.string.qr_title), keyState.note.text(inc), ::back)
+        }
+        route == Route.LAST -> LastNoteScreen(keyState, onQr = { open(Route.LAST_QR) }, onBack = ::back)
         route == Route.READ_OUT -> ReadOutScreen(keyState, model, ::back)
         route == Route.AID -> ListScreen(
             title = stringResource(R.string.home_aid),

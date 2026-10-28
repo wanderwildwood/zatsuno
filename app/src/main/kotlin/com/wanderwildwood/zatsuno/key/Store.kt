@@ -34,61 +34,148 @@ object Keys {
 
 /**
  * What the assessment state machine needs from the phone, so the rules can be tested without
- * one: the two files, and the reminder (an alarm and a notification).
+ * one: a file for each open patient, the kept note and the undo slot, which patient is showing,
+ * and the reminder (an alarm and a notification).
  */
 interface AssessmentPlatform {
-    fun readOpen(): String?
-    fun writeOpen(text: String)
-    fun deleteOpen()
+    /** The ids of the patients with a file, in no order. */
+    fun openIds(): List<String>
+    fun readOpen(id: String): String?
+    fun writeOpen(id: String, text: String)
+    fun deleteOpen(id: String)
     fun readKept(): String?
     fun writeKept(text: String)
     fun deleteKept()
-    /** Sets the reminder for an open assessment (or takes it away if none is due). */
-    fun remind(incident: Incident)
+    /** The patient showing: an id, [Assessments.BLANK] for a new one not yet begun, or null for none chosen. */
+    fun readActive(): String?
+    fun writeActive(id: String?)
+    /** The one thing that can still be put back: a first line "K" or "O", a tab and the time, then the text. */
+    fun readTrash(): String?
+    fun writeTrash(text: String)
+    fun deleteTrash()
+    /** Sets the one reminder, for whichever open patient is due first (or takes it away if none is). */
+    fun remind(patients: List<Incident>)
     /** Cancels the alarm and any reminder notification showing. */
     fun cancelReminder()
+    /** Takes the reminder notification down (one patient ended; the others' alarm stays). */
+    fun dismissNotification()
 }
 
 /**
- * The assessment's life: nothing -> open (a first answer starts it) -> ended, by "End
- * assessment" only. Ending always cancels the alarm and the notification. The open assessment
- * is saved after every change; the one that was ended with "keep" waits as the last note
- * until it is deleted or another is kept over it.
+ * The assessments' life. Any number of patients can be open at once, each in a file of its
+ * own, saved after every change. One is showing. A patient is begun by a first answer and
+ * ends by "End assessment" only: the note is kept as the last one, or discarded. Ending always
+ * clears that patient's part of the reminder. Whatever is deleted or discarded (and a reset)
+ * waits in one undo slot for [UNDO_MS].
  */
-class Assessments(private val p: AssessmentPlatform) {
-    fun open(): Incident? = runCatching { p.readOpen()?.let(Incident::decode) }.getOrNull()
+class Assessments(private val p: AssessmentPlatform, private val now: () -> Long = System::currentTimeMillis) {
+    /** Every open patient, the oldest first. */
+    fun patients(): List<Incident> =
+        p.openIds().mapNotNull { id -> runCatching { p.readOpen(id)?.let(Incident::decode) }.getOrNull() }.sortedBy { it.started }
+
+    /** The patient showing: the one chosen, else the newest. Null for a new one not yet begun. */
+    fun open(): Incident? {
+        val all = patients()
+        return when (val a = p.readActive()) {
+            BLANK -> null
+            null -> all.lastOrNull()
+            else -> all.firstOrNull { it.id == a } ?: all.lastOrNull()
+        }
+    }
+
+    /** Shows [id]; null shows a new patient, begun by the first answer. */
+    fun show(id: String?) = p.writeActive(id ?: BLANK)
 
     fun kept(): Incident? = runCatching { p.readKept()?.let(Incident::decode) }.getOrNull()
 
     fun save(incident: Incident) {
-        p.writeOpen(incident.encode())
-        p.remind(incident)
+        p.writeOpen(incident.id, incident.encode())
+        p.writeActive(incident.id)
+        p.remind(patients())
     }
 
-    /** Ends the open assessment: [keep] it as the last note, or throw it away. Either way the next one starts fresh. */
-    fun end(keep: Boolean) {
-        val text = p.readOpen()
+    /** Ends patient [id]: [keep] the note as the last one, or throw it away (it can be put back). Either way the reminder is worked out again without it. */
+    fun end(id: String, keep: Boolean) {
+        val text = p.readOpen(id)
         if (keep && text != null && Incident.decode(text) != null) p.writeKept(text)
-        p.deleteOpen()
-        p.cancelReminder()
+        else if (text != null) trash(OPEN, text)
+        p.deleteOpen(id)
+        if (p.readActive() == id) p.writeActive(null)
+        remindAgain()
     }
 
-    fun deleteKept() = p.deleteKept()
+    /** Empties patient [id] for a fresh start: nothing is left of it but the undo. */
+    fun reset(id: String) {
+        val text = p.readOpen(id)
+        if (text != null) trash(OPEN, text)
+        p.deleteOpen(id)
+        p.writeActive(BLANK)
+        remindAgain()
+    }
+
+    fun deleteKept() {
+        p.readKept()?.let { trash(KEPT, it) }
+        p.deleteKept()
+    }
+
+    /** What [undo] would put back: [KEPT] or [OPEN], or null when nothing is waiting or it is too old. */
+    fun undoable(): String? {
+        val head = p.readTrash()?.substringBefore('\n') ?: return null
+        val kind = head.substringBefore('\t')
+        val at = head.substringAfter('\t', "").toLongOrNull() ?: return null
+        if (now() - at > UNDO_MS || now() < at) { p.deleteTrash(); return null }
+        return kind.takeIf { it == KEPT || it == OPEN }
+    }
+
+    /** Puts back what was last deleted, discarded or reset. Returns what it was, or null. */
+    fun undo(): String? {
+        val kind = undoable() ?: return null
+        val body = p.readTrash()!!.substringAfter('\n', "")
+        p.deleteTrash()
+        when (kind) {
+            KEPT -> p.writeKept(body)
+            else -> {
+                val inc = Incident.decode(body) ?: return null
+                save(inc)
+            }
+        }
+        return kind
+    }
+
+    private fun trash(kind: String, text: String) = p.writeTrash("$kind\t${now()}\n$text")
+
+    private fun remindAgain() {
+        val all = patients()
+        if (all.isEmpty()) p.cancelReminder() else { p.dismissNotification(); p.remind(all) }
+    }
 
     /**
-     * Run whenever the app's process starts: no open assessment, no alarm and no notification
-     * (whatever left them behind); an open one has its reminder set again.
+     * Run whenever the app's process starts: files that cannot be read go, an old undo goes, no
+     * patient means no alarm and no notification (whatever left them behind), and each open one
+     * counts in the reminder again.
      */
     fun sweep() {
-        val o = open()
-        if (o == null) { p.deleteOpen(); p.cancelReminder() } else p.remind(o)
+        for (id in p.openIds()) if (runCatching { p.readOpen(id)?.let(Incident::decode) }.getOrNull() == null) p.deleteOpen(id)
+        undoable()
+        remindAgain()
+    }
+
+    companion object {
+        const val BLANK = ""
+        const val KEPT = "K"
+        const val OPEN = "O"
+        /** How long a deleted note can be put back. */
+        const val UNDO_MS = 10 * 60_000L
     }
 }
 
-/** The phone's side of [Assessments]: one file each in the app's own storage, which is never backed up and never sent. */
+/** The phone's side of [Assessments]: files in the app's own storage, which is never backed up and never sent. */
 class AndroidAssessmentPlatform(private val context: Context) : AssessmentPlatform {
-    private fun open() = File(context.noBackupFilesDir, "incident.txt")
-    private fun kept() = File(context.noBackupFilesDir, "last-note.txt")
+    private val dir get() = context.noBackupFilesDir
+    private fun open(id: String) = File(dir, "patient-$id.txt")
+    private fun kept() = File(dir, "last-note.txt")
+    private fun active() = File(dir, "showing.txt")
+    private fun trash() = File(dir, "undo.txt")
 
     private fun write(f: File, text: String) {
         val tmp = File(f.parentFile, f.name + ".new")
@@ -96,24 +183,48 @@ class AndroidAssessmentPlatform(private val context: Context) : AssessmentPlatfo
         tmp.renameTo(f)
     }
 
-    override fun readOpen() = runCatching { open().takeIf { it.isFile }?.readText() }.getOrNull()
-    override fun writeOpen(text: String) = write(open(), text)
-    override fun deleteOpen() { open().delete() }
-    override fun readKept() = runCatching { kept().takeIf { it.isFile }?.readText() }.getOrNull()
+    private fun read(f: File) = runCatching { f.takeIf { it.isFile }?.readText() }.getOrNull()
+
+    override fun openIds(): List<String> {
+        // Before several patients there was one file, incident.txt: it becomes the first patient.
+        File(dir, "incident.txt").takeIf { it.isFile }?.let { old ->
+            val started = runCatching { Incident.decode(old.readText())?.id }.getOrNull()
+            if (started != null) write(open(started), old.readText())
+            old.delete()
+        }
+        return dir.listFiles { f -> f.name.startsWith("patient-") && f.name.endsWith(".txt") }
+            ?.map { it.name.removePrefix("patient-").removeSuffix(".txt") }.orEmpty()
+    }
+
+    override fun readOpen(id: String) = read(open(id))
+    override fun writeOpen(id: String, text: String) = write(open(id), text)
+    override fun deleteOpen(id: String) { open(id).delete() }
+    override fun readKept() = read(kept())
     override fun writeKept(text: String) = write(kept(), text)
     override fun deleteKept() { kept().delete() }
-    override fun remind(incident: Incident) = Recheck.schedule(context, incident)
+    override fun readActive() = read(active())
+    override fun writeActive(id: String?) { if (id == null) active().delete() else write(active(), id) }
+    override fun readTrash() = read(trash())
+    override fun writeTrash(text: String) = write(trash(), text)
+    override fun deleteTrash() { trash().delete() }
+    override fun remind(patients: List<Incident>) = Recheck.schedule(context, patients)
     override fun cancelReminder() = Recheck.cancel(context)
+    override fun dismissNotification() = Recheck.seen(context)
 }
 
 /** The app's one [Assessments], on the phone. */
 object IncidentStore {
     fun of(context: Context) = Assessments(AndroidAssessmentPlatform(context.applicationContext))
     fun load(context: Context): Incident? = of(context).open()
+    fun patients(context: Context): List<Incident> = of(context).patients()
+    fun show(context: Context, id: String?) = of(context).show(id)
     fun save(context: Context, incident: Incident) = of(context).save(incident)
-    fun end(context: Context, keep: Boolean) = of(context).end(keep)
+    fun end(context: Context, id: String, keep: Boolean) = of(context).end(id, keep)
+    fun reset(context: Context, id: String) = of(context).reset(id)
     fun kept(context: Context): Incident? = of(context).kept()
     fun deleteKept(context: Context) = of(context).deleteKept()
+    fun undoable(context: Context): String? = of(context).undoable()
+    fun undo(context: Context): String? = of(context).undo()
     fun sweep(context: Context) = of(context).sweep()
 }
 
@@ -132,6 +243,10 @@ object ReminderPlan {
         firedFor >= due -> null
         else -> now
     }
+
+    /** Of several open patients, the one whose reminder comes first, and when. */
+    fun next(key: Key, patients: List<Incident>, now: Long, firedFor: Long): Pair<Incident, Long>? =
+        patients.mapNotNull { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor)?.let { i to it } }.minByOrNull { it.second }
 }
 
 /**
@@ -150,6 +265,8 @@ object Recheck {
     const val EXTRA_MONITOR = "com.wanderwildwood.zatsuno.extra.MONITOR"
     /** Only Field Kit's own notification sends it: opens the question "End assessment?". */
     const val EXTRA_END = "com.wanderwildwood.zatsuno.extra.END"
+    /** Which patient the reminder is about: their id (the time they were begun). */
+    const val EXTRA_PATIENT = "com.wanderwildwood.zatsuno.extra.PATIENT"
 
     private fun pending(context: Context) = PendingIntent.getBroadcast(
         context, 0, Intent(context, RecheckReceiver::class.java),
@@ -158,9 +275,10 @@ object Recheck {
 
     private fun firedFor(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong(FIRED_FOR, 0L)
 
-    fun schedule(context: Context, incident: Incident, now: Long = System.currentTimeMillis()) {
+    /** One alarm, for whichever open patient is due first. */
+    fun schedule(context: Context, patients: List<Incident>, now: Long = System.currentTimeMillis()) {
         val alarms = context.getSystemService(AlarmManager::class.java)
-        val at = ReminderPlan.alarmAt(incident.nextCheck(Keys.get(context)), incident.last, now, firedFor(context))
+        val at = ReminderPlan.next(Keys.get(context), patients, now, firedFor(context))?.second
         if (at == null) { alarms.cancel(pending(context)); return }
         // Exact when the phone allows it; otherwise as near as Android will let it be.
         if (alarms.canScheduleExactAlarms()) alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending(context))
@@ -178,7 +296,13 @@ object Recheck {
         context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
     }
 
-    fun notify(context: Context, incident: Incident) {
+    /** The patient whose reassessment is due first, or null when nobody is open. */
+    fun dueFirst(context: Context, patients: List<Incident>): Incident? {
+        val key = Keys.get(context)
+        return patients.minByOrNull { it.nextCheck(key) }
+    }
+
+    fun notify(context: Context, incident: Incident, several: Boolean = false, label: String = "") {
         val due = incident.nextCheck(Keys.get(context))
         // Once per due time. Starting the app's process to deliver this alarm sets an alarm again
         // (FieldKitApplication), which would otherwise buzz a second time a moment after the first.
@@ -199,23 +323,23 @@ object Recheck {
         // until it is answered; with the phone in use it is a notification at the top.
         val screen = PendingIntent.getActivity(
             context, 2,
-            Intent(context, ReminderActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            Intent(context, ReminderActivity::class.java).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val open = PendingIntent.getActivity(
             context, 0,
-            Intent(context, MainActivity::class.java).putExtra(EXTRA_MONITOR, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, MainActivity::class.java).putExtra(EXTRA_MONITOR, true).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val end = PendingIntent.getActivity(
             context, 1,
-            Intent(context, MainActivity::class.java).putExtra(EXTRA_END, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, MainActivity::class.java).putExtra(EXTRA_END, true).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val n = android.app.Notification.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.recheck_title))
-            .setContentText(context.getString(R.string.recheck_text))
+            .setContentText(if (several) context.getString(R.string.recheck_text_named, label) else context.getString(R.string.recheck_text))
             .setContentIntent(open)
             .setAutoCancel(true)
             .setOngoing(false)
@@ -254,8 +378,12 @@ class BootReceiver : BroadcastReceiver() {
 
 class RecheckReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        // Only while an assessment is still open: ending it cancels the alarm, this makes sure.
-        val open = IncidentStore.load(context)
-        if (open != null) Recheck.notify(context, open) else Recheck.cancel(context)
+        // Only while an assessment is still open: ending the last one cancels the alarm, this makes sure.
+        val all = IncidentStore.patients(context)
+        val due = Recheck.dueFirst(context, all)
+        if (due == null) { Recheck.cancel(context); return }
+        Recheck.notify(context, due, all.size > 1, Patients.label(due, all, context))
+        // The others are still to come.
+        Recheck.schedule(context, all)
     }
 }

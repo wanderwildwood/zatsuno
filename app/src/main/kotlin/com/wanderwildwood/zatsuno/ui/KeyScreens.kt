@@ -51,6 +51,7 @@ import com.wanderwildwood.zatsuno.key.Incident
 import com.wanderwildwood.zatsuno.key.IncidentStore
 import com.wanderwildwood.zatsuno.key.Key
 import com.wanderwildwood.zatsuno.key.Note
+import com.wanderwildwood.zatsuno.key.Patients
 import com.wanderwildwood.zatsuno.key.Question
 import com.wanderwildwood.zatsuno.key.Ranking
 import com.wanderwildwood.zatsuno.key.Recheck
@@ -74,6 +75,43 @@ class KeyState(
     var incident by mutableStateOf(IncidentStore.load(context))
         private set
 
+    /** Every patient open, the oldest first. [incident] is the one showing. */
+    var patients by mutableStateOf(IncidentStore.patients(context))
+        private set
+
+    /** What "Undo" would put back ([com.wanderwildwood.zatsuno.key.Assessments.KEPT] or OPEN), while it still can. */
+    var undoable by mutableStateOf(IncidentStore.undoable(context))
+        private set
+
+    /** The patient as the lists and the reminder name them. */
+    fun label(i: Incident): String = Patients.label(i, patients, words)
+
+    private fun reload() {
+        incident = IncidentStore.load(context)
+        patients = IncidentStore.patients(context)
+        kept = IncidentStore.kept(context)
+        undoable = IncidentStore.undoable(context)
+    }
+
+    /** Shows patient [id]; null is a new one, begun by the first answer. */
+    fun show(id: String?) {
+        IncidentStore.show(context, id)
+        reload()
+    }
+
+    /** Clears this patient and shows a new one: the answers, the note and the reminder for it go (Undo puts them back). */
+    fun reset() {
+        val id = incident?.id ?: return
+        IncidentStore.reset(context, id)
+        reload()
+    }
+
+    /** Puts back what was last deleted, discarded or cleared. */
+    fun undo() {
+        IncidentStore.undo(context)
+        reload()
+    }
+
     val note: Note get() = Note(key, words, titles, twentyFourHour = android.text.format.DateFormat.is24HourFormat(context))
     val answers: Answers get() = incident?.answers() ?: Answers()
     val ranking: Ranking get() = rank(key, answers)
@@ -88,6 +126,7 @@ class KeyState(
             else base + e
         incident = next
         IncidentStore.save(context, next)
+        patients = IncidentStore.patients(context)
     }
 
     /** One answer; the same one again takes it back. */
@@ -124,14 +163,14 @@ class KeyState(
 
     /** Ends the assessment: keep the note as the last one, or discard it. All that belongs to it is cleared, reminder included. */
     fun end(keep: Boolean) {
-        IncidentStore.end(context, keep)
-        incident = null
-        kept = IncidentStore.kept(context)
+        val id = incident?.id ?: return
+        IncidentStore.end(context, id, keep)
+        reload()
     }
 
     fun deleteKept() {
         IncidentStore.deleteKept(context)
-        kept = null
+        reload()
     }
 
     fun text(field: String): String = incident?.texts()?.get(field)?.text.orEmpty()
@@ -207,18 +246,20 @@ fun KeyScreen(
     onNote: () -> Unit,
     onReadOut: () -> Unit,
     onEnd: () -> Unit,
+    onPatients: () -> Unit,
+    onAnother: () -> Unit,
     onBack: () -> Unit,
 ) {
     val list = rememberLazyListState()
     LaunchedEffect(stage) { list.scrollToItem(0) }
     val context = LocalContext.current
-    val draft = remember { VitalsDraft() }
+    val draft = remember(state.incident?.id) { VitalsDraft() }
     LaunchedEffect(draft.counting) {
         if (draft.counting) { delay(15_000); Recheck.buzz(context); draft.counting = false }
     }
     if (stage == Stage.CALL) RecordWhere(state, model)
     Screen(
-        title = stringResource(R.string.key_title_bar),
+        title = state.incident?.takeIf { state.patients.size > 1 }?.let { state.label(it) } ?: stringResource(R.string.key_title_bar),
         onBack = onBack,
         actions = {
             if (state.incident != null) BarText(stringResource(R.string.key_end), onEnd)
@@ -245,7 +286,7 @@ fun KeyScreen(
                 }
                 item(key = "stage-head") { Heading(stringResource(STAGE_FULL[stage.ordinal])) }
                 when (stage) {
-                    Stage.SCENE -> scene(state, onOpenPage)
+                    Stage.SCENE -> scene(state, onOpenPage, onPatients, onAnother)
                     Stage.PRIMARY -> {
                         questions(state, Stage.PRIMARY)
                         item(key = "expose") { Reminder(stringResource(R.string.key_expose)) }
@@ -253,7 +294,7 @@ fun KeyScreen(
                     Stage.CALL -> call(state, ranking, onOpenPage, onReadOut)
                     Stage.SECONDARY -> secondary(state, ranking, draft)
                     Stage.TREAT -> treat(state, ranking, onOpenPage, onStage)
-                    Stage.MONITOR -> monitor(state, draft, onStage, onEnd)
+                    Stage.MONITOR -> monitor(state, draft, onStage, onEnd, onPatients, onAnother)
                 }
                 val next = Stage.entries.getOrNull(stage.ordinal + 1)
                 if (next != null && !(stage == Stage.SCENE && state.answers.single("safe") == "no")) {
@@ -302,6 +343,40 @@ private fun StageStrip(current: Stage, onStage: (Stage) -> Unit) {
             )
         }
     }
+}
+
+/**
+ * Who the note is about: the patients already open (one tap to switch), the name, and a way to
+ * begin another. The name can come from the emergency card when the patient is the owner.
+ */
+@Composable
+private fun PatientBlock(state: KeyState, onPatients: () -> Unit, onAnother: () -> Unit) {
+    val context = LocalContext.current
+    Column(Modifier.fillMaxWidth()) {
+        if (state.patients.size > 1) {
+            Column(Modifier.padding(horizontal = 20.dp)) {
+                PageRow(stringResource(R.string.key_patients, state.patients.size), null, onClick = onPatients)
+            }
+        }
+        TextLine(state, Fields.NAME, null)
+        val card = remember { CardStore.load(context) }
+        if (card.name.isNotBlank() && state.text(Fields.NAME).isBlank()) {
+            WideButton(stringResource(R.string.key_name_card), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)) {
+                state.write(Fields.NAME, card.name.trim())
+            }
+        }
+        if (state.incident != null) {
+            WideButton(stringResource(R.string.key_another), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp), onAnother)
+        }
+    }
+}
+
+/** A button that asks twice: the first tap arms it for 6 seconds and says so. */
+@Composable
+fun ArmedButton(label: Int, armedLabel: Int, modifier: Modifier = Modifier, onConfirm: () -> Unit) {
+    var armed by remember { mutableStateOf(false) }
+    LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
+    WideButton(stringResource(if (armed) armedLabel else label), modifier) { if (armed) { armed = false; onConfirm() } else armed = true }
 }
 
 /** A page to open, with why it is there under it. */
@@ -412,8 +487,9 @@ private fun QuestionHead(state: KeyState, q: Question) {
     }
 }
 
-private fun LazyListScope.scene(state: KeyState, onOpenPage: (String) -> Unit) {
+private fun LazyListScope.scene(state: KeyState, onOpenPage: (String) -> Unit, onPatients: () -> Unit, onAnother: () -> Unit) {
     val safe = state.key.question("safe")!!
+    item(key = "patient") { PatientBlock(state, onPatients, onAnother) }
     question(state, safe)
     item(key = "bsi") { Reminder(stringResource(R.string.key_bsi)) }
     if (state.answers.single("safe") == "no") {
@@ -718,7 +794,9 @@ private fun LazyListScope.vitals(state: KeyState, draft: VitalsDraft) {
 }
 
 /** Monitoring: the vital signs again, when the next reassessment is due, and the way back to the primary assessment. */
-private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: (Stage) -> Unit, onEnd: () -> Unit) {
+private fun LazyListScope.monitor(
+    state: KeyState, draft: VitalsDraft, onStage: (Stage) -> Unit, onEnd: () -> Unit, onPatients: () -> Unit, onAnother: () -> Unit,
+) {
     vitals(state, draft)
     state.incident?.let { inc ->
         item(key = "v:next") {
@@ -731,6 +809,15 @@ private fun LazyListScope.monitor(state: KeyState, draft: VitalsDraft, onStage: 
     }
     if (state.incident != null) item(key = "end") {
         WideButton(stringResource(R.string.key_end_assessment), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp), onEnd)
+    }
+    if (state.incident != null) item(key = "another") {
+        WideButton(stringResource(R.string.key_another), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp), onAnother)
+    }
+    if (state.patients.size > 1) item(key = "patients") {
+        WideButton(stringResource(R.string.key_patients, state.patients.size), Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp), onPatients)
+    }
+    if (state.incident != null) item(key = "reset") {
+        ArmedButton(R.string.key_reset, R.string.key_reset_armed, Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) { state.reset() }
     }
 }
 
@@ -760,7 +847,7 @@ fun EndAssessmentDialog(state: KeyState, onEnded: () -> Unit, onDismiss: () -> U
 
 /** The note of the last assessment, ended with "Keep the note": read, copy or share; an armed row deletes it. */
 @Composable
-fun LastNoteScreen(state: KeyState, onBack: () -> Unit) {
+fun LastNoteScreen(state: KeyState, onQr: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
     val inc = state.kept
     val text = inc?.let { state.note.text(it) }
@@ -779,6 +866,7 @@ fun LastNoteScreen(state: KeyState, onBack: () -> Unit) {
                     }
                 }
             }
+            item(key = "tools") { NoteTools(text!!, onQr) }
             item(key = "delete") {
                 var armed by remember { mutableStateOf(false) }
                 LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
@@ -822,7 +910,7 @@ private fun CountField(label: String, value: String, onChange: (String) -> Unit)
  * "End assessment", which asks whether to keep the note or discard it.
  */
 @Composable
-fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBack: () -> Unit, onEnd: () -> Unit) {
+fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onQr: () -> Unit, onBack: () -> Unit, onEnd: () -> Unit) {
     val context = LocalContext.current
     RecordWhere(state, model)
     val inc = state.incident
@@ -846,6 +934,7 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
                     }
                 }
             }
+            if (text != null) item(key = "tools") { NoteTools(text, onQr) }
             if (inc != null) item(key = "end") {
                 Column(Modifier.padding(top = 20.dp, bottom = 16.dp)) {
                     HorizontalDividerMMD()
@@ -855,6 +944,91 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onBa
                         modifier = Modifier.fillMaxWidth().clickable(onClick = onEnd).padding(horizontal = 20.dp, vertical = 16.dp),
                     )
                     HorizontalDividerMMD()
+                }
+            }
+        }
+    }
+}
+
+/** A plain row under a note: tap to do it. */
+@Composable
+private fun ToolRow(label: String, onClick: () -> Unit) {
+    TextMMD(
+        text = label,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(onClick = onClick).padding(horizontal = 20.dp, vertical = 14.dp),
+    )
+}
+
+/**
+ * Under a note: show it as QR code(s) for a crew's phone to scan, or save it as a file. The
+ * file is written where the person chooses in the phone's own file picker; the app writes to no
+ * other place.
+ */
+@Composable
+private fun NoteTools(text: String, onQr: () -> Unit) {
+    val context = LocalContext.current
+    var status by remember { mutableStateOf<Int?>(null) }
+    val current by androidx.compose.runtime.rememberUpdatedState(text)
+    val save = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("text/plain"),
+    ) { uri ->
+        if (uri != null) {
+            val ok = runCatching { context.contentResolver.openOutputStream(uri, "wt")!!.use { it.write(current.toByteArray()) } }.isSuccess
+            status = if (ok) R.string.note_saved else R.string.note_save_failed
+        }
+    }
+    Column(Modifier.padding(top = 12.dp)) {
+        ToolRow(stringResource(R.string.note_qr), onQr)
+        ToolRow(stringResource(R.string.note_save)) { status = null; save.launch(context.getString(R.string.note_file_name)) }
+        status?.let { TextMMD(text = stringResource(it), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 20.dp)) }
+    }
+}
+
+/**
+ * The note as QR codes. A short note is one code; a long one is cut between lines into
+ * numbered codes ("(1/3)") that are scanned in turn, because one code holding it all would be
+ * too fine to read off a small panel.
+ */
+@Composable
+fun QrScreen(title: String, text: String, onBack: () -> Unit) {
+    val pieces = remember(text) { Patients.codes(text) }
+    var n by rememberSaveable { mutableStateOf(0) }
+    if (n > pieces.lastIndex) n = pieces.lastIndex
+    Screen(title = title, onBack = onBack) { modifier ->
+        Column(modifier.padding(horizontal = 12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (pieces.size > 1) TextMMD(text = stringResource(R.string.qr_n, n + 1, pieces.size), style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 6.dp))
+            QrCode(pieces[n], Modifier.fillMaxWidth().weight(1f))
+            TextMMD(text = stringResource(if (pieces.size > 1) R.string.qr_hint_many else R.string.qr_hint), style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 6.dp))
+            if (pieces.size > 1) Row(Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (n > 0) WideButton(stringResource(R.string.qr_prev), Modifier.weight(1f)) { n-- }
+                if (n < pieces.lastIndex) WideButton(stringResource(R.string.qr_next), Modifier.weight(1f)) { n++ }
+            }
+        }
+    }
+}
+
+/** The patients open, to pick one or begin another. */
+@Composable
+fun PatientsScreen(state: KeyState, onPick: (String) -> Unit, onAnother: () -> Unit, onBack: () -> Unit) {
+    val shown = state.incident?.id
+    Screen(title = stringResource(R.string.patients_title), onBack = onBack) { modifier ->
+        PagedColumn(modifier) {
+            for (p in state.patients) {
+                item(key = p.id) {
+                    Column(Modifier.fillMaxWidth().clickable { onPick(p.id) }.heightIn(min = 48.dp).padding(horizontal = 20.dp, vertical = 12.dp)) {
+                        TextMMD(text = state.label(p), style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = if (p.id == shown) FontWeight.Bold else FontWeight.Normal)
+                        TextMMD(text = stringResource(R.string.patients_row, state.note.time(p.started), state.note.time(p.nextCheck(state.key))),
+                            style = MaterialTheme.typography.labelSmall)
+                    }
+                }
+            }
+            item(key = "another") {
+                Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp)) {
+                    WideButton(stringResource(R.string.key_another), Modifier.fillMaxWidth(), onAnother)
                 }
             }
         }

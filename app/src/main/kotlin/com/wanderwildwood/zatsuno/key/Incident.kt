@@ -5,10 +5,13 @@ package com.wanderwildwood.zatsuno.key
  * time, in the order it happened. The answers, the vitals and the note are all read off this
  * list, so nothing is filled in twice and every line of the note has a time.
  *
- * There is one open incident at a time. It is saved after every change, so it outlives the
- * app being stopped, and it is cleared only by "Start over".
+ * Any number of incidents (one a patient) can be open at once. Each is saved after every
+ * change, so it outlives the app being stopped, and is cleared only by ending it or starting it over.
  */
 data class Incident(val started: Long, val events: List<Event> = emptyList()) {
+
+    /** Names the patient on disk and in the reminder: the time they were begun. */
+    val id: String get() = started.toString()
 
     sealed interface Event { val at: Long }
 

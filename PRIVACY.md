@@ -26,6 +26,12 @@ the app. If you switch on "Show on the lock screen", the lines you choose are ha
 anyone holding the phone can read them without unlocking it. Field Kit answers no other app
 that asks. It is off until you switch it on.
 
+You can have several patients open at once; each is its own file in the same private storage,
+and a deleted, discarded or cleared note waits there for ten minutes so it can be put back, then
+is removed. "Show as QR code" draws the note on the screen for another phone to scan; nothing is
+sent. "Save as a file" hands the text to the phone's own file picker and writes it only where you
+choose.
+
 ## What it asks for
 
 `app/src/main/AndroidManifest.xml` declares:

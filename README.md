@@ -33,7 +33,10 @@ and it will install on any Android 12 device.
   to reassess every 15 minutes, or 5 while a danger page is on the problem list. "End
   assessment" asks whether to keep the note or discard it, and starts the next one fresh. The
   reminder comes as a whole screen over the lock screen that stays until answered. It names
-  pages; it never says the patient is stable.
+  pages; it never says the patient is stable. Several patients can be open at once, each with a
+  name and a reminder of their own (the one due first goes off first). A note shows as a QR code
+  a crew can scan with a phone (a long note as numbered codes) or saves as a text file wherever
+  you choose in the phone's file picker. A deleted or cleared note can be put back for ten minutes.
 - **First aid.** Thirty-six short pages: scene size-up and primary assessment, signalling
   for rescue, hands-only CPR, choking, severe bleeding and tourniquets, drowning, anaphylaxis,
   respiratory distress and asthma, chest pain, stroke, shock, seizures, low blood sugar
@@ -196,4 +199,4 @@ You should have received a copy of the GNU General Public License along with thi
 not, see <https://www.gnu.org/licenses/>.
 
 The compass and position code is from kCompass by Ondřej Koloničný (OK1CDJ), GPL-3.0. Icons are
-from Material Symbols, Apache 2.0.
+from Material Symbols, Apache 2.0. QR codes are drawn with ZXing, Apache 2.0.

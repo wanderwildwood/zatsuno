@@ -51,11 +51,11 @@ class MainActivity : ComponentActivity() {
         // Reopened from the recent apps, the old request would come round again.
         if (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return
         if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_END, false)) {
-            request.value = Opening.Request.End
+            request.value = Opening.Request.End(intent.getStringExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_PATIENT))
             return
         }
         if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_MONITOR, false)) {
-            request.value = Opening.Request.Monitor
+            request.value = Opening.Request.Monitor(intent.getStringExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_PATIENT))
             return
         }
         Opening.read(
