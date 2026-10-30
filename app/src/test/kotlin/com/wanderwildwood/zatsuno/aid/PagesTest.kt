@@ -24,6 +24,17 @@ class PagesTest {
     }
 
     @Test
+    fun noPageSendsEveryoneToNineOneOneAlone() {
+        // The number depends on the country: wherever a page names 911 it names 112 beside it.
+        for (f in raw.listFiles { f -> f.name.startsWith("aid_") && f.name != "aid_call.txt" }!!) {
+            for (line in f.readLines()) {
+                if (line.startsWith("source:")) continue
+                if (Regex("""\b911\b""").containsMatchIn(line)) assertTrue("${f.name}: $line", "112" in line)
+            }
+        }
+    }
+
+    @Test
     fun theListNamesEveryPageOnce() {
         val src = listOf("src/main/kotlin", "app/src/main/kotlin").map { File(it, "com/wanderwildwood/zatsuno/aid/Pages.kt") }.first { it.isFile }
         val listed = Regex("""R\.raw\.aid_(\w+)""").findAll(src.readText()).map { it.groupValues[1] }.toList()

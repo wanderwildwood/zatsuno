@@ -8,7 +8,7 @@ source: MedlinePlus (NIH), "Anaphylaxis", "Insect bites and stings" and "Bee, wa
 - Hives spreading over the body, faintness, a weak fast pulse, vomiting or belly cramps
 - Can start within minutes of a sting, food or medicine
 # Do this
-1. Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, give epinephrine first, then send someone for help.
+1. Call your local emergency number (112 or 911). No signal: try 112 and 911 anyway (see Calling for help); if it fails, give epinephrine first, then send someone for help.
 2. If they carry epinephrine, help them use it now: an auto-injector into the outer thigh, through clothing if need be, or a nasal spray up one nostril.
 3. Lay them down with the feet raised (pregnant: on the left side). If breathing is hard, let them sit up instead. Don't let them stand or walk while signs remain.
 4. No better 5 to 10 minutes after the first dose, or the signs come back: give the second dose if there is one.

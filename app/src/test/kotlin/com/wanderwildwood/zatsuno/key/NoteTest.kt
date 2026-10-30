@@ -71,7 +71,7 @@ class NoteTest {
                 "Head injury: Head or spine mechanism not checked. Heat exhaustion and heat stroke: Altered mental status not checked. " +
                 "Altitude illness (AMS, HACE, HAPE): Recent altitude not checked.",
             "P  Insulated from ground 14:15.",
-            "   Called (911 / SAR) 14:16.",
+            "   Called (emergency number / SAR) 14:16.",
             "   Splinted 14:20.",
             "   Carry out (litter) 14:25.",
             "   Monitoring: vital signs every 5 min.",
@@ -90,7 +90,7 @@ class NoteTest {
                 "MOI/NOI: Fall 14:02",
                 "Condition: LOR (AVPU): A: Alert. Breathing: Normal. Severe bleeding: None. HR 96. RR 18. SCTM pink, warm, dry. Pupils PERRL.",
                 "Problem list: Hypothermia, Fractures and splinting, Sprains and strains",
-                "Treatment and plan: Insulated from ground 14:15. Called (911 / SAR) 14:16. Splinted 14:20. Carry out (litter) 14:25.",
+                "Treatment and plan: Insulated from ground 14:15. Called (emergency number / SAR) 14:16. Splinted 14:20. Carry out (litter) 14:25.",
             ).joinToString("\n"),
             note.readOut(incident),
         )

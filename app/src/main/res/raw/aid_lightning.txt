@@ -3,7 +3,7 @@ keywords: lightning, thunder, thunderstorm, storm, struck, electrical, shelter, 
 source: NWS (NOAA), "Lightning Safety"; NPS, "Lightning Safety"; Wilderness Medical Society, lightning injury guidelines (2014 update).
 ---
 # Someone is struck
-1. Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, start care, then send someone for help.
+1. Call your local emergency number (112 or 911). No signal: try 112 and 911 anyway (see Calling for help); if it fails, start care, then send someone for help.
 2. It is safe to touch them. They carry no charge.
 3. Lightning still close: move to a safer place.
 4. Not breathing normally: start CPR, with rescue breaths if you can, and use an AED if there is one. See Hands-only CPR.

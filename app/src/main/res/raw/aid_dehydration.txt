@@ -6,8 +6,8 @@ source: MedlinePlus (NIH), "Dehydration" and "Diarrhea in infants"; CDC, "Treati
 - Thirst, dry mouth, tiredness, headache
 - Little urine, or dark yellow urine
 - Dizziness, especially on standing up
-! Call 911 or your local emergency number for confusion, fainting, fast heartbeat or breathing, no urine for many hours, signs of heat stroke (see Heat exhaustion and heat stroke), fluids not staying down, or no better after rest and fluids.
-! No signal: try 911 anyway (see Calling for help); if it fails, send someone out.
+! Call your local emergency number (112 or 911) for confusion, fainting, fast heartbeat or breathing, no urine for many hours, signs of heat stroke (see Heat exhaustion and heat stroke), fluids not staying down, or no better after rest and fluids.
+! No signal: try 112 and 911 anyway (see Calling for help); if it fails, send someone out.
 ! Baby with no wet diaper in 3 hours, no tears when crying, or unusual sleepiness: get care now.
 # Do this
 1. Rest in shade.

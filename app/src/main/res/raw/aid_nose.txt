@@ -2,8 +2,8 @@ title: Nosebleeds and dental injuries
 keywords: nosebleed, nose bleed, bloody nose, epistaxis, broken nose, tooth, teeth, knocked out, avulsed, chipped, broken tooth, lost filling, jaw, dislocated jaw, mouth, milk
 source: MedlinePlus (NIH), "Nosebleeds", "Tooth - broken or knocked out" and "Jaw - broken or dislocated"; AHA and American Red Cross, "2024 Guidelines for First Aid"; American Dental Association, "Dental emergencies"; International Association of Dental Traumatology, avulsion guidelines (2020), for facts.
 ---
-! Call 911 or your local emergency number if the nose bleeds after a head injury (see Head injury), won't stop after 20 minutes of steady pinching or leaves them faint, or a jaw injury makes breathing hard.
-  No signal: try 911 anyway (see Calling for help); if it fails, keep pinching and head out. After a head injury, don't walk them out: see Head injury.
+! Call your local emergency number (112 or 911) if the nose bleeds after a head injury (see Head injury), won't stop after 20 minutes of steady pinching or leaves them faint, or a jaw injury makes breathing hard.
+  No signal: try 112 and 911 anyway (see Calling for help); if it fails, keep pinching and head out. After a head injury, don't walk them out: see Head injury.
 # Nosebleed
 1. Sit them up, leaning forward. Do not tilt the head back.
 2. Pinch the soft part of the nose, below the bone. Hold 10 to 15 minutes by the clock. Don't let go to look.
@@ -20,7 +20,7 @@ source: MedlinePlus (NIH), "Nosebleeds", "Tooth - broken or knocked out" and "Ja
 - Dentist as soon as you can, the same day if it hurts, is loose, or a pink or bleeding spot shows in the break.
 # Jaw
 - Teeth that don't meet, a jaw that won't close, drooling: likely broken or dislocated. Don't push it back.
-- Support it with a hand or a bandage under the chin and over the head, easy to pull off if they vomit. Hospital; heavy bleeding or a fast-swelling face: 911.
+- Support it with a hand or a bandage under the chin and over the head, easy to pull off if they vomit. Hospital; heavy bleeding or a fast-swelling face: call your local emergency number (112 or 911).
 # Notes
 - On blood thinners (warfarin, apixaban, clopidogrel): a doctor now, even if it stops.
 - After a nosebleed: no blowing or sniffing for several hours. Don't pack the nose.

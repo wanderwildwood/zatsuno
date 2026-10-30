@@ -2,7 +2,7 @@ title: Animal bites and rabies
 keywords: bite, animal bite, dog bite, cat bite, bat, rabies, raccoon, fox, skunk, scratch, tetanus, infection
 source: CDC, "Rabies: Preventing rabies" (15-minute wash, high-risk wildlife, any bat contact, dog/cat/ferret 10-day observation); NIH MedlinePlus, "Animal bites - self-care"; Wilderness Medical Society, basic wound management guidelines (2014 update).
 ---
-! Bleeding that firm pressure won't stop: Call 911 or your local emergency number. See Severe bleeding.
+! Bleeding that firm pressure won't stop: Call your local emergency number (112 or 911). See Severe bleeding.
 # Do this
 1. Get away from the animal. Don't try to catch or kill it.
 2. Press on the wound with a clean cloth until the bleeding stops.

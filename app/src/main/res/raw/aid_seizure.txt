@@ -2,13 +2,13 @@ title: Seizures
 keywords: seizure, fit, convulsions, epilepsy, shaking, jerking, twitching, collapsed, blank stare, foaming, unresponsive, bit tongue
 source: CDC, "First Aid for Seizures"; MedlinePlus (NIH), "Seizures" and "Seizure first aid"; Epilepsy Foundation, "Seizure First Aid"; AHA and American Red Cross, "2024 Guidelines for First Aid".
 ---
-! Call 911 or your local emergency number if:
+! Call your local emergency number (112 or 911) if:
 - It lasts over 5 minutes, or another starts soon after (even if they woke up)
 - It is their first seizure, or you don't know
 - It happened in water
 - They are pregnant, diabetic, hurt, or have a head injury
 - They struggle to breathe, or don't wake up after
-No signal: try 911 anyway (see Calling for help); if it fails, send someone out for help.
+No signal: try 112 and 911 anyway (see Calling for help); if it fails, send someone out for help.
 # During the seizure
 1. Note the time.
 2. Ease them to the ground. Move rocks, gear and people away.
@@ -17,7 +17,7 @@ No signal: try 911 anyway (see Calling for help); if it fails, send someone out 
 5. In water: if you can reach them safely, hold the face above water, then get them out once it stops. See Drowning (submersion).
 # After it stops
 1. Roll them onto their side, mouth toward the ground.
-2. Not breathing, or only gasping: call 911 or your local emergency number and start CPR. See Hands-only CPR.
+2. Not breathing, or only gasping: call your local emergency number (112 or 911) and start CPR. See Hands-only CPR.
 - Heavy, noisy or snoring breaths right after a seizure are common. Keep them on their side and watch.
 3. Stay with them. Confusion and sleepiness are normal.
 4. Protect them from the ground and weather: a pad or pack under them. A layer over them if cold; shade, not layers, if hot.

@@ -42,13 +42,23 @@ class AddContactActivity : ComponentActivity() {
             return
         }
         val already = CardStore.load(this).hasNumber(contact.number)
+        // Named from callingPackage alone: the referrer can be set by whoever asks. An app that
+        // starts this without asking for a result has no calling package; the screen then says
+        // the sender cannot be told, and Add stays the reader's choice.
+        val asker = callingPackage?.let { pkg ->
+            runCatching { packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString() }.getOrNull() ?: pkg
+        }
         setContent {
             ThemeMMD(colorScheme = monochrome) {
                 BackHandler { finish() }
                 Screen(title = stringResource(R.string.card_title), onBack = { finish() }) { modifier ->
                     Column(modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
                         TextMMD(
-                            text = stringResource(if (already) R.string.card_given_already else R.string.card_given_ask),
+                            text = when {
+                                already -> stringResource(R.string.card_given_already)
+                                asker != null -> stringResource(R.string.card_given_ask_from, asker)
+                                else -> stringResource(R.string.card_given_ask_unknown)
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Spacer(Modifier.height(12.dp))

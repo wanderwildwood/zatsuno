@@ -93,6 +93,7 @@
     <string name="compass_map">Map</string>
     <!-- %1$s is the number to dial -->
     <string name="pos_dial">Dial %1$s</string>
+    <string name="pos_dial_note">The emergency number depends on the country. 112 and 911 are both offered; if you are not sure, try 112, then 911.</string>
     <!-- First line of a shared position. %1$s the time, %2$s metres -->
     <string name="share_heading">My position at %1$s, to within %2$s m:</string>
     <string name="share_heading_no_accuracy">My position at %1$s:</string>
@@ -252,6 +253,8 @@
     <string name="card_lock_off">Not shown on the lock screen.</string>
     <!-- Someone sent from Contacts ("Add to emergency card") -->
     <string name="card_given_ask">Add to the emergency contacts on your card?</string>
+    <string name="card_given_ask_from">%1$s offers this person for the emergency contacts on your card. Add them?</string>
+    <string name="card_given_ask_unknown">An app that cannot be identified offers this person for the emergency contacts on your card. Add them only if you just asked for that.</string>
     <string name="card_given_already">Already one of the emergency contacts on your card.</string>
     <string name="card_given_add">Add</string>
     <string name="card_given_cancel">Cancel</string>
@@ -432,7 +435,7 @@
     <!-- Call for help -->
     <string name="key_q_called">Call for help now?</string>
     <string name="key_n_called">Call for help</string>
-    <string name="key_a_called_called">Called (911 / SAR)</string>
+    <string name="key_a_called_called">Called (emergency number / SAR)</string>
     <string name="key_a_called_sent">No signal: sent someone</string>
     <string name="key_a_called_not_yet">Not needed yet</string>
 
@@ -585,7 +588,7 @@
     <string name="key_a_plan_stay">No evacuation: treat and monitor here</string>
     <string name="key_a_plan_walk">Walk out (self-evacuation, non-urgent)</string>
     <string name="key_a_plan_carry">Carry out (litter)</string>
-    <string name="key_a_plan_rescue">Urgent: wait for rescue (911 / SAR)</string>
+    <string name="key_a_plan_rescue">Urgent: wait for rescue (emergency number / SAR)</string>
 
     <!-- Written lines. SAMPLE and OPQRST carry their letter -->
     <string name="key_field_who">Age, sex, anything else that matters</string>
@@ -682,7 +685,7 @@
     <string name="about_privacy_head">Privacy</string>
     <string name="about_privacy">Everything you put in this app stays on this phone. It has no internet access, so nothing is sent anywhere, and nothing is collected about you. Location is read only while the compass, your position or a note you started is open, and is used only to show it to you. The emergency card goes on the lock screen only if you switch that on. The reassessment reminder uses the phone\'s alarm, notification and vibration. Anything you share goes only where you send it. There are no ads, no analytics and no tracking. Backups and exports go only where you choose to save them.</string>
     <string name="about_terms_head">Terms</string>
-    <string name="about_terms">This app is free software under the GNU General Public License v3. It comes with no warranty: use it at your own risk.</string>
+    <string name="about_terms">This app is free software under the GNU General Public License, version 3 only. It comes with no warranty of any kind: use it at your own risk. The first-aid pages are a reference, not training and not medical advice, and nothing here is a substitute for emergency services.</string>
     <string name="about_disclaimer_head">First aid</string>
     <string name="about_disclaimer">This is a reference for first aid, not training and not a substitute for emergency services. In an emergency, call your local emergency number first.</string>
     <string name="about_licence">GNU General Public License v3</string>
@@ -723,4 +726,16 @@
     <string name="folio_page">Page %1$d of %2$d</string>
     <string name="folio_go">Go</string>
     <string name="folio_cancel">Cancel</string>
+    <string name="about_licences">Licences</string>
+    <string name="licences_title">Licences</string>
+    <string name="licences_source_head">Source code</string>
+    <string name="licences_licence_head">Licence</string>
+    <string name="licences_licence">Field Kit is free software under the GNU General Public License, version 3 only (GPL-3.0-only), copyright wander wildwood, for what is written here. It also contains code from kCompass, under the same licence. The work it is built on keeps its own licence and its authors keep their copyright, as listed under Built with. The full text of each licence is at the end of this page.</string>
+    <string name="licences_built_head">Built with</string>
+    <string name="licences_back">Back</string>
+    <string name="about_no_browser_address">No browser is installed. The address is %1$s.</string>
+    <string name="licences_gpl">GNU General Public License, version 3</string>
+    <string name="licences_apache">Apache License, version 2.0</string>
+    <string name="licences_mit">MIT License</string>
+    <string name="licences_ofl">SIL Open Font License, version 1.1</string>
 </resources>

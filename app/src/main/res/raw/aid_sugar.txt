@@ -2,8 +2,8 @@ title: Low blood sugar (hypoglycemia)
 keywords: low blood sugar, diabetes, diabetic, insulin, hypoglycemia, sugar low, shaky, sweaty, confused, acting drunk, passed out, glucose, juice, candy, glucagon
 source: NIDDK (NIH), "Low Blood Glucose (Hypoglycemia)"; CDC, "Low Blood Sugar (Hypoglycemia)"; MedlinePlus (NIH), "Low blood sugar - self-care"; AHA and American Red Cross, "2024 Guidelines for First Aid".
 ---
-! Can't sit up, swallow safely or follow simple instructions: give nothing by mouth. Call 911 or your local emergency number.
-  No signal: try 911 anyway (see Calling for help); if it fails, send someone for help and stay with them.
+! Can't sit up, swallow safely or follow simple instructions: give nothing by mouth. Call your local emergency number (112 or 911).
+  No signal: try 112 and 911 anyway (see Calling for help); if it fails, send someone for help and stay with them.
 # Signs
 - Shaky, sweaty, pale, hungry, fast heartbeat.
 - Confused, irritable, clumsy, slurred speech, acting strangely.

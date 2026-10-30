@@ -8,16 +8,18 @@ import java.util.Locale
  * Which emergency number comes first. 911 answers across North America (and is the number
  * people there know); almost everywhere else 112 does, and in the EU it is the one that works
  * on any SIM. Both are always offered; only the order follows the phone's country, which is
- * read from the network, then the SIM, then the language setting. No permission needed.
+ * read from the network, then the SIM. The language setting is not a country (an English
+ * phone in Poland is still in Poland), so it is never used, and when neither is known 112
+ * comes first with 911 beside it. No permission needed.
  */
 object Emergency {
     /** Countries where 911 is the emergency number: the US and its territories, Canada, Mexico. */
     private val NINE_ONE_ONE = setOf("US", "CA", "MX", "PR", "GU", "VI", "AS", "MP")
 
-    /** [countries] are ISO codes in order of trust (network, SIM, locale); the first one known decides. */
+    /** [countries] are ISO codes in order of trust (network, SIM); the first one known decides. */
     fun order(countries: List<String?>): List<String> {
         val country = countries.firstOrNull { !it.isNullOrBlank() }?.uppercase(Locale.ROOT)
-        return if (country == null || country in NINE_ONE_ONE) listOf("911", "112") else listOf("112", "911")
+        return if (country != null && country in NINE_ONE_ONE) listOf("911", "112") else listOf("112", "911")
     }
 
     fun order(context: Context): List<String> {
@@ -26,7 +28,6 @@ object Emergency {
             listOf(
                 runCatching { tm?.networkCountryIso }.getOrNull(),
                 runCatching { tm?.simCountryIso }.getOrNull(),
-                Locale.getDefault().country,
             ),
         )
     }

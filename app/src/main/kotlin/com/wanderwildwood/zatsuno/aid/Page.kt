@@ -11,7 +11,7 @@ package com.wanderwildwood.zatsuno.aid
  * source: DHS, "Applying a Tourniquet" · MedlinePlus, "Bleeding"
  * checklist: yes                                  points become tick boxes, kept on the phone
  * ---
- * ! Call 911 or your local emergency number.     a line that must not be missed
+ * ! Call your local emergency number (112 or 911). a line that must not be missed
  * # Press on it                                   a heading
  * 1. Press hard with a cloth or your hand.        a step
  * - a point                                       a point under a step or heading

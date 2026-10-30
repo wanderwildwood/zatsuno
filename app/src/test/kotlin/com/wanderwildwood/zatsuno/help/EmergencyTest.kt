@@ -18,16 +18,17 @@ class EmergencyTest {
     }
 
     @Test
-    fun theNetworkBeatsTheSimBeatsTheLanguage() {
+    fun theNetworkBeatsTheSim() {
         // A US phone roaming in Poland: the network says where it is.
-        assertEquals(eu, Emergency.order(listOf("pl", "us", "US")))
-        // No network (flight mode): the SIM; then the language setting.
-        assertEquals(us, Emergency.order(listOf("", "us", "PL")))
-        assertEquals(eu, Emergency.order(listOf(null, "", "PL")))
+        assertEquals(eu, Emergency.order(listOf("pl", "us")))
+        // No network (flight mode): the SIM.
+        assertEquals(us, Emergency.order(listOf("", "us")))
+        assertEquals(eu, Emergency.order(listOf(null, "pl")))
     }
 
     @Test
-    fun nothingKnownKeepsTheOldOrder() {
-        assertEquals(us, Emergency.order(listOf(null, "", "")))
+    fun nothingKnownOffersBothWithOneOneTwoFirst() {
+        assertEquals(eu, Emergency.order(listOf(null, "")))
+        assertEquals(eu, Emergency.order(emptyList()))
     }
 }

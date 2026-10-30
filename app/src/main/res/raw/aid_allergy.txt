@@ -3,7 +3,7 @@ keywords: allergy, hives, rash, itching, swelling, antihistamine, food allergy, 
 source: MedlinePlus (NIH), "Allergic reactions" and "Anaphylaxis"; AHA and Red Cross first aid guidelines (2024); Wilderness Medical Society, epinephrine guideline.
 ---
 ! Trouble breathing, a swollen tongue or throat, faintness, or hives with repeated vomiting is anaphylaxis. Give their epinephrine (auto-injector or nasal spray) now. See Stings and anaphylaxis.
-! Call 911 or your local emergency number. No signal: try 911 anyway (see Calling for help); if it fails, send someone for help.
+! Call your local emergency number (112 or 911). No signal: try 112 and 911 anyway (see Calling for help); if it fails, send someone for help.
 - Struggling to breathe: let them sit up.
 # A mild reaction
 - Itching, sneezing, a local rash or hives, mild swelling

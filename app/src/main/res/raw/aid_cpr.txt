@@ -3,7 +3,7 @@ keywords: cardiac arrest, collapse, collapsed, not breathing, chest compressions
 source: NHLBI (NIH), "Cardiac Arrest: Treatment"; MedlinePlus (NIH), "CPR: adult and child after onset of puberty"; American Heart Association, 2025 Guidelines for CPR and ECC, Heartsaver high-quality CPR summary; Wilderness Medical Society, "CPR in the Wilderness" guideline summary; FCC, "911 Wireless Services".
 ---
 ! Collapsed, not responding to a shout or tap, and not breathing normally (gasping is not normal). Adult, child or baby.
-1. Call 911 or your local emergency number, or have someone call, on speaker. No signal: try 911 anyway (see Calling for help); if it fails, use a satellite messenger or send others. Alone with no way to call: start CPR.
+1. Call your local emergency number (112 or 911), or have someone call, on speaker. No signal: try 112 and 911 anyway (see Calling for help); if it fails, use a satellite messenger or send others. Alone with no way to call: start CPR.
 2. Send someone for an AED (defibrillator) if one might be nearby.
 3. On their back on firm, flat ground. Heel of one hand on the lower half of the breastbone, center of the chest, other hand on top.
 4. Push hard and fast: at least 2 inches (5 cm) deep, 100 to 120 a minute (under two a second).

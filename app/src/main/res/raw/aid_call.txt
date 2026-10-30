@@ -4,7 +4,7 @@ source: 911.gov (NHTSA), "Calling 911"; FCC, "Text to 911"; FCC, 911 call rules 
 ---
 @position
 # Call
-1. Call 911 or your local emergency number (112 in Europe and many other countries).
+1. Call your local emergency number. It depends on the country: 911 in the US, Canada and Mexico; 112 across Europe and in many other countries, and a phone usually passes 112 on to the right service. Not sure where you are: try 112, then 911.
 2. Put the phone on speaker. Stay on the line until told to hang up. If the call drops, call back.
 3. After the call, keep the phone on for rescuers. Use it for nothing else.
 # What to tell them
@@ -15,9 +15,9 @@ source: 911.gov (NHTSA), "Calling 911"; FCC, "Text to 911"; FCC, 911 call rules 
 - The call-taker may talk you through CPR or bleeding control. Do what they ask.
 # No signal
 - Satellite messenger, PLB or phone satellite SOS: use it now.
-- Try 911 even with no service showing: any carrier's tower must carry it.
+- Try 112 and 911 even with no service showing: a phone with no signal of its own can often still reach an emergency number through any network that is near. Where it works depends on the country.
 - Still failing: if safe, try from higher ground or open sky nearby. A call can get through where data cannot.
-- Can't call? Text 911 (many US areas take it) or someone who can call for you. Position first.
+- Can't call? Text 911 (many US areas take it; most other countries do not) or someone who can call for you. Position first.
 - Signal in threes: three whistle blasts, shouts or flashes.
 @sos
 - Still nothing: send two people out to call if you can, with the position and what happened written down. The rest stay with the injured.

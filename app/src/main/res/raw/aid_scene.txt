@@ -8,7 +8,7 @@ source: MedlinePlus (NIH), "CPR" and "Shock"; NHLBI (NIH), "Cardiac Arrest: Trea
 3. Put on gloves if you have them.
 # Primary assessment (ABCDE)
 1. Tap their shoulder and shout. Do they answer?
-2. No answer: shout for help. Have someone call 911 or your local emergency number and bring an AED. Alone: call on speaker and stay. No signal: try 911 anyway (see Calling for help); if it fails, send others.
+2. No answer: shout for help. Have someone call your local emergency number (112 or 911) and bring an AED. Alone: call on speaker and stay. No signal: try 112 and 911 anyway (see Calling for help); if it fails, send others.
 3. Watch the chest for up to 10 seconds, a full minute if they are very cold (see Hypothermia). Gasping is not normal breathing.
 ! Not breathing normally, or not sure: start CPR now. See Hands-only CPR.
 - Breathing: stop any heavy bleeding first. See Severe bleeding.

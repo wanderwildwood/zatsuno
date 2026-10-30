@@ -2,7 +2,7 @@ title: Wound care
 keywords: cut, scrape, puncture, laceration, wound, clean, infection, bandage, tetanus, splinter
 source: MedlinePlus (NIH), "Cuts and puncture wounds"; CDC, "Tetanus: Clinical Overview"; Wilderness Medical Society, "Practice Guidelines for Basic Wound Management in the Austere Environment: 2014 Update".
 ---
-! Severe bleeding comes first. If firm pressure doesn't stop it, call 911 or your local emergency number. See Severe bleeding.
+! Severe bleeding comes first. If firm pressure doesn't stop it, call your local emergency number (112 or 911). See Severe bleeding.
 # Clean and cover
 1. Wash your hands. Gloves on if you have them.
 2. Press on it until the bleeding stops.

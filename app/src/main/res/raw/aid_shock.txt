@@ -2,8 +2,8 @@ title: Shock
 keywords: pale, clammy, cold sweat, weak pulse, fast breathing, faint, confused, blood loss, low blood pressure
 source: MedlinePlus (NIH), "Shock" and "Anaphylaxis"; Resuscitation Council UK, anaphylaxis guideline (2021).
 ---
-! Call 911 or your local emergency number at the first signs of shock. Don't wait.
-  No signal: try 911 anyway (see Calling for help); if it fails, send someone now with your location.
+! Call your local emergency number (112 or 911) at the first signs of shock. Don't wait.
+  No signal: try 112 and 911 anyway (see Calling for help); if it fails, send someone now with your location.
 # Signs
 - Pale or gray, cool, clammy skin
 - Fast, weak pulse; fast, shallow breathing
