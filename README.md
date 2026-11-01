@@ -50,7 +50,7 @@ and it will install on any Android 12 device.
   counter: tap at the flash and at the thunder, and it says how far that strike was and keeps
   the last few counts so a storm coming closer shows. The kit checklist's points are tick
   boxes, kept on the phone until "Clear ticks" (any page with `checklist: yes` in its header
-  works that way, and sent to Notes it goes as a checklist). Each is written for this screen
+  works that way, and sent to Memo it goes as a checklist). Each is written for this screen
   from current guidance and names its sources. Where the advice has changed (tourniquets,
   CPR, choking, snakebite) the page says what changed and who says so.
 - **Knots.** Overhand, figure-eight, figure-eight loop, bowline, clove hitch, two half hitches,
@@ -67,7 +67,7 @@ and it will install on any Android 12 device.
   "Calling for help", and on the lock screen through
   [Glance](https://github.com/wanderwildwood/hitome) if you switch that on, with the lines you
   choose.
-- **Search across all of it**, and send any page or knot to Notes or anywhere else as text.
+- **Search across all of it**, and send any page or knot to Memo or anywhere else as text.
   Select text on a page to reach Define and the other text apps; a "see Shock" on a page opens
   that page.
 
@@ -158,7 +158,7 @@ Intent("com.wanderwildwood.zatsuno.action.CALL_FOR_HELP")
 `com.wanderwildwood.zatsuno.extra.NAME` and `com.wanderwildwood.zatsuno.extra.NUMBER` (a
 number is needed). This one does change something, so Field Kit shows the name and number
 first and adds them to the card's emergency contacts only when **Add** is pressed. A number
-already on the card is said so, not added twice. Contacts offers it as "Add to emergency
+already on the card is said so, not added twice. Connections offers it as "Add to emergency
 card" on a person's More page.
 
 ## Building
