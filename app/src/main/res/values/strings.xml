@@ -692,7 +692,7 @@
     <string name="about_kcompass">Compass and position code from kCompass by Ondřej Koloničný, OK1CDJ, GPL-3.0</string>
     <string name="about_icons">Icons from Material Symbols, Apache 2.0</string>
     <string name="about_zxing">QR codes drawn with ZXing, Apache 2.0</string>
-    <string name="about_feed_the_llamas">feed the llamas</string>
+    <string name="about_feed_the_llamas">Feed the llamas</string>
     <string name="about_no_browser">There is no browser on this phone to open that with.</string>
     <string name="about_close">Close</string>
     <!-- Several patients, undo, QR code and saving the note -->
