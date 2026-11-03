@@ -107,7 +107,7 @@ private fun HomeRow(label: String, line: String? = null, onClick: () -> Unit) {
         TextMMD(text = label, style = MaterialTheme.typography.headlineSmall)
         if (line != null) TextMMD(text = line, style = MaterialTheme.typography.labelSmall)
     }
-    HorizontalDividerMMD()
+    DottedRule(start = 20.dp, end = 20.dp)
 }
 
 /** A plain list of names to choose from, with an optional line under each. */
