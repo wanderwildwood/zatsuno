@@ -54,7 +54,7 @@ over the one number you pick; Field Kit has no access to your contacts beyond th
 
 - Share on a page, a knot, the card, your position or the note: the text, to the app you choose.
 - Open in map: a `geo:` address, to your map app.
-- Dial: the number, to the dialler, which waits for you to press call.
+- Dial: the number, to the dialer, which waits for you to press call.
 - Fill in from Medicine: Medicine hands its list to Field Kit, on your say in Medicine.
 
 ## Reading the phone's country
