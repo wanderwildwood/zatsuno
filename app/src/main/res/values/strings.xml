@@ -407,7 +407,7 @@
     <string name="key_a_breathing_normal">Normal</string>
     <string name="key_a_breathing_struggling">Labored: working hard, noisy, or can\'t speak a full sentence</string>
     <string name="key_a_breathing_gasping">Not breathing or only gasping</string>
-    <string name="key_q_skin">Signs of shock: is their skin pale or grey, cool or clammy?</string>
+    <string name="key_q_skin">Signs of shock: is their skin pale or gray, cool or clammy?</string>
     <string name="key_n_skin">Skin signs of shock</string>
     <string name="key_a_skin_yes">Yes</string>
     <string name="key_a_skin_no">No, normal</string>
@@ -494,7 +494,7 @@
     <string name="key_n_burn_serious">Serious burn</string>
     <string name="key_a_burn_serious_yes">Yes</string>
     <string name="key_a_burn_serious_no">No</string>
-    <string name="key_q_frozen">Is the skin hard or wooden, or still white, grey or numb after warming?</string>
+    <string name="key_q_frozen">Is the skin hard or wooden, or still white, gray or numb after warming?</string>
     <string name="key_n_frozen">Frozen tissue</string>
     <string name="key_a_frozen_yes">Yes</string>
     <string name="key_a_frozen_no">No, back to normal</string>
@@ -575,7 +575,7 @@
     <string name="key_a_resp_fast">over 30</string>
     <string name="key_q_vskin">Note the skin under Vital signs.</string>
     <string name="key_n_vskin">SCTM</string>
-    <string name="key_a_vskin_pale_cool">pale or grey, cool or clammy</string>
+    <string name="key_a_vskin_pale_cool">pale or gray, cool or clammy</string>
     <string name="key_a_vskin_blue">blue lips</string>
     <string name="key_q_pupils">Check the pupils under Vital signs.</string>
     <string name="key_n_pupils">Pupils</string>
@@ -610,7 +610,7 @@
     <!-- Vital signs: skin words, HR rhythm, RR quality, and AVPU as its one letter -->
     <string name="key_skin_pink">pink</string>
     <string name="key_skin_pale">pale</string>
-    <string name="key_skin_grey">grey</string>
+    <string name="key_skin_grey">gray</string>
     <string name="key_skin_flushed">flushed</string>
     <string name="key_skin_blue">blue lips</string>
     <string name="key_skin_warm">warm</string>
@@ -720,15 +720,15 @@
     <string name="qr_hint_many">The note is in several codes. Scan them in order, one after another.</string>
     <string name="qr_prev">Previous code</string>
     <string name="qr_next">Next code</string>
-    <string name="about_licences">Licences</string>
-    <string name="licences_title">Licences</string>
+    <string name="about_licences">Licenses</string>
+    <string name="licences_title">Licenses</string>
     <string name="licences_source_head">Source code</string>
-    <string name="licences_no_text">%s needs no licence text here.</string>
-    <string name="licences_licence">Field Kit is free software: GPL-3.0-only, copyright wander wildwood. It also contains code from kCompass, under the same licence. What it is built on keeps its own licences, each on its own page.</string>
+    <string name="licences_no_text">%s needs no license text here.</string>
+    <string name="licences_licence">Field Kit is free software: GPL-3.0-only, copyright wander wildwood. It also contains code from kCompass, under the same license. What it is built on keeps its own licenses, each on its own page.</string>
     <string name="licences_back">Back</string>
     <string name="about_no_browser_address">No browser is installed. The address is %1$s.</string>
     <string name="licences_full_head">Full texts</string>
     <string name="licences_full_gpl">GNU General Public License v3 (full text)</string>
     <string name="licences_full_apache">Apache License 2.0 (full text)</string>
-    <string name="licences_full_ofl">SIL Open Font Licence 1.1 (full text)</string>
+    <string name="licences_full_ofl">SIL Open Font License 1.1 (full text)</string>
 </resources>

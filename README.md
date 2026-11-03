@@ -18,9 +18,9 @@ and it will install on any Android 12 device.
   dispatcher, with how close it is and how old: decimal, degrees-minutes-seconds and the US
   National Grid (MGRS) reference search and rescue teams work in. Share it as text to
   Messaging or anything else (the same three, a `geo:` address and a map link), or open the
-  dialler with 911 or 112 filled in. What to tell the call-taker, and what to do with no
+  dialer with 911 or 112 filled in. What to tell the call-taker, and what to do with no
   signal, with a Flash SOS button that blinks the camera flash in Morse until you stop it,
-  and a line to Signalling for rescue.
+  and a line to Signaling for rescue.
 - **Patient assessment.** A second way into the first-aid pages, for when you don't know yet
   what's wrong. It walks the Patient Assessment System as wilderness first aid courses (NOLS,
   WMI, WMA, SOLO) teach it: scene size-up, primary assessment (responsiveness, then X-ABCDE),
@@ -37,7 +37,7 @@ and it will install on any Android 12 device.
   name and a reminder of their own (the one due first goes off first). A note shows as a QR code
   a crew can scan with a phone (a long note as numbered codes) or saves as a text file wherever
   you choose in the phone's file picker. A deleted or cleared note can be put back for ten minutes.
-- **First aid.** Thirty-six short pages: scene size-up and primary assessment, signalling
+- **First aid.** Thirty-six short pages: scene size-up and primary assessment, signaling
   for rescue, hands-only CPR, choking, severe bleeding and tourniquets, drowning, anaphylaxis,
   respiratory distress and asthma, chest pain, stroke, shock, seizures, low blood sugar
   (hypoglycemia), poisoning and carbon monoxide, head injury, heat illness, hypothermia,
@@ -182,7 +182,7 @@ For updates without doing this by hand, add this repository to
 
     https://github.com/wanderwildwood/zatsuno
 
-## Licence
+## License
 
 GPL-3.0-only. See [LICENSE](LICENSE).
 

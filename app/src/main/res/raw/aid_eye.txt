@@ -32,4 +32,4 @@ source: MedlinePlus (NIH), "Eye emergencies"; American Heart Association and Ame
 - Contact lens wearer with a sore red eye: lens out, leave it out, get care.
 # Don't
 - No rubbing, no swabs on the colored part, no drops or ointment unless a clinician says so.
-- Don't try to neutralise a chemical. Water only.
+- Don't try to neutralize a chemical. Water only.
