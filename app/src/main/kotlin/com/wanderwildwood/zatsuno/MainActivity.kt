@@ -11,6 +11,7 @@ import com.mudita.mmd.ThemeMMD
 import com.wanderwildwood.zatsuno.aid.Pages
 import com.wanderwildwood.zatsuno.ui.ClearFocusWhenKeyboardHides
 import com.wanderwildwood.zatsuno.ui.FieldKitApp
+import com.wanderwildwood.zatsuno.ui.houseTypography
 import com.wanderwildwood.zatsuno.ui.monochrome
 import com.wanderwildwood.zatsuno.ui.ArmedScope
 
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
         // Only a fresh start: remade after being stopped, the screen is already where it was.
         if (savedInstanceState == null) take(intent)
         setContent {
-            ThemeMMD(colorScheme = monochrome) {
+            ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
                 ArmedScope {
                     // A steady cursor: a blinking one redraws the screen twice a second for as long as
                     // a field has focus, which on e-ink is a refresh each time.

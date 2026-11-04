@@ -25,6 +25,7 @@ import com.mudita.mmd.components.text.TextMMD
 import com.wanderwildwood.zatsuno.MainActivity
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.ui.WideButton
+import com.wanderwildwood.zatsuno.ui.houseTypography
 import com.wanderwildwood.zatsuno.ui.monochrome
 import java.util.Date
 import com.wanderwildwood.zatsuno.ui.ArmedScope
@@ -42,7 +43,7 @@ class ReminderActivity : ComponentActivity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         setContent {
-            ThemeMMD(colorScheme = monochrome) {
+            ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
                 ArmedScope {
                     CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
                         Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {

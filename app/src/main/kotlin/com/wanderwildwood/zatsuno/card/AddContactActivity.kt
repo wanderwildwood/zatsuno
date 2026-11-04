@@ -21,6 +21,7 @@ import com.mudita.mmd.components.text.TextMMD
 import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.ui.Screen
 import com.wanderwildwood.zatsuno.ui.WideButton
+import com.wanderwildwood.zatsuno.ui.houseTypography
 import com.wanderwildwood.zatsuno.ui.monochrome
 import com.wanderwildwood.zatsuno.ui.ArmedScope
 
@@ -50,7 +51,7 @@ class AddContactActivity : ComponentActivity() {
             runCatching { packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString() }.getOrNull() ?: pkg
         }
         setContent {
-            ThemeMMD(colorScheme = monochrome) {
+            ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
                 ArmedScope {
                     BackHandler { finish() }
                     Screen(title = stringResource(R.string.card_title), onBack = { finish() }) { modifier ->
