@@ -22,6 +22,7 @@ import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.ui.Screen
 import com.wanderwildwood.zatsuno.ui.WideButton
 import com.wanderwildwood.zatsuno.ui.monochrome
+import com.wanderwildwood.zatsuno.ui.ArmedScope
 
 /**
  * Someone to call, handed over by another app: Contacts' "Add to emergency card". The name
@@ -50,39 +51,41 @@ class AddContactActivity : ComponentActivity() {
         }
         setContent {
             ThemeMMD(colorScheme = monochrome) {
-                BackHandler { finish() }
-                Screen(title = stringResource(R.string.card_title), onBack = { finish() }) { modifier ->
-                    Column(modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-                        TextMMD(
-                            text = when {
-                                already -> stringResource(R.string.card_given_already)
-                                asker != null -> stringResource(R.string.card_given_ask_from, asker)
-                                else -> stringResource(R.string.card_given_ask_unknown)
-                            },
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        TextMMD(
-                            text = listOf(contact.name, contact.number).filter { it.isNotEmpty() }.joinToString("  "),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Spacer(Modifier.height(20.dp))
-                        if (!already) {
-                            WideButton(stringResource(R.string.card_given_add)) {
-                                // Read again: the card may have changed while this was open.
-                                val card = CardStore.load(this@AddContactActivity)
-                                if (!card.hasNumber(contact.number)) {
-                                    CardStore.save(this@AddContactActivity, card.copy(contacts = card.contacts + contact))
+                ArmedScope {
+                    BackHandler { finish() }
+                    Screen(title = stringResource(R.string.card_title), onBack = { finish() }) { modifier ->
+                        Column(modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+                            TextMMD(
+                                text = when {
+                                    already -> stringResource(R.string.card_given_already)
+                                    asker != null -> stringResource(R.string.card_given_ask_from, asker)
+                                    else -> stringResource(R.string.card_given_ask_unknown)
+                                },
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Spacer(Modifier.height(12.dp))
+                            TextMMD(
+                                text = listOf(contact.name, contact.number).filter { it.isNotEmpty() }.joinToString("  "),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Spacer(Modifier.height(20.dp))
+                            if (!already) {
+                                WideButton(stringResource(R.string.card_given_add)) {
+                                    // Read again: the card may have changed while this was open.
+                                    val card = CardStore.load(this@AddContactActivity)
+                                    if (!card.hasNumber(contact.number)) {
+                                        CardStore.save(this@AddContactActivity, card.copy(contacts = card.contacts + contact))
+                                    }
+                                    Toast.makeText(this@AddContactActivity, getString(R.string.card_given_done), Toast.LENGTH_SHORT).show()
+                                    setResult(Activity.RESULT_OK)
+                                    finish()
                                 }
-                                Toast.makeText(this@AddContactActivity, getString(R.string.card_given_done), Toast.LENGTH_SHORT).show()
-                                setResult(Activity.RESULT_OK)
+                                Spacer(Modifier.height(8.dp))
+                            }
+                            WideButton(stringResource(if (already) R.string.about_close else R.string.card_given_cancel), Modifier.fillMaxWidth()) {
                                 finish()
                             }
-                            Spacer(Modifier.height(8.dp))
-                        }
-                        WideButton(stringResource(if (already) R.string.about_close else R.string.card_given_cancel), Modifier.fillMaxWidth()) {
-                            finish()
                         }
                     }
                 }

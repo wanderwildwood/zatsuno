@@ -371,11 +371,10 @@ private fun PatientBlock(state: KeyState, onPatients: () -> Unit, onAnother: () 
     }
 }
 
-/** A button that asks twice: the first tap arms it for 6 seconds and says so. */
+/** A button that asks twice: the first tap arms it and says so; it stays armed until the next other touch, Back or leaving. */
 @Composable
 fun ArmedButton(label: Int, armedLabel: Int, modifier: Modifier = Modifier, onConfirm: () -> Unit) {
-    var armed by remember { mutableStateOf(false) }
-    LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
+    var armed by rememberArmedFlag()
     WideButton(stringResource(if (armed) armedLabel else label), modifier) { if (armed) { armed = false; onConfirm() } else armed = true }
 }
 
@@ -828,20 +827,25 @@ private fun LazyListScope.monitor(
  */
 @Composable
 fun EndAssessmentDialog(state: KeyState, onEnded: () -> Unit, onDismiss: () -> Unit) {
-    var armed by remember { mutableStateOf(false) }
-    LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
     EInkDialog(onDismiss = onDismiss) {
-        TextMMD(text = stringResource(R.string.key_end_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(8.dp))
-        TextMMD(text = stringResource(R.string.key_end_text), style = MaterialTheme.typography.bodyMedium)
-        Spacer(Modifier.height(14.dp))
-        WideButton(stringResource(R.string.key_end_keep)) { state.end(keep = true); onEnded() }
-        Spacer(Modifier.height(8.dp))
-        WideButton(stringResource(if (armed) R.string.key_end_discard_armed else R.string.key_end_discard)) {
-            if (armed) { state.end(keep = false); onEnded() } else armed = true
+        // The dialog is its own window: its armed row needs its own scope, so a tap on Keep or
+        // Cancel, or Back, disarms it.
+        ArmedScope(Modifier.fillMaxWidth()) {
+            Column {
+                var armed by rememberArmedFlag()
+                TextMMD(text = stringResource(R.string.key_end_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                TextMMD(text = stringResource(R.string.key_end_text), style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(14.dp))
+                WideButton(stringResource(R.string.key_end_keep)) { state.end(keep = true); onEnded() }
+                Spacer(Modifier.height(8.dp))
+                WideButton(stringResource(if (armed) R.string.key_end_discard_armed else R.string.key_end_discard)) {
+                    if (armed) { state.end(keep = false); onEnded() } else armed = true
+                }
+                Spacer(Modifier.height(8.dp))
+                WideButton(stringResource(R.string.key_end_cancel), onClick = onDismiss)
+            }
         }
-        Spacer(Modifier.height(8.dp))
-        WideButton(stringResource(R.string.key_end_cancel), onClick = onDismiss)
     }
 }
 
@@ -868,8 +872,7 @@ fun LastNoteScreen(state: KeyState, onQr: () -> Unit, onBack: () -> Unit) {
             }
             item(key = "tools") { NoteTools(text!!, onQr) }
             item(key = "delete") {
-                var armed by remember { mutableStateOf(false) }
-                LaunchedEffect(armed) { if (armed) { delay(6_000); armed = false } }
+                var armed by rememberArmedFlag()
                 Column(Modifier.padding(top = 20.dp, bottom = 16.dp)) {
                     HorizontalDividerMMD()
                     TextMMD(

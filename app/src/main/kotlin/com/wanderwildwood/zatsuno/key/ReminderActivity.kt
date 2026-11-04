@@ -27,6 +27,7 @@ import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.ui.WideButton
 import com.wanderwildwood.zatsuno.ui.monochrome
 import java.util.Date
+import com.wanderwildwood.zatsuno.ui.ArmedScope
 
 /**
  * The reassessment reminder as a whole screen, shown over the lock screen when it goes off
@@ -42,14 +43,16 @@ class ReminderActivity : ComponentActivity() {
         setTurnScreenOn(true)
         setContent {
             ThemeMMD(colorScheme = monochrome) {
-                CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
-                    Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
-                        Reminder(
-                            patientId = intent.getStringExtra(Recheck.EXTRA_PATIENT),
-                            onOpen = { id -> go(Recheck.EXTRA_MONITOR, id) },
-                            onEnd = { id -> go(Recheck.EXTRA_END, id) },
-                            onClose = ::finish,
-                        )
+                ArmedScope {
+                    CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
+                        Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
+                            Reminder(
+                                patientId = intent.getStringExtra(Recheck.EXTRA_PATIENT),
+                                onOpen = { id -> go(Recheck.EXTRA_MONITOR, id) },
+                                onEnd = { id -> go(Recheck.EXTRA_END, id) },
+                                onClose = ::finish,
+                            )
+                        }
                     }
                 }
             }

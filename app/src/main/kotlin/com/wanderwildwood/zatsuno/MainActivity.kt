@@ -12,6 +12,7 @@ import com.wanderwildwood.zatsuno.aid.Pages
 import com.wanderwildwood.zatsuno.ui.ClearFocusWhenKeyboardHides
 import com.wanderwildwood.zatsuno.ui.FieldKitApp
 import com.wanderwildwood.zatsuno.ui.monochrome
+import com.wanderwildwood.zatsuno.ui.ArmedScope
 
 class MainActivity : ComponentActivity() {
 
@@ -24,11 +25,13 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null) take(intent)
         setContent {
             ThemeMMD(colorScheme = monochrome) {
-                // A steady cursor: a blinking one redraws the screen twice a second for as long as
-                // a field has focus, which on e-ink is a refresh each time.
-                CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
-                    ClearFocusWhenKeyboardHides()
-                    FieldKitApp(request = request.value, onRequestHandled = { request.value = null })
+                ArmedScope {
+                    // A steady cursor: a blinking one redraws the screen twice a second for as long as
+                    // a field has focus, which on e-ink is a refresh each time.
+                    CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
+                        ClearFocusWhenKeyboardHides()
+                        FieldKitApp(request = request.value, onRequestHandled = { request.value = null })
+                    }
                 }
             }
         }
