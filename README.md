@@ -1,7 +1,8 @@
 # 雑嚢 zatsunō — Field Kit
 
 First aid, knots and a compass, offline, on one plain home screen. Short first-aid pages you
-can read at a glance, a dozen knots drawn step by step, a compass with your position, and an
+can read at a glance, pages for floods, storms, fires and quakes, a dozen knots and a lashing
+drawn step by step, a compass with your position, and an
 "In case of emergency" card. Built for the [Mudita Kompakt](https://mudita.com/products/kompakt/),
 and it will install on any Android 12 device.
 
@@ -54,9 +55,15 @@ and it will install on any Android 12 device.
   from current guidance and names its sources. Where the advice has changed (tourniquets,
   CPR, choking, snakebite) the page says what changed and who says so.
 - **Knots.** Overhand, figure-eight, figure-eight loop, bowline, clove hitch, two half hitches,
-  taut-line hitch, sheet bend, square knot, prusik, double fisherman's and timber hitch. What
+  taut-line hitch, sheet bend, square knot, prusik, double fisherman's and timber hitch, and a
+  square lashing for binding two poles crossed (a splint, a stretcher, a shelter frame). What
   each is for in a line, and each step drawn, the rope's working end marked with an arrow and
   over-and-under shown by a gap in the lower strand.
+- **Disasters.** Seven pages of their own, each opening on what to do now: earthquake (Drop,
+  Cover, and Hold On), tornado, flood (Turn Around, Don't Drown), wildfire and smoke, winter
+  storm (and a car stuck in it), power outage (generators and carbon monoxide, food and
+  medicine), and an emergency supply kit to tick off. Written from National Weather Service,
+  CDC and NIOSH guidance, and the Earthquake Country Alliance's for earthquakes.
 - **Compass.** The heading in degrees and points, magnetic or true north, your position in
   decimal, degrees-minutes-seconds, US National Grid and as a Maidenhead locator, and Freeze to hold the screen
   still while you read or copy it. Open your position in any map app on the phone (Topo
@@ -128,7 +135,8 @@ as the string extra `com.wanderwildwood.zatsuno.extra.PAGE`. The ids are `scene`
 `signals`, `cpr`, `choking`, `bleeding`, `drowning`, `anaphylaxis`, `breathing`, `chest`,
 `stroke`, `shock`, `seizure`, `sugar`, `poisoning`, `head`, `heat`, `hypothermia`, `altitude`,
 `lightning`, `burns`, `snakebite`, `bites`, `allergy`, `fracture`, `frostbite`, `dehydration`,
-`water`, `sprain`, `wounds`, `eye`, `nose`, `ticks`, `blisters`, `poisonivy` and `kit`. An id
+`water`, `sprain`, `wounds`, `eye`, `nose`, `ticks`, `blisters`, `poisonivy` and `kit`, and the
+disaster pages `earthquake`, `tornado`, `flood`, `wildfire`, `winter`, `power` and `supplies`. An id
 that is not one of these opens nothing.
 
 ```kotlin
