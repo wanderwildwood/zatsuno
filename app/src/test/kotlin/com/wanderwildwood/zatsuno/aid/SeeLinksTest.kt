@@ -30,7 +30,7 @@ class SeeLinksTest {
     @Test
     fun noPageSaysSeeThatPage() {
         val raw = listOf("src/main/res/raw", "app/src/main/res/raw").map(::File).first { it.isDirectory }
-        for (f in raw.listFiles { f -> f.name.startsWith("aid_") }!!) {
+        for (f in raw.listFiles { f -> f.name.startsWith("aid_") || f.name.startsWith("dis_") }!!) {
             assertTrue(f.name, "see that page" !in f.readText().lowercase())
         }
     }

@@ -1,0 +1,27 @@
+title: Emergency supply kit
+keywords: kit, emergency kit, supply kit, go bag, bug out bag, 72 hour kit, disaster kit, supplies, water, gallon, food, radio, flashlight, batteries, cash, documents, prepare
+source: CDC, "Emergency Kit Checklist" (CS259306-B) and "How to Create an Emergency Water Supply".
+checklist: yes
+---
+Check off what you have. Get the rest before you need it.
+# Water and food
+- Water: 1 gallon (4 liters) per person per day, for at least 3 days
+- Food for 3 days
+- Manual can opener
+# Light and news
+- Flashlight
+- Radio, a NOAA Weather Radio if you can
+- Extra batteries
+- Phone and chargers
+# Health
+- First-aid kit (see First-aid kit checklist)
+- Medicines
+- Emergency blanket
+# Papers and keys
+- Family and emergency contact numbers
+- Personal documents
+- Cash
+- Spare car and house keys
+- Maps
++++
+> Store 2 weeks of water at home if you can, and more for pregnancy, illness, pets or a hot climate. Change stored water every 6 months.

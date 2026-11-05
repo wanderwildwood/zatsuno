@@ -16,16 +16,18 @@
     <string name="home_call">Calling for help</string>
     <string name="home_card">In case of emergency</string>
     <string name="home_aid">First aid</string>
+    <string name="home_disasters">Disasters</string>
     <string name="home_knots">Knots</string>
     <string name="home_compass">Compass</string>
 
     <!-- ============================================================ -->
     <!-- Search -->
 
-    <string name="search_hint">Search first aid, knots, compass</string>
+    <string name="search_hint">Search first aid, disasters, knots</string>
     <string name="search_none">Nothing here matches that.</string>
     <!-- Under a result: which part of the app it is in -->
     <string name="kind_aid">First aid</string>
+    <string name="kind_disaster">Disaster</string>
     <string name="kind_knot">Knot</string>
     <string name="kind_compass">Compass</string>
     <string name="kind_card">Your card</string>
@@ -218,6 +220,12 @@
     <string name="knot_timber_hitch_1">Pass the end round the log.</string>
     <string name="knot_timber_hitch_2">Take it round the standing part.</string>
     <string name="knot_timber_hitch_3">Twist it round its own part three times. Pull the standing part so the turns bite.</string>
+    <string name="knot_square_lashing">Square lashing</string>
+    <string name="knot_square_lashing_use">Binds two poles crossed at a right angle: a splint, a stretcher, a shelter frame.</string>
+    <string name="knot_square_lashing_1">Tie a clove hitch on the upright, just below the crosspiece. Twist the short end round the long part.</string>
+    <string name="knot_square_lashing_2">Wrap: up in front of the crosspiece, behind the upright, down in front of the crosspiece, behind the upright. Three or four turns, each outside the last on the crosspiece and inside it on the upright. Pull every turn tight.</string>
+    <string name="knot_square_lashing_3">Frap: two or three turns between the poles, round the wraps. Pull them hard; they tighten the whole lashing.</string>
+    <string name="knot_square_lashing_4">Finish with a clove hitch on the crosspiece.</string>
 
     <!-- ============================================================ -->
     <!-- In case of emergency card -->
@@ -680,7 +688,7 @@
     <!-- About -->
 
     <string name="about_title">Field Kit %1$s</string>
-    <string name="about_what">First aid, knots and a compass that work with no signal: first-aid pages that open on what to do now, a patient assessment, twelve knots, a compass with your position, SOS on the camera flash and an emergency card. It is a reference, not training; in an emergency, call your local emergency number first.</string>
+    <string name="about_what">First aid, knots and a compass that work with no signal: first-aid pages that open on what to do now, a patient assessment, twelve knots and a lashing, a compass with your position, SOS on the camera flash and an emergency card. It is a reference, not training; in an emergency, call your local emergency number first.</string>
     <string name="about_aid">First-aid pages written from current guidance: US government sources (MedlinePlus, CDC, NPS and others), the AHA and Red Cross first-aid guidelines, and the Wilderness Medical Society, each named on its page. They do not replace training.</string>
     <string name="about_privacy_head">Privacy</string>
     <string name="about_privacy">Everything you put in this app stays on this phone. It has no internet access, so nothing is sent anywhere, and nothing is collected about you. Location is read only while the compass, your position or a note you started is open, and is used only to show it to you. The emergency card goes on the lock screen only if you switch that on. The reassessment reminder uses the phone\'s alarm, notification and vibration. Anything you share goes only where you send it. There are no ads, no analytics and no tracking. Backups and exports go only where you choose to save them.</string>

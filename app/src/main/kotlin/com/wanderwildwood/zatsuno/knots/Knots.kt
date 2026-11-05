@@ -78,6 +78,12 @@ object Knots {
             Step(R.drawable.knot_timber_hitch_2, R.string.knot_timber_hitch_2),
             Step(R.drawable.knot_timber_hitch_3, R.string.knot_timber_hitch_3),
         )),
+        Knot("square_lashing", R.string.knot_square_lashing, R.string.knot_square_lashing_use, listOf(
+            Step(R.drawable.knot_square_lashing_1, R.string.knot_square_lashing_1),
+            Step(R.drawable.knot_square_lashing_2, R.string.knot_square_lashing_2),
+            Step(R.drawable.knot_square_lashing_3, R.string.knot_square_lashing_3),
+            Step(R.drawable.knot_square_lashing_4, R.string.knot_square_lashing_4),
+        )),
     )
 
     fun find(id: String): Knot? = all.firstOrNull { it.id == id }

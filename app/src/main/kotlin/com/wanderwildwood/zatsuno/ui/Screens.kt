@@ -90,6 +90,7 @@ fun HomeScreen(
             }
             if (lastNote != null) item(key = "last") { HomeRow(stringResource(R.string.home_last), stringResource(R.string.home_last_ended, lastNote), onLast) }
             item(key = "aid") { HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) } }
+            item(key = "disasters") { HomeRow(stringResource(R.string.home_disasters)) { onOpen(Route.DISASTERS) } }
             item(key = "knots") { HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) } }
         }
     }
@@ -173,7 +174,7 @@ fun SearchScreen(
                     item(key = "${hit.entry.kind}:${hit.entry.id}") {
                         val kind = stringResource(
                             when (hit.entry.kind) {
-                                Kind.AID -> R.string.kind_aid
+                                Kind.AID -> if (com.wanderwildwood.zatsuno.aid.Pages.isDisaster(hit.entry.id)) R.string.kind_disaster else R.string.kind_aid
                                 Kind.KNOT -> R.string.kind_knot
                                 Kind.COMPASS -> R.string.kind_compass
                                 Kind.CARD -> R.string.kind_card

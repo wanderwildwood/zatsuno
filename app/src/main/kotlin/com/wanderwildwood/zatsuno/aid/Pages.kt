@@ -52,8 +52,24 @@ object Pages {
         "kit" to R.raw.aid_kit,
     )
 
+    /**
+     * The disaster pages, a list of their own off the home screen: the ones that strike with
+     * no warning first, the supply kit last. They read, link and search like the rest.
+     */
+    private val disasterOrder = listOf(
+        "earthquake" to R.raw.dis_earthquake,
+        "tornado" to R.raw.dis_tornado,
+        "flood" to R.raw.dis_flood,
+        "wildfire" to R.raw.dis_wildfire,
+        "winter" to R.raw.dis_winter,
+        "power" to R.raw.dis_power,
+        "supplies" to R.raw.dis_supplies,
+    )
+
+    private val disasterIds = disasterOrder.map { it.first }.toSet()
+
     /** Every page's id, without reading the pages: what another app may ask to open. */
-    val ids: List<String> get() = order.map { it.first }
+    val ids: List<String> get() = (order + disasterOrder).map { it.first }
 
     @Volatile private var cache: Pair<String, List<Page>>? = null
 
@@ -61,7 +77,7 @@ object Pages {
     fun all(context: Context): List<Page> {
         val locale = context.resources.configuration.locales[0].toLanguageTag()
         cache?.let { (l, pages) -> if (l == locale) return pages }
-        val pages = order.map { (id, res) ->
+        val pages = (order + disasterOrder).map { (id, res) ->
             val text = context.resources.openRawResource(res).bufferedReader().use { it.readText() }
             Markup.parse(id, text)
         }
@@ -70,4 +86,7 @@ object Pages {
     }
 
     fun find(context: Context, id: String): Page? = all(context).firstOrNull { it.id == id }
+
+    /** Is this one of the disaster pages, listed apart from first aid? */
+    fun isDisaster(id: String): Boolean = id in disasterIds
 }

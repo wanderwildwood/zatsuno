@@ -10,15 +10,18 @@ import java.io.File
 class PagesTest {
 
     private val raw = listOf("src/main/res/raw", "app/src/main/res/raw").map(::File).first { it.isDirectory }
-    private val pages = raw.listFiles { f -> f.name.startsWith("aid_") }!!.sortedBy { it.name }
-        .map { Markup.parse(it.nameWithoutExtension.removePrefix("aid_"), it.readText()) }
+    private fun isPage(f: File) = f.name.startsWith("aid_") || f.name.startsWith("dis_")
+    private val pages = raw.listFiles(::isPage)!!.sortedBy { it.name }
+        .map { Markup.parse(it.nameWithoutExtension.substringAfter('_'), it.readText()) }
 
     private val titles = pages.map { it.title }.toSet()
 
     @Test
-    fun allThirtySixPagesAreThere() {
-        assertEquals(36, pages.size)
-        for (id in listOf("chest", "breathing", "sugar", "seizure", "stroke", "drowning", "altitude", "poisoning", "signals", "poisonivy", "bites", "eye", "nose", "water", "kit")) {
+    fun allFortyThreePagesAreThere() {
+        // Thirty-six of first aid, seven of disasters.
+        assertEquals(43, pages.size)
+        for (id in listOf("chest", "breathing", "sugar", "seizure", "stroke", "drowning", "altitude", "poisoning", "signals", "poisonivy", "bites", "eye", "nose", "water", "kit",
+            "earthquake", "tornado", "flood", "wildfire", "winter", "power", "supplies")) {
             assertTrue("$id is there", pages.any { it.id == id })
         }
     }
@@ -26,7 +29,7 @@ class PagesTest {
     @Test
     fun noPageSendsEveryoneToNineOneOneAlone() {
         // The number depends on the country: wherever a page names 911 it names 112 beside it.
-        for (f in raw.listFiles { f -> f.name.startsWith("aid_") && f.name != "aid_call.txt" }!!) {
+        for (f in raw.listFiles { f -> isPage(f) && f.name != "aid_call.txt" }!!) {
             for (line in f.readLines()) {
                 if (line.startsWith("source:")) continue
                 if (Regex("""\b911\b""").containsMatchIn(line)) assertTrue("${f.name}: $line", "112" in line)
@@ -37,7 +40,7 @@ class PagesTest {
     @Test
     fun theListNamesEveryPageOnce() {
         val src = listOf("src/main/kotlin", "app/src/main/kotlin").map { File(it, "com/wanderwildwood/zatsuno/aid/Pages.kt") }.first { it.isFile }
-        val listed = Regex("""R\.raw\.aid_(\w+)""").findAll(src.readText()).map { it.groupValues[1] }.toList()
+        val listed = Regex("""R\.raw\.(?:aid|dis)_(\w+)""").findAll(src.readText()).map { it.groupValues[1] }.toList()
         assertEquals(listed.toSet().size, listed.size)
         assertEquals(pages.map { it.id }.toSet(), listed.toSet())
     }
@@ -80,14 +83,16 @@ class PagesTest {
         for (p in pages) {
             assertTrue("${p.id} title", p.title.isNotBlank())
             assertTrue("${p.id} cites a US government source: ${p.source}",
-                listOf("MedlinePlus", "CDC", "NIOSH", "NIH", "NPS", "NWS", "DHS", "911.gov", "FCC", "NIAMS", "NHLBI").any { it in p.source })
+                listOf("MedlinePlus", "CDC", "NIOSH", "NIH", "NPS", "NWS", "DHS", "911.gov", "FCC", "NIAMS", "NHLBI",
+                    // Its Drop, Cover, and Hold On is the guidance FEMA and the USGS give, set out with them.
+                    "Earthquake Country Alliance").any { it in p.source })
             assertTrue("${p.id} has steps or points", p.blocks.any { it is Block.Step || it is Block.Point })
         }
     }
 
     @Test
-    fun onlyTheKitPageIsAChecklist() {
-        assertEquals(listOf("kit"), pages.filter { it.checklist }.map { it.id })
+    fun onlyTheTwoKitPagesAreChecklists() {
+        assertEquals(setOf("kit", "supplies"), pages.filter { it.checklist }.map { it.id }.toSet())
     }
 
     @Test

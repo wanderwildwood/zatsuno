@@ -579,6 +579,74 @@ def timber_hitch():
             (edges + [Strand(rope.points)], [region])]
 
 
+def square_lashing():
+    """Two poles crossed square, the crosspiece in front of the upright.
+
+    Heights: the upright 0, the crosspiece 1. Rope in front of the crosspiece is 2, rope behind
+    the upright -1, and the frapping turns between the two poles 0.5, so the crosspiece hides
+    them and the upright does not. The crossing sits up and to the left, to leave room for the
+    two clove hitches at nearly the size the clove hitch itself is drawn.
+    """
+    W = 12                                        # both poles
+    X, Y = 40, 24                                 # the crossing
+    pe, pr = post(X, top=2, bottom=78, w=W)
+    re_, rr = rail(Y, left=4, right=116, w=W)
+    rr.z = 1.0
+    re_ = [Strand([(x, y, 1.0) for x, y, _ in e.points]) for e in re_]
+    poles = pe + re_
+    regions = [pr, rr]
+
+    # The clove-hitch drawing: a post 14 wide at x 60, its turns between y 19 and 62.
+    cl = [(50, 41.5, 0.6), (59, 36.6, 0.3), (70, 30, 0.6), (76, 24, 0),
+          (66, 19, -1), (54, 19, -1), (44, 22, 0), (50, 24, 0.6), (59, 36.6, 1.4), (70, 52, 0.6),
+          (76, 58, 0), (66, 62, -1), (54, 62, -1), (44, 58, 0), (50, 54, 0.6), (65.8, 46.1, 0.3),
+          (72, 43.2, 0.4)]
+    across, along = W / 14, 0.72
+
+    # Start: that hitch on the upright below the crosspiece; the short end to the left.
+    hitch = [(X + (x - 60) * across, 61 + (y - 40) * along, z) for x, y, z in cl]
+    start = [(X - 22, hitch[0][1] + 1, 0)] + hitch + [(X + 15, 52, 0.5), (X + 13, 42, 2)]
+
+    wraps = []
+    for k in range(3):
+        r, l = X + 11 + 2.2 * k, X - 11 - 2.2 * k  # on the crosspiece: each turn outside the last
+        t, b = Y - 13 + 2.0 * k, Y + 13 - 2.0 * k  # on the upright: each turn inside the last
+        rn = X + 11 + 2.2 * (k + 1)
+        wraps += [
+            (r, b - 3, 2), (r, t + 3, 2),          # up in front of the crosspiece, right
+            (r - 3, t, 0.5), (X, t, -1),           # behind the upright, above
+            (l + 3, t, 0.5), (l, t + 3, 2),        # down in front of the crosspiece, left
+            (l, b - 3, 2),
+            (l + 3, b, 0.5), (X, b, -1),           # behind the upright, below
+            (rn - 3, b, 0.5),
+        ]
+    n_start = len(start)
+    n_wraps = n_start + len(wraps)
+
+    # Frapping: turns round the wraps between the two poles, pulled in at the corners.
+    frap = []
+    for k in range(2):
+        h, c = 16.5 - 1.6 * k, 4
+        frap += [(X + h, Y + h - c, 0.5), (X + h - c, Y + h, 0.5),
+                 (X - h + c, Y + h, 0.5), (X - h, Y + h - c, 0.5),
+                 (X - h, Y - h + c, 0.5), (X - h + c, Y - h, 0.5),
+                 (X + h - c, Y - h, 0.5), (X + h, Y - h + c, 0.5)]
+    n_frap = n_wraps + len(frap)
+
+    # Finish: the same hitch turned a quarter, on the crosspiece right of the crossing.
+    cx = 88
+    end = [(cx + (y - 40) * along, Y - (x - 60) * across, z + 1) for x, y, z in cl]   # on the crosspiece, a step forward
+    end = [(X + 20, Y - 9, 1.6)] + end + [(cx + 26, end[-1][1] - 4, 1)]
+    pts = start + wraps + frap + end
+    rope = Strand(pts)
+    return [
+        (poles + [rope.upto(n_start - 1)], regions),
+        (poles + [rope.upto(n_wraps - 1)], regions),
+        (poles + [rope.upto(n_frap - 1)], regions),
+        (poles + [Strand(pts)], regions),
+    ]
+
+
 KNOTS = {
     "overhand": overhand,
     "figure_eight": figure_eight,
@@ -592,6 +660,7 @@ KNOTS = {
     "prusik": prusik_steps,
     "double_fishermans": double_fishermans,
     "timber_hitch": timber_hitch,
+    "square_lashing": square_lashing,
 }
 
 

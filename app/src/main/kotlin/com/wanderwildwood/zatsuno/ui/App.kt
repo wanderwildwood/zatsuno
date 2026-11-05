@@ -31,6 +31,7 @@ import com.wanderwildwood.zatsuno.search.Search
 object Route {
     const val HOME = "home"
     const val AID = "aid"
+    const val DISASTERS = "disasters"
     const val KNOTS = "knots"
     const val COMPASS = "compass"
     const val SEARCH = "search"
@@ -156,12 +157,24 @@ fun FieldKitApp(
         }
         route == Route.LAST -> LastNoteScreen(keyState, onQr = { open(Route.LAST_QR) }, onBack = ::back)
         route == Route.READ_OUT -> ReadOutScreen(keyState, model, ::back)
-        route == Route.AID -> ListScreen(
-            title = stringResource(R.string.home_aid),
-            rows = pages.map { it.title to null },
-            onBack = ::back,
-            onPick = { open(Route.aid(pages[it].id)) },
-        )
+        route == Route.AID -> {
+            val aid = remember(pages) { pages.filterNot { Pages.isDisaster(it.id) } }
+            ListScreen(
+                title = stringResource(R.string.home_aid),
+                rows = aid.map { it.title to null },
+                onBack = ::back,
+                onPick = { open(Route.aid(aid[it].id)) },
+            )
+        }
+        route == Route.DISASTERS -> {
+            val dis = remember(pages) { pages.filter { Pages.isDisaster(it.id) } }
+            ListScreen(
+                title = stringResource(R.string.home_disasters),
+                rows = dis.map { it.title to null },
+                onBack = ::back,
+                onPick = { open(Route.aid(dis[it].id)) },
+            )
+        }
         route.startsWith("aid:") -> {
             val id = route.removePrefix("aid:").substringBefore(':')
             val page = pages.firstOrNull { it.id == id }
