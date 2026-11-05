@@ -83,6 +83,8 @@ fun HomeScreen(
         PagedColumn(modifier) {
             if (undo != null) item(key = "undo") { HomeRow(undo, null, onUndo) }
             item(key = "call") { HomeRow(stringResource(R.string.home_call)) { onOpen(Route.aid(com.wanderwildwood.zatsuno.aid.Pages.CALL)) } }
+            // Second, so it is on the first page: in a flood or a fire it is what is wanted next.
+            item(key = "disasters") { HomeRow(stringResource(R.string.home_disasters)) { onOpen(Route.DISASTERS) } }
             item(key = "compass") { HomeRow(stringResource(R.string.home_compass)) { onOpen(Route.COMPASS) } }
             item(key = "card") { HomeRow(stringResource(R.string.home_card)) { onOpen(Route.CARD) } }
             item(key = "key") {
@@ -90,7 +92,6 @@ fun HomeScreen(
             }
             if (lastNote != null) item(key = "last") { HomeRow(stringResource(R.string.home_last), stringResource(R.string.home_last_ended, lastNote), onLast) }
             item(key = "aid") { HomeRow(stringResource(R.string.home_aid)) { onOpen(Route.AID) } }
-            item(key = "disasters") { HomeRow(stringResource(R.string.home_disasters)) { onOpen(Route.DISASTERS) } }
             item(key = "knots") { HomeRow(stringResource(R.string.home_knots)) { onOpen(Route.KNOTS) } }
         }
     }
