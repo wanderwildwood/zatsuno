@@ -634,9 +634,13 @@ def square_lashing():
     n_frap = n_wraps + len(frap)
 
     # Finish: the same hitch turned a quarter, on the crosspiece right of the crossing.
-    cx = 88
-    end = [(cx + (y - 40) * along, Y - (x - 60) * across, z + 1) for x, y, z in cl]   # on the crosspiece, a step forward
-    end = [(X + 20, Y - 9, 1.6)] + end + [(cx + 26, end[-1][1] - 4, 1)]
+    # The rope leaves the frapping along the top of the crosspiece and goes into the hitch
+    # from above, so it runs beside the pole rather than across it; the end leaves below.
+    cx = 84
+    end = [(cx + (y - 40) * along, Y + (x - 60) * across, z + 1) for x, y, z in cl]   # a step forward: on the crosspiece
+    sx0, sy0, _ = end[0]
+    ex, ey, _ = end[-1]
+    end = [(X + 21, Y - 11, 1.2), (sx0 - 6, sy0 - 2, 1.2)] + end + [(ex + 6, ey + 7, 1)]
     pts = start + wraps + frap + end
     rope = Strand(pts)
     return [
