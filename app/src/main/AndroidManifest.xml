@@ -50,6 +50,8 @@
         <package android:name="com.wanderwildwood.fukuyaku" />
         <!-- Glance, the lock-screen panel the emergency card can appear on: only to say whether it is there. -->
         <package android:name="com.wanderwildwood.hitome" />
+        <!-- Files, whose own screens choose where a note is saved when it is installed. -->
+        <package android:name="com.wanderwildwood.tana" />
     </queries>
 
     <application

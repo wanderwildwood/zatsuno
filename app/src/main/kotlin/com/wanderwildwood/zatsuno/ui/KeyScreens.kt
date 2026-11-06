@@ -965,8 +965,8 @@ private fun ToolRow(label: String, onClick: () -> Unit) {
 
 /**
  * Under a note: show it as QR code(s) for a crew's phone to scan, or save it as a file. The
- * file is written where the person chooses in the phone's own file picker; the app writes to no
- * other place.
+ * file is written where the person chooses in the file picker (Files', or the phone's own); the
+ * app writes to no other place.
  */
 @Composable
 private fun NoteTools(text: String, onQr: () -> Unit) {
@@ -974,7 +974,7 @@ private fun NoteTools(text: String, onQr: () -> Unit) {
     var status by remember { mutableStateOf<Int?>(null) }
     val current by androidx.compose.runtime.rememberUpdatedState(text)
     val save = androidx.activity.compose.rememberLauncherForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("text/plain"),
+        FilesCreateDocument("text/plain"),
     ) { uri ->
         if (uri != null) {
             val ok = runCatching { context.contentResolver.openOutputStream(uri, "wt")!!.use { it.write(current.toByteArray()) } }.isSuccess
