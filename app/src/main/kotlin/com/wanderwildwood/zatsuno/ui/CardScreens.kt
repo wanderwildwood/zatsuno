@@ -101,7 +101,7 @@ fun CardScreen(onBack: () -> Unit, onEdit: () -> Unit) {
             }
         },
     ) { modifier ->
-        PagedColumn(modifier) {
+        PagedColumn(modifier, showCutRow = true) {
             item(key = "body") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp)) {
                     if (card.isEmpty) {
@@ -201,7 +201,7 @@ fun CardEditScreen(onDone: () -> Unit) {
         onBack = ::save,
     ) { modifier ->
         androidx.activity.compose.BackHandler { save() }
-        PagedColumn(modifier, state = list) {
+        PagedColumn(modifier, state = list, showCutRow = true) {
             item(key = "name") { Field(stringResource(R.string.card_name), name, onFocus = toTop(0)) { name = it } }
             item(key = "blood") { Field(stringResource(R.string.card_blood), blood, onFocus = toTop(1)) { blood = it } }
             item(key = "allergies") { Field(stringResource(R.string.card_allergies), allergies, lines = 2, onFocus = toTop(2)) { allergies = it } }

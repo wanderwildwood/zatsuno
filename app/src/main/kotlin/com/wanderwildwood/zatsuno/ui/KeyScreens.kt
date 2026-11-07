@@ -273,7 +273,7 @@ fun KeyScreen(
             val alarms = alarms(ranking, state.answers)
             // A new life threat goes to the top of the list, and the list goes to it at once.
             LaunchedEffect(alarms.map { it.first }) { if (alarms.isNotEmpty()) list.scrollToItem(0) }
-            PagedColumn(Modifier.fillMaxWidth().weight(1f), state = list) {
+            PagedColumn(Modifier.fillMaxWidth().weight(1f), state = list, showCutRow = true) {
                 for ((page, line) in alarms) {
                     run {
                         item(key = "alarm:$page") {
@@ -861,7 +861,7 @@ fun LastNoteScreen(state: KeyState, onQr: () -> Unit, onBack: () -> Unit) {
         onBack = onBack,
         actions = { BarButton(Icons.Share, stringResource(R.string.key_share)) { shareText(context, context.getString(R.string.key_title), text!!) } },
     ) { modifier ->
-        PagedColumn(modifier) {
+        PagedColumn(modifier, showCutRow = true) {
             text!!.lines().forEachIndexed { i, l ->
                 item(key = i) {
                     SelectionContainer(Modifier.textActions()) {
@@ -927,7 +927,7 @@ fun NoteScreen(state: KeyState, model: CompassModel, onReadOut: () -> Unit, onQr
         },
     ) { modifier ->
         val empty = stringResource(R.string.key_note_empty)
-        PagedColumn(modifier) {
+        PagedColumn(modifier, showCutRow = true) {
             val lines = text?.lines() ?: listOf(empty)
             lines.forEachIndexed { i, l ->
                 item(key = i) {
@@ -1018,7 +1018,7 @@ fun QrScreen(title: String, text: String, onBack: () -> Unit) {
 fun PatientsScreen(state: KeyState, onPick: (String) -> Unit, onAnother: () -> Unit, onBack: () -> Unit) {
     val shown = state.incident?.id
     Screen(title = stringResource(R.string.patients_title), onBack = onBack) { modifier ->
-        PagedColumn(modifier) {
+        PagedColumn(modifier, showCutRow = true) {
             for (p in state.patients) {
                 item(key = p.id) {
                     Column(Modifier.fillMaxWidth().clickable { onPick(p.id) }.heightIn(min = 48.dp).padding(horizontal = 20.dp, vertical = 12.dp)) {
@@ -1050,7 +1050,7 @@ fun ReadOutScreen(state: KeyState, model: CompassModel, onBack: () -> Unit) {
         onBack = onBack,
         actions = { BarButton(Icons.Share, stringResource(R.string.key_share)) { shareText(context, context.getString(R.string.key_title), text) } },
     ) { modifier ->
-        PagedColumn(modifier) {
+        PagedColumn(modifier, showCutRow = true) {
             text.lines().forEachIndexed { i, l ->
                 item(key = i) {
                     SelectionContainer(Modifier.textActions()) {

@@ -119,7 +119,7 @@ fun AidScreen(
         LaunchedEffect(page.id) {
             if (openMore && hasMore) list.scrollToItem(page.now.size + if (showCard) 1 else 0)
         }
-        PagedColumn(modifier, state = list) {
+        PagedColumn(modifier, state = list, showCutRow = true) {
             if (showCard) {
                 item(key = "card") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { CardLines(card!!, bordered = true) } }
             }
@@ -324,7 +324,7 @@ fun KnotScreen(knot: Knot, onBack: () -> Unit) {
         },
     ) { modifier ->
         // Whole steps to a swipe: each is most of a screen tall.
-        PagedColumn(modifier) {
+        PagedColumn(modifier, showCutRow = true) {
             item(key = "use") {
                 Readable {
                     TextMMD(text = use, style = MaterialTheme.typography.bodyMedium,
