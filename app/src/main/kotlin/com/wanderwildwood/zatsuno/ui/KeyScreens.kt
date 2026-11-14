@@ -1002,7 +1002,7 @@ fun QrScreen(title: String, text: String, onBack: () -> Unit) {
         Column(modifier.padding(horizontal = 12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             if (pieces.size > 1) TextMMD(text = stringResource(R.string.qr_n, n + 1, pieces.size), style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 6.dp))
-            QrCode(pieces[n], Modifier.fillMaxWidth().weight(1f))
+            QrCode(pieces[n], Modifier.fillMaxWidth().weight(1f).keepColors())
             TextMMD(text = stringResource(if (pieces.size > 1) R.string.qr_hint_many else R.string.qr_hint), style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 6.dp))
             if (pieces.size > 1) Row(Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
