@@ -106,7 +106,7 @@ private fun HomeRow(label: String, line: String? = null, onClick: () -> Unit) {
             .clickable(onClick = onClick)
             .padding(horizontal = 20.dp, vertical = if (line == null) 20.dp else 10.dp),
     ) {
-        TextMMD(text = label, style = MaterialTheme.typography.headlineSmall)
+        TextMMD(text = label, style = MaterialTheme.typography.titleLarge)
         if (line != null) TextMMD(text = line, style = MaterialTheme.typography.labelSmall)
     }
     DottedRule(start = 20.dp, end = 20.dp)

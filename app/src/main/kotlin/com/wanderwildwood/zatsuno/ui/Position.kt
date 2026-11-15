@@ -146,7 +146,7 @@ fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
     Column(Modifier.fillMaxWidth()) {
         TextMMD(
             text = decimal,
-            style = if (big) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleLarge,
+            style = if (big) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth().clickable { copy(decimal) }.heightIn(min = 48.dp).padding(vertical = 2.dp),
         )
