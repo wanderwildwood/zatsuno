@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.components.text.TextMMD
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 
 /**
  * Choices as a grid of tiles, from the mushroom journal's ChoiceGrid without its drawings: every
@@ -100,6 +102,7 @@ private fun Tile(label: String, selected: Boolean, dotted: Boolean, modifier: Mo
     Column(
         modifier = modifier
             .then(edge)
+            .semantics { this.selected = selected }
             .clickable(onClick = onClick)
             .padding(vertical = 8.dp, horizontal = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

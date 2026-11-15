@@ -60,6 +60,10 @@ import com.wanderwildwood.zatsuno.key.Words
 import com.wanderwildwood.zatsuno.key.rank
 import com.wanderwildwood.zatsuno.key.vitalRows
 import kotlinx.coroutines.delay
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 
 /**
  * The open incident, and every change to it. Each change is one timed event, saved at once,
@@ -337,6 +341,7 @@ private fun StageStrip(current: Stage, onStage: (Stage) -> Unit) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .heightIn(min = 48.dp)
+                    .semantics { role = Role.RadioButton; selected = s == current }
                     .clickable { onStage(s) }
                     .then(if (s == current) Modifier.border(BorderStroke(2.dp, Color.Black), RoundedCornerShape(6.dp)) else Modifier)
                     .padding(horizontal = 4.dp, vertical = 8.dp),
@@ -1021,7 +1026,7 @@ fun PatientsScreen(state: KeyState, onPick: (String) -> Unit, onAnother: () -> U
         PagedColumn(modifier, showCutRow = true) {
             for (p in state.patients) {
                 item(key = p.id) {
-                    Column(Modifier.fillMaxWidth().clickable { onPick(p.id) }.heightIn(min = 48.dp).padding(horizontal = 20.dp, vertical = 12.dp)) {
+                    Column(Modifier.fillMaxWidth().semantics { selected = p.id == shown }.clickable { onPick(p.id) }.heightIn(min = 48.dp).padding(horizontal = 20.dp, vertical = 12.dp)) {
                         TextMMD(text = state.label(p), style = MaterialTheme.typography.bodyLarge,
                             fontWeight = if (p.id == shown) FontWeight.Bold else FontWeight.Normal)
                         TextMMD(text = stringResource(R.string.patients_row, state.note.time(p.started), state.note.time(p.nextCheck(state.key))),
