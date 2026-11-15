@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.SystemClock
 import android.provider.Settings
 import android.text.format.DateFormat
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -86,6 +85,8 @@ fun RunWhileShown(model: CompassModel) {
 fun LocationPrompt(live: Live, onChanged: () -> Unit) {
     val context = LocalContext.current
     var asked by rememberSaveable { mutableStateOf(false) }
+    // When nothing on the phone opens the settings page, said under the button until the next press.
+    var noApp by remember { mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         asked = true
         onChanged()
@@ -100,14 +101,14 @@ fun LocationPrompt(live: Live, onChanged: () -> Unit) {
                     !activity.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
                 if (blocked) {
                     WideButton(stringResource(R.string.pos_settings)) {
-                        open(
+                        noApp = !open(
                             context,
                             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)),
-                            R.string.no_app,
                         )
                     }
                 } else {
                     WideButton(stringResource(R.string.pos_allow)) {
+                        noApp = false
                         launcher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
                     }
                 }
@@ -116,10 +117,14 @@ fun LocationPrompt(live: Live, onChanged: () -> Unit) {
                 TextMMD(text = stringResource(R.string.pos_off), style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(10.dp))
                 WideButton(stringResource(R.string.pos_turn_on)) {
-                    open(context, Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), R.string.no_app)
+                    noApp = !open(context, Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
             }
             else -> TextMMD(text = stringResource(R.string.pos_waiting), style = MaterialTheme.typography.bodyMedium)
+        }
+        if (noApp && !(live.permitted && live.locationOn)) {
+            Spacer(Modifier.height(6.dp))
+            TextMMD(text = stringResource(R.string.no_app), style = MaterialTheme.typography.labelSmall)
         }
     }
 }
@@ -133,11 +138,12 @@ fun LocationPrompt(live: Live, onChanged: () -> Unit) {
 @Composable
 fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
     val context = LocalContext.current
-    val copied = stringResource(R.string.copied)
+    // "Copied" stays under the lines while this screen shows, not on a timer.
+    var copied by remember { mutableStateOf(false) }
     fun copy(text: String) {
         val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         cm.setPrimaryClip(ClipData.newPlainText(text, text))
-        Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+        copied = true
     }
     val decimal = CoordinateFormatter.decimal(fix.lat, fix.lon)
     val dms = CoordinateFormatter.dms(fix.lat, fix.lon)
@@ -169,6 +175,7 @@ fun PositionLines(fix: Fix, big: Boolean, quality: Boolean = true) {
                 modifier = Modifier.heightIn(min = 48.dp).clickable { copy(locator) },
             )
         }
+        if (copied) TextMMD(text = stringResource(R.string.copied), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -211,15 +218,14 @@ fun shareGiven(context: Context, given: Given) {
 }
 
 /** Hands the position to whatever map app is on the phone (Topo answers `geo:`). */
-fun openInMap(context: Context, fix: Fix) {
+fun openInMap(context: Context, fix: Fix): Boolean {
     val uri = Uri.parse(Place.geoUri(fix.lat, fix.lon, context.getString(R.string.map_label)))
-    open(context, Intent(Intent.ACTION_VIEW, uri), R.string.no_map)
+    return open(context, Intent(Intent.ACTION_VIEW, uri))
 }
 
 /** Opens the dialler with the number filled in. Calling is still the person's own press. */
-fun dial(context: Context, number: String) {
-    open(context, Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number")), R.string.no_dialer)
-}
+fun dial(context: Context, number: String): Boolean =
+    open(context, Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number")))
 
 fun shareText(context: Context, subject: String, text: String) {
     val send = Intent(Intent.ACTION_SEND)
@@ -229,13 +235,15 @@ fun shareText(context: Context, subject: String, text: String) {
     context.startActivity(Intent.createChooser(send, null))
 }
 
-/** Starts something, and says so when nothing on the phone can do it, rather than doing nothing. */
-fun open(context: Context, intent: Intent, failure: Int) {
-    try {
-        context.startActivity(intent)
-    } catch (_: ActivityNotFoundException) {
-        Toast.makeText(context, context.getString(failure), Toast.LENGTH_LONG).show()
-    }
+/**
+ * Starts something; false when nothing on the phone can do it, for the caller to say so on the
+ * screen until the next press (a toast is gone before the panel has shown it).
+ */
+fun open(context: Context, intent: Intent): Boolean = try {
+    context.startActivity(intent)
+    true
+} catch (_: ActivityNotFoundException) {
+    false
 }
 
 @Composable

@@ -257,6 +257,7 @@ private fun BlockView(
 @Composable
 private fun PositionCard(model: CompassModel, given: Given?, onDropGiven: () -> Unit) {
     val context = LocalContext.current
+    var noDialer by remember { mutableStateOf(false) }
     val live by model.live.collectAsState()
     Column(
         Modifier
@@ -293,11 +294,13 @@ private fun PositionCard(model: CompassModel, given: Given?, onDropGiven: () -> 
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
             // 112 first in the EU and most of the world, 911 first in North America; both always.
             for (number in remember { com.wanderwildwood.zatsuno.help.Emergency.order(context) }) {
-                WideButton(stringResource(R.string.pos_dial, number), Modifier.weight(1f)) { dial(context, number) }
+                WideButton(stringResource(R.string.pos_dial, number), Modifier.weight(1f)) { noDialer = !dial(context, number) }
             }
         }
         Spacer(Modifier.height(6.dp))
         TextMMD(text = stringResource(R.string.pos_dial_note), style = MaterialTheme.typography.labelSmall)
+        // With no dialer on the phone, said here until the next press.
+        if (noDialer) TextMMD(text = stringResource(R.string.no_dialer), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
     }
 }
 

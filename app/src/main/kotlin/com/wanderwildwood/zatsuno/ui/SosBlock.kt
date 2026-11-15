@@ -3,7 +3,6 @@ package com.wanderwildwood.zatsuno.ui
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -69,7 +68,9 @@ fun SosBlock(titles: Map<String, String>, onOpenPage: (String) -> Unit) {
     val signals = remember(titles) { titles.entries.firstOrNull { it.value == SIGNALS_PAGE }?.key }
     if (torch == null && signals == null) return
     var running by remember { mutableStateOf(false) }
-    val failed = stringResource(R.string.sos_failed)
+    // Why the flash stopped, under the button until it is pressed again: a toast would be gone
+    // before the panel had shown it.
+    var failed by remember { mutableStateOf(false) }
 
     if (torch != null) {
         val view = LocalView.current
@@ -90,7 +91,7 @@ fun SosBlock(titles: Map<String, String>, onOpenPage: (String) -> Unit) {
                 while (true) {
                     for (step in steps) {
                         if (!Torch.set(context, torch, step.on)) {
-                            Toast.makeText(context, failed, Toast.LENGTH_LONG).show()
+                            failed = true
                             running = false
                             return@LaunchedEffect
                         }
@@ -105,7 +106,14 @@ fun SosBlock(titles: Map<String, String>, onOpenPage: (String) -> Unit) {
 
     Column(Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp)) {
         if (torch != null) {
-            WideButton(stringResource(if (running) R.string.sos_stop else R.string.sos_start)) { running = !running }
+            WideButton(stringResource(if (running) R.string.sos_stop else R.string.sos_start)) {
+                failed = false
+                running = !running
+            }
+            if (failed) {
+                Spacer(Modifier.height(6.dp))
+                TextMMD(text = stringResource(R.string.sos_failed), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+            }
             if (running) {
                 Spacer(Modifier.height(6.dp))
                 TextMMD(text = stringResource(R.string.sos_running), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)

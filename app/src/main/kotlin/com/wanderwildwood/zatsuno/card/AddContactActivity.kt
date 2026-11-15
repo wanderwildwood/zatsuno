@@ -2,7 +2,9 @@ package com.wanderwildwood.zatsuno.card
 
 import android.app.Activity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -50,6 +52,9 @@ class AddContactActivity : ComponentActivity() {
         val asker = callingPackage?.let { pkg ->
             runCatching { packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString() }.getOrNull() ?: pkg
         }
+        // After Add the screen says it was added, with Close, rather than closing at once under
+        // a toast that would be gone before the panel had shown it.
+        var added by mutableStateOf(false)
         setContent {
             ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
                 ArmedScope {
@@ -58,6 +63,7 @@ class AddContactActivity : ComponentActivity() {
                         Column(modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
                             TextMMD(
                                 text = when {
+                                    added -> stringResource(R.string.card_given_done)
                                     already -> stringResource(R.string.card_given_already)
                                     asker != null -> stringResource(R.string.card_given_ask_from, asker)
                                     else -> stringResource(R.string.card_given_ask_unknown)
@@ -71,20 +77,19 @@ class AddContactActivity : ComponentActivity() {
                                 fontWeight = FontWeight.Bold,
                             )
                             Spacer(Modifier.height(20.dp))
-                            if (!already) {
+                            if (!already && !added) {
                                 WideButton(stringResource(R.string.card_given_add)) {
                                     // Read again: the card may have changed while this was open.
                                     val card = CardStore.load(this@AddContactActivity)
                                     if (!card.hasNumber(contact.number)) {
                                         CardStore.save(this@AddContactActivity, card.copy(contacts = card.contacts + contact))
                                     }
-                                    Toast.makeText(this@AddContactActivity, getString(R.string.card_given_done), Toast.LENGTH_SHORT).show()
                                     setResult(Activity.RESULT_OK)
-                                    finish()
+                                    added = true
                                 }
                                 Spacer(Modifier.height(8.dp))
                             }
-                            WideButton(stringResource(if (already) R.string.about_close else R.string.card_given_cancel), Modifier.fillMaxWidth()) {
+                            WideButton(stringResource(if (already || added) R.string.about_close else R.string.card_given_cancel), Modifier.fillMaxWidth()) {
                                 finish()
                             }
                         }

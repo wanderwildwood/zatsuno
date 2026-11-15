@@ -16,6 +16,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -56,6 +59,8 @@ import androidx.compose.ui.semantics.toggleableState
 fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
     RunWhileShown(model)
     val context = LocalContext.current
+    // With no map app on the phone, said under the buttons until the next press.
+    var noMap by remember { mutableStateOf(false) }
     val live by model.live.collectAsState()
     val points = stringArrayResource(R.array.points)
     Screen(stringResource(R.string.home_compass), onBack) { modifier ->
@@ -129,9 +134,16 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
                     Modifier.weight(1f),
                 ) { model.freeze() }
                 if (fix != null) {
-                    WideButton(stringResource(R.string.compass_share), Modifier.weight(1f)) { sharePosition(context, fix) }
-                    WideButton(stringResource(R.string.compass_map), Modifier.weight(1f)) { openInMap(context, fix) }
+                    WideButton(stringResource(R.string.compass_share), Modifier.weight(1f)) {
+                        noMap = false
+                        sharePosition(context, fix)
+                    }
+                    WideButton(stringResource(R.string.compass_map), Modifier.weight(1f)) { noMap = !openInMap(context, fix) }
                 }
+            }
+            if (noMap) {
+                Spacer(Modifier.height(6.dp))
+                TextMMD(text = stringResource(R.string.no_map), style = MaterialTheme.typography.labelSmall)
             }
         }
     }

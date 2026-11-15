@@ -57,6 +57,8 @@ import androidx.compose.ui.semantics.toggleableState
 @Composable
 fun CardLines(card: Card, bordered: Boolean) {
     val context = LocalContext.current
+    // With no dialer on the phone, said under the card until the next press.
+    var noDialer by remember { mutableStateOf(false) }
     val box = if (bordered) Modifier
         .padding(top = 12.dp, bottom = 6.dp)
         .border(BorderStroke(2.dp, Color.Black), RoundedCornerShape(12.dp))
@@ -69,7 +71,7 @@ fun CardLines(card: Card, bordered: Boolean) {
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .then(if (contact != null && contact.number.isNotBlank()) Modifier.clickable { dial(context, contact.number) } else Modifier)
+                    .then(if (contact != null && contact.number.isNotBlank()) Modifier.clickable { noDialer = !dial(context, contact.number) } else Modifier)
                     .padding(vertical = 4.dp),
             ) {
                 TextMMD(
@@ -84,6 +86,7 @@ fun CardLines(card: Card, bordered: Boolean) {
                 )
             }
         }
+        if (noDialer) TextMMD(text = stringResource(R.string.no_dialer), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -164,6 +167,7 @@ fun CardEditScreen(onDone: () -> Unit) {
     var contacts by rememberSaveable { mutableStateOf(Card.encodeContacts(start.contacts)) }
     var lock by rememberSaveable { mutableStateOf(start.onLockScreen) }
     var shown by rememberSaveable { mutableStateOf(start.shown.map { it.name }) }
+    var noContactsApp by remember { mutableStateOf(false) }
 
     fun current() = Card(
         name, blood, allergies, medications, conditions, Card.decodeContacts(contacts), note, lock,
@@ -235,8 +239,12 @@ fun CardEditScreen(onDone: () -> Unit) {
                     }
                     Spacer(Modifier.height(6.dp))
                     WideButton(stringResource(R.string.card_add_contact)) {
-                        runCatching { pickContact.launch(Unit) }
-                            .onFailure { android.widget.Toast.makeText(context, context.getString(R.string.no_app), android.widget.Toast.LENGTH_SHORT).show() }
+                        noContactsApp = runCatching { pickContact.launch(Unit) }.isFailure
+                    }
+                    // Said under the button until it is pressed again, not in a toast that is
+                    // gone before the panel has shown it.
+                    if (noContactsApp) {
+                        TextMMD(text = stringResource(R.string.no_app), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = 6.dp))
                     }
                 }
             }
