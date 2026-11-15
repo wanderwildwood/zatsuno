@@ -47,6 +47,11 @@ import com.wanderwildwood.zatsuno.card.CardStore
 import com.wanderwildwood.zatsuno.card.Contact
 import com.wanderwildwood.zatsuno.card.Field
 import com.wanderwildwood.zatsuno.glance.CardOnLockScreen
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
 
 /** The card as it reads to someone else: each filled line under its label; a contact dials. */
 @Composable
@@ -279,7 +284,7 @@ private fun Field(label: String, value: String, lines: Int = 1, onFocus: () -> U
 private fun SwitchRow(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().clickable { onChange(!checked) }.padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().semantics { role = Role.Switch; toggleableState = ToggleableState(checked) }.clickable { onChange(!checked) }.padding(vertical = 8.dp),
     ) {
         TextMMD(text = label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
         Spacer(Modifier.width(16.dp))

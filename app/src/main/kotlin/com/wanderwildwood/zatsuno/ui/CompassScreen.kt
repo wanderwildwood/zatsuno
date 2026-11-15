@@ -38,6 +38,11 @@ import com.wanderwildwood.zatsuno.compass.CompassModel
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
 
 /**
  * The compass: a card that turns, the heading as a number, magnetic or true north, the
@@ -86,6 +91,7 @@ fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .semantics { role = Role.Switch; toggleableState = ToggleableState(live.trueNorth) }
                     .clickable { model.setTrueNorth(!live.trueNorth) }
                     .padding(vertical = 8.dp),
             ) {
