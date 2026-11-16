@@ -1,5 +1,6 @@
 package com.wanderwildwood.zatsuno
 
+import com.wanderwildwood.zatsuno.ui.DarkSelection
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
         // Only a fresh start: remade after being stopped, the screen is already where it was.
         if (savedInstanceState == null) take(intent)
         setContent {
-            ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
+            ThemeMMD(colorScheme = monochrome, typography = houseTypography) { DarkSelection {
                 ArmedScope {
                     // A steady cursor: a blinking one redraws the screen twice a second for as long as
                     // a field has focus, which on e-ink is a refresh each time.
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                         FieldKitApp(request = request.value, onRequestHandled = { request.value = null })
                     }
                 }
-            }
+            } }
         }
     }
 

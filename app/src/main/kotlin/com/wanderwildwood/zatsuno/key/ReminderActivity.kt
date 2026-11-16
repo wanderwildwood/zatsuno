@@ -1,5 +1,6 @@
 package com.wanderwildwood.zatsuno.key
 
+import com.wanderwildwood.zatsuno.ui.DarkSelection
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -43,7 +44,7 @@ class ReminderActivity : ComponentActivity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         setContent {
-            ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
+            ThemeMMD(colorScheme = monochrome, typography = houseTypography) { DarkSelection {
                 ArmedScope {
                     CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
                         Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
@@ -56,7 +57,7 @@ class ReminderActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
+            } }
         }
     }
 

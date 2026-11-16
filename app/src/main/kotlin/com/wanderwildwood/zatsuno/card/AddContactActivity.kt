@@ -1,5 +1,6 @@
 package com.wanderwildwood.zatsuno.card
 
+import com.wanderwildwood.zatsuno.ui.DarkSelection
 import android.app.Activity
 import android.os.Bundle
 import androidx.compose.runtime.getValue
@@ -56,7 +57,7 @@ class AddContactActivity : ComponentActivity() {
         // a toast that would be gone before the panel had shown it.
         var added by mutableStateOf(false)
         setContent {
-            ThemeMMD(colorScheme = monochrome, typography = houseTypography) {
+            ThemeMMD(colorScheme = monochrome, typography = houseTypography) { DarkSelection {
                 ArmedScope {
                     BackHandler { finish() }
                     Screen(title = stringResource(R.string.card_title), onBack = { finish() }) { modifier ->
@@ -95,7 +96,7 @@ class AddContactActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
+            } }
         }
     }
 
