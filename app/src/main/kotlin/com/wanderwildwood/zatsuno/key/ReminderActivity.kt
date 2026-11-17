@@ -39,8 +39,18 @@ import com.wanderwildwood.zatsuno.ui.ArmedScope
  * never closes itself.
  */
 class ReminderActivity : ComponentActivity() {
+    /** The patient this screen is about; a second reminder while it is up names the next one. */
+    private val patient = androidx.compose.runtime.mutableStateOf<String?>(null)
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        patient.value = intent.getStringExtra(Recheck.EXTRA_PATIENT)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        patient.value = intent.getStringExtra(Recheck.EXTRA_PATIENT)
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         setContent {
@@ -49,7 +59,7 @@ class ReminderActivity : ComponentActivity() {
                     CompositionLocalProvider(LocalCursorBlinkEnabled provides false) {
                         Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxSize()) {
                             Reminder(
-                                patientId = intent.getStringExtra(Recheck.EXTRA_PATIENT),
+                                patientId = patient.value,
                                 onOpen = { id -> go(Recheck.EXTRA_MONITOR, id) },
                                 onEnd = { id -> go(Recheck.EXTRA_END, id) },
                                 onClose = ::finish,
@@ -70,8 +80,8 @@ class ReminderActivity : ComponentActivity() {
 @Composable
 private fun Reminder(patientId: String?, onOpen: (String?) -> Unit, onEnd: (String?) -> Unit, onClose: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    val all = androidx.compose.runtime.remember { IncidentStore.patients(context) }
-    val incident = androidx.compose.runtime.remember { all.firstOrNull { it.id == patientId } ?: Keys.get(context).let { key -> all.minByOrNull { it.nextCheck(key) } } }
+    val all = androidx.compose.runtime.remember(patientId) { IncidentStore.patients(context) }
+    val incident = androidx.compose.runtime.remember(patientId) { all.firstOrNull { it.id == patientId } ?: Keys.get(context).let { key -> all.minByOrNull { it.nextCheck(key) } } }
     Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 24.dp)) {
         if (incident == null) {
             TextMMD(text = stringResource(R.string.recheck_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)

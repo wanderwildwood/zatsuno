@@ -18,8 +18,9 @@ class AssessmentsTest {
         var alarmSet = false
         var reminded: List<Incident> = emptyList()
         var notificationShowing = false
+        var unreadable: String? = null
         override fun openIds() = open.keys.toList()
-        override fun readOpen(id: String) = open[id]
+        override fun readOpen(id: String) = if (id == unreadable) throw java.io.IOException("not now") else open[id]
         override fun writeOpen(id: String, text: String) { open[id] = text }
         override fun deleteOpen(id: String) { open.remove(id) }
         override fun readKept() = kept
@@ -106,6 +107,21 @@ class AssessmentsTest {
         assertNull(a.open())
         a.sweep()
         assertTrue(p.open.isEmpty()); assertFalse(p.alarmSet)
+    }
+
+    @Test fun aRestartLeavesAReminderStillShowing() {
+        val p = Fake(); val a = Assessments(p)
+        a.save(first); p.notificationShowing = true
+        Assessments(p).sweep()
+        assertTrue(p.notificationShowing); assertTrue(p.alarmSet)
+    }
+
+    @Test fun aFileThatCannotBeReadJustNowIsKept() {
+        val p = Fake(); p.open["7"] = first.encode(); p.unreadable = "7"
+        Assessments(p).sweep()
+        assertTrue(p.open.containsKey("7"))
+        p.unreadable = null
+        assertEquals(first, Assessments(p).open())
     }
 
     @Test fun endingWithNothingOpenIsHarmless() {

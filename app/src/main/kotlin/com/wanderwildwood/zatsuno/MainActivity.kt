@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.wanderwildwood.zatsuno.key.Recheck.channel(this)
         // Only a fresh start: remade after being stopped, the screen is already where it was.
         if (savedInstanceState == null) take(intent)
         setContent {
@@ -55,12 +56,15 @@ class MainActivity : ComponentActivity() {
         intent ?: return
         // Reopened from the recent apps, the old request would come round again.
         if (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return
-        if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_END, false)) {
-            request.value = Opening.Request.End(intent.getStringExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_PATIENT))
-            return
-        }
-        if (intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_MONITOR, false)) {
-            request.value = Opening.Request.Monitor(intent.getStringExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_PATIENT))
+        val end = intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_END, false)
+        val monitor = intent.getBooleanExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_MONITOR, false)
+        if (end || monitor) {
+            // The reminder's own requests name one of the open patients. This screen is open to
+            // other apps too, so a name that is not one of them is no request at all.
+            val patient = intent.getStringExtra(com.wanderwildwood.zatsuno.key.Recheck.EXTRA_PATIENT)
+            val open = com.wanderwildwood.zatsuno.key.IncidentStore.patients(this)
+            if (open.none { it.id == patient }) return
+            request.value = if (end) Opening.Request.End(patient) else Opening.Request.Monitor(patient)
             return
         }
         Opening.read(

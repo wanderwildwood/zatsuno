@@ -150,14 +150,19 @@ class Assessments(private val p: AssessmentPlatform, private val now: () -> Long
     }
 
     /**
-     * Run whenever the app's process starts: files that cannot be read go, an old undo goes, no
-     * patient means no alarm and no notification (whatever left them behind), and each open one
-     * counts in the reminder again.
+     * Run whenever the app's process starts: files that were read and make no sense go (one that
+     * could not be read just now stays), an old undo goes, no patient means no alarm and no
+     * notification (whatever left them behind), and each open one counts in the reminder again.
+     * A reminder still showing stays: a process starting is not the person answering it.
      */
     fun sweep() {
-        for (id in p.openIds()) if (runCatching { p.readOpen(id)?.let(Incident::decode) }.getOrNull() == null) p.deleteOpen(id)
+        for (id in p.openIds()) {
+            val text = runCatching { p.readOpen(id) }.getOrNull() ?: continue
+            if (runCatching { Incident.decode(text) }.getOrNull() == null) p.deleteOpen(id)
+        }
         undoable()
-        remindAgain()
+        val all = patients()
+        if (all.isEmpty()) p.cancelReminder() else p.remind(all)
     }
 
     companion object {
@@ -180,7 +185,11 @@ class AndroidAssessmentPlatform(private val context: Context) : AssessmentPlatfo
     private fun write(f: File, text: String) {
         val tmp = File(f.parentFile, f.name + ".new")
         tmp.writeText(text)
-        tmp.renameTo(f)
+        // A rename that fails would leave the old text in place: write it directly then.
+        if (!tmp.renameTo(f)) {
+            f.writeText(text)
+            tmp.delete()
+        }
     }
 
     private fun read(f: File) = runCatching { f.takeIf { it.isFile }?.readText() }.getOrNull()
@@ -311,13 +320,12 @@ object Recheck {
     fun dueFirst(context: Context, patients: List<Incident>, now: Long = System.currentTimeMillis()): Incident? =
         ReminderPlan.dueNow(Keys.get(context), patients, now, firedFor(context))
 
-    fun notify(context: Context, incident: Incident, several: Boolean = false, label: String = "") {
-        val due = incident.nextCheck(Keys.get(context))
-        // Once per due time. Starting the app's process to deliver this alarm sets an alarm again
-        // (FieldKitApplication), which would otherwise buzz a second time a moment after the first.
-        if (firedFor(context) >= due) return
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-            .putLong(FIRED_FOR, due).apply()
+    /**
+     * The reminder's channel. Made when the app opens as well as at the first reminder: on
+     * Android 13 and later the question about notifications comes with the first channel, and
+     * only while the app is in front.
+     */
+    fun channel(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.deleteNotificationChannel(OLD_CHANNEL)
         manager.createNotificationChannel(
@@ -328,6 +336,17 @@ object Recheck {
                 lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
             },
         )
+    }
+
+    fun notify(context: Context, incident: Incident, several: Boolean = false, label: String = "") {
+        val due = incident.nextCheck(Keys.get(context))
+        // Once per due time. Starting the app's process to deliver this alarm sets an alarm again
+        // (FieldKitApplication), which would otherwise buzz a second time a moment after the first.
+        if (firedFor(context) >= due) return
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+            .putLong(FIRED_FOR, due).apply()
+        val manager = context.getSystemService(NotificationManager::class.java)
+        channel(context)
         // With the screen off or locked the reminder comes up as a whole screen, which stays
         // until it is answered; with the phone in use it is a notification at the top.
         val screen = PendingIntent.getActivity(
