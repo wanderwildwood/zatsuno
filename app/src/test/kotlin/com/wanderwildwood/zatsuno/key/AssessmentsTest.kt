@@ -230,6 +230,10 @@ class AssessmentsTest {
         assertNull(ReminderPlan.next(key, listOf(early, late), dueLate + min, dueLate))
         // Left for 12 hours: not reminded about.
         assertNull(ReminderPlan.dueNow(key, listOf(late), late.last + ReminderPlan.STALE_MS + min, 0L))
+        // Both overdue at once (after a restart, or a late alarm), listed later-due first:
+        // the earlier-due one is reminded first, then the other.
+        assertEquals(early, ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, 0L))
+        assertEquals(late, ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, dueEarly))
     }
 
     // The reminder is given once per due time, not on every tap after it.

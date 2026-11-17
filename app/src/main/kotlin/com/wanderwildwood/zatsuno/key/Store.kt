@@ -246,7 +246,10 @@ object ReminderPlan {
 
     /** Of several open patients, the one whose reminder comes first, and when. */
     fun next(key: Key, patients: List<Incident>, now: Long, firedFor: Long): Pair<Incident, Long>? =
-        patients.mapNotNull { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor)?.let { i to it } }.minByOrNull { it.second }
+        patients.mapNotNull { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor)?.let { i to it } }
+            // Several overdue at once all alarm "now": the one due first goes first, so a later
+            // reminder never raises FIRED_FOR past a patient who has not been reminded yet.
+            .minWithOrNull(compareBy<Pair<Incident, Long>>({ it.second }, { it.first.nextCheck(key) }))
 
     /**
      * The patient to remind about now, or null when nobody is due. The same choice as [next]: a
