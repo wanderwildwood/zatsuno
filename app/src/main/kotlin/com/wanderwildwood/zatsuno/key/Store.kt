@@ -247,6 +247,14 @@ object ReminderPlan {
     /** Of several open patients, the one whose reminder comes first, and when. */
     fun next(key: Key, patients: List<Incident>, now: Long, firedFor: Long): Pair<Incident, Long>? =
         patients.mapNotNull { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor)?.let { i to it } }.minByOrNull { it.second }
+
+    /**
+     * The patient to remind about now, or null when nobody is due. The same choice as [next]: a
+     * patient already reminded about for their due time, or left for [STALE_MS], is passed over,
+     * so a later patient's reminder is given rather than lost behind them.
+     */
+    fun dueNow(key: Key, patients: List<Incident>, now: Long, firedFor: Long): Incident? =
+        next(key, patients, now, firedFor)?.takeIf { it.second <= now }?.first
 }
 
 /**
@@ -296,11 +304,9 @@ object Recheck {
         context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
     }
 
-    /** The patient whose reassessment is due first, or null when nobody is open. */
-    fun dueFirst(context: Context, patients: List<Incident>): Incident? {
-        val key = Keys.get(context)
-        return patients.minByOrNull { it.nextCheck(key) }
-    }
+    /** The patient whose reminder is due now and not yet given, or null when there is none. */
+    fun dueFirst(context: Context, patients: List<Incident>, now: Long = System.currentTimeMillis()): Incident? =
+        ReminderPlan.dueNow(Keys.get(context), patients, now, firedFor(context))
 
     fun notify(context: Context, incident: Incident, several: Boolean = false, label: String = "") {
         val due = incident.nextCheck(Keys.get(context))
@@ -380,10 +386,13 @@ class RecheckReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // Only while an assessment is still open: ending the last one cancels the alarm, this makes sure.
         val all = IncidentStore.patients(context)
-        val due = Recheck.dueFirst(context, all)
-        if (due == null) { Recheck.cancel(context); return }
-        Recheck.notify(context, due, all.size > 1, Patients.label(due, all, context))
+        if (all.isEmpty()) { Recheck.cancel(context); return }
+        val now = System.currentTimeMillis()
+        // Nobody due now (each already reminded about, or left too long): no reminder, and the
+        // alarm is set again only for a reminder still to come, never for now.
+        val due = Recheck.dueFirst(context, all, now)
+        if (due != null) Recheck.notify(context, due, all.size > 1, Patients.label(due, all, context))
         // The others are still to come.
-        Recheck.schedule(context, all)
+        Recheck.schedule(context, all, now)
     }
 }

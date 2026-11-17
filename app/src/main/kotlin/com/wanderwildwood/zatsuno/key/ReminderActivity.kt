@@ -71,7 +71,7 @@ class ReminderActivity : ComponentActivity() {
 private fun Reminder(patientId: String?, onOpen: (String?) -> Unit, onEnd: (String?) -> Unit, onClose: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val all = androidx.compose.runtime.remember { IncidentStore.patients(context) }
-    val incident = androidx.compose.runtime.remember { all.firstOrNull { it.id == patientId } ?: Recheck.dueFirst(context, all) }
+    val incident = androidx.compose.runtime.remember { all.firstOrNull { it.id == patientId } ?: Keys.get(context).let { key -> all.minByOrNull { it.nextCheck(key) } } }
     Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 24.dp)) {
         if (incident == null) {
             TextMMD(text = stringResource(R.string.recheck_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)

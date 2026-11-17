@@ -216,6 +216,22 @@ class AssessmentsTest {
         assertEquals(late, ReminderPlan.next(key, listOf(early, late), early.nextCheck(key) + min, early.nextCheck(key))!!.first)
     }
 
+    // Two patients: the first reminded about and not yet reassessed must not swallow the second's reminder.
+    @Test fun aLaterPatientIsRemindedAfterAnEarlierOne() {
+        val key = KeyFixtures.key
+        val min = 60_000L
+        val early = Incident(0L); val late = Incident(10 * min)
+        val dueEarly = early.nextCheck(key); val dueLate = late.nextCheck(key)
+        assertNull(ReminderPlan.dueNow(key, listOf(early, late), dueEarly - min, 0L))       // nobody due yet
+        assertEquals(early, ReminderPlan.dueNow(key, listOf(early, late), dueEarly, 0L))    // the first comes first
+        assertEquals(late, ReminderPlan.dueNow(key, listOf(early, late), dueLate, dueEarly)) // then the second, not the first again
+        // Once both are given there is nothing to remind about and no alarm, so the alarm cannot go off again and again.
+        assertNull(ReminderPlan.dueNow(key, listOf(early, late), dueLate + min, dueLate))
+        assertNull(ReminderPlan.next(key, listOf(early, late), dueLate + min, dueLate))
+        // Left for 12 hours: not reminded about.
+        assertNull(ReminderPlan.dueNow(key, listOf(late), late.last + ReminderPlan.STALE_MS + min, 0L))
+    }
+
     // The reminder is given once per due time, not on every tap after it.
     @Test fun reminderRules() {
         val min = 60_000L
