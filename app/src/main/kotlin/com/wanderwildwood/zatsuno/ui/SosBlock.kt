@@ -58,7 +58,7 @@ object Torch {
  * "Flash SOS" on "Calling for help": the flash blinks · · · – – – · · · over and over until
  * the button is pressed again. The screen stays awake while it runs, and it stops by itself
  * when the page is left, the screen goes off or the app goes behind another. On a phone
- * without a flash the button is not there. Under it, when the "Signalling for rescue" page
+ * without a flash the button is not there. Under it, when the "Signaling for rescue" page
  * exists, a line that opens it.
  */
 @Composable
@@ -135,5 +135,5 @@ fun SosBlock(titles: Map<String, String>, onOpenPage: (String) -> Unit) {
     }
 }
 
-/** The id of the page on signalling for rescue, linked from the SOS button once it exists. */
+/** The id of the page on signaling for rescue, linked from the SOS button once it exists. */
 const val SIGNALS_PAGE = "signals"

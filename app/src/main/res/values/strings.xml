@@ -61,7 +61,7 @@
     <string name="lightning_flash">Flash</string>
     <string name="lightning_thunder">Thunder</string>
     <string name="lightning_counting">Counting. Tap Thunder when you hear it.</string>
-    <!-- %1$s seconds, %2$s miles, %3$s kilometres -->
+    <!-- %1$s seconds, %2$s miles, %3$s kilometers -->
     <string name="lightning_result">%1$s s: about %2$s mi (%3$s km) away</string>
     <string name="lightning_row">%1$s s · %2$s mi (%3$s km)</string>
     <!-- NWS: "If you hear thunder, lightning is close enough to strike you." and 30 minutes after the last thunder -->
@@ -79,7 +79,7 @@
     <string name="pos_settings">Open app settings</string>
     <string name="pos_off">Location is turned off on this phone.</string>
     <string name="pos_turn_on">Turn on location</string>
-    <!-- %1$s is metres, %2$s how old: "±8 m · 12 s old" -->
+    <!-- %1$s is meters, %2$s how old: "±8 m · 12 s old" -->
     <string name="pos_accuracy">±%1$s m · %2$s</string>
     <string name="pos_accuracy_unknown">accuracy unknown · %1$s</string>
     <string name="age_now">just now</string>
@@ -96,7 +96,7 @@
     <!-- %1$s is the number to dial -->
     <string name="pos_dial">Dial %1$s</string>
     <string name="pos_dial_note">The emergency number depends on the country. 112 and 911 are both offered; if you are not sure, try 112, then 911.</string>
-    <!-- First line of a shared position. %1$s the time, %2$s metres -->
+    <!-- First line of a shared position. %1$s the time, %2$s meters -->
     <string name="share_heading">My position at %1$s, to within %2$s m:</string>
     <string name="share_heading_no_accuracy">My position at %1$s:</string>
     <string name="map_label">My position</string>
@@ -642,7 +642,7 @@
     <!-- The SOAP note, as sent. Times are 24-hour, HH:MM -->
     <!-- First line. %1$s the start, %2$s the latest -->
     <string name="note_head">SOAP note %1$s–%2$s · Field Kit</string>
-    <!-- %1$s the position, %2$s metres, %3$s the time -->
+    <!-- %1$s the position, %2$s meters, %3$s the time -->
     <string name="note_where">Where: %1$s (±%2$s m, %3$s)</string>
     <string name="note_where_no_accuracy">Where: %1$s (%2$s)</string>
     <string name="note_where_none">Where: not recorded</string>

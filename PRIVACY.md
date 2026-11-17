@@ -56,6 +56,11 @@ over the one number you pick; Field Kit has no access to your contacts beyond th
 - Open in map: a `geo:` address, to your map app.
 - Dial: the number, to the dialer, which waits for you to press call.
 - Fill in from Medicine: Medicine hands its list to Field Kit, on your say in Medicine.
+- Save as a file: the file is named and placed in Cabinet's screens when Cabinet is installed,
+  otherwise in the phone's own picker, and Field Kit writes the note there.
+
+When Home is installed, Field Kit reads Home's dark mode switch, a yes or no, so it is light or
+dark with the rest of the phone, and sends Home nothing.
 
 ## Reading the phone's country
 
