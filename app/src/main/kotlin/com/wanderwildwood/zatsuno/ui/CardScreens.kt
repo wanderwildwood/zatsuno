@@ -196,13 +196,14 @@ fun CardEditScreen(onDone: () -> Unit) {
         onPauseOrDispose { }
     }
 
-    val pickContact = rememberLauncherForActivityResult(PickPhone()) { picked ->
+    val pickContact = rememberLauncherForActivityResult(remember { PickPhone(context.applicationContext) }) { picked ->
         if (picked != null) contacts = Card.encodeContacts(Card.decodeContacts(contacts) + picked)
     }
     val medicine = remember { medicineIntent(context) }
     val fromMedicine = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val text = result.data?.getStringExtra(Intent.EXTRA_TEXT)
-        if (result.resultCode == Activity.RESULT_OK && !text.isNullOrBlank()) medications = text.trim()
+        // Kept to a list's length, whatever the answering app hands back.
+        if (result.resultCode == Activity.RESULT_OK && !text.isNullOrBlank()) medications = text.trim().take(4000)
     }
 
     Screen(
@@ -304,13 +305,11 @@ private fun SwitchRow(label: String, checked: Boolean, onChange: (Boolean) -> Un
  * The phone's own picker over phone numbers. The answer comes with a one-time grant to read
  * that one number, so Field Kit needs no contacts permission.
  */
-private class PickPhone : ActivityResultContract<Unit, Contact?>() {
-    private lateinit var context: Context
-
-    override fun createIntent(context: Context, input: Unit): Intent {
-        this.context = context.applicationContext
-        return Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
-    }
+private class PickPhone(private val context: Context) : ActivityResultContract<Unit, Contact?>() {
+    // Given the context when made, not when the picker opens: after the process was let go
+    // while the picker was up, the answer comes back to a new contract that never opened it.
+    override fun createIntent(context: Context, input: Unit): Intent =
+        Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
 
     override fun parseResult(resultCode: Int, intent: Intent?): Contact? {
         val uri: Uri = intent?.data ?: return null

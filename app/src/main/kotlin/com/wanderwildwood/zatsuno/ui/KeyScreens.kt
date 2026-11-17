@@ -257,7 +257,10 @@ fun KeyScreen(
     val list = rememberLazyListState()
     LaunchedEffect(stage) { list.scrollToItem(0) }
     val context = LocalContext.current
-    val draft = remember(state.incident?.id) { VitalsDraft() }
+    // A fresh draft for each patient, except that a patient is begun by the first answer: the
+    // vitals typed before it, for "not yet begun", go on with the patient it became.
+    val drafts = remember { DraftHolder() }
+    val draft = drafts.forPatient(state.incident?.id)
     LaunchedEffect(draft.counting) {
         if (draft.counting) { delay(15_000); Recheck.buzz(context); draft.counting = false }
     }
@@ -715,6 +718,20 @@ private fun DoneLine(state: KeyState) {
 }
 
 /** The check being entered under "now", until it is saved. */
+/** Which patient the vitals draft belongs to. Not state: the draft follows from the id alone. */
+private class DraftHolder {
+    private var of: String? = null
+    private var draft = VitalsDraft()
+
+    fun forPatient(id: String?): VitalsDraft {
+        if (id != of) {
+            if (of != null) draft = VitalsDraft()
+            of = id
+        }
+        return draft
+    }
+}
+
 class VitalsDraft {
     var avpu by mutableStateOf<String?>(null)
     var pulse by mutableStateOf("")
