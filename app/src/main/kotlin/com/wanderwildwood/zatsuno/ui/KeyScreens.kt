@@ -90,7 +90,15 @@ class KeyState(
     /** The patient as the lists and the reminder name them. */
     fun label(i: Incident): String = Patients.label(i, patients, words)
 
+    /**
+     * The patient the last answer began from "not yet begun", until another patient is shown.
+     * Only that change of patient carries the vitals typed before it; any other starts afresh.
+     */
+    var begun: String? = null
+        private set
+
     private fun reload() {
+        begun = null
         incident = IncidentStore.load(context)
         patients = IncidentStore.patients(context)
         kept = IncidentStore.kept(context)
@@ -122,7 +130,7 @@ class KeyState(
 
     private fun change(make: (Long) -> Incident.Event) {
         val t = now()
-        val base = incident ?: Incident(t)
+        val base = incident ?: Incident(t).also { begun = it.id }
         val e = make(t)
         // Typing a line is one event, not one per letter: the latest edit replaces the one before.
         val last = base.events.lastOrNull()
@@ -260,7 +268,7 @@ fun KeyScreen(
     // A fresh draft for each patient, except that a patient is begun by the first answer: the
     // vitals typed before it, for "not yet begun", go on with the patient it became.
     val drafts = remember { DraftHolder() }
-    val draft = drafts.forPatient(state.incident?.id)
+    val draft = drafts.forPatient(state.incident?.id, state.begun)
     LaunchedEffect(draft.counting) {
         if (draft.counting) { delay(15_000); Recheck.buzz(context); draft.counting = false }
     }
@@ -722,9 +730,10 @@ private class DraftHolder {
     private var of: String? = null
     private var draft = VitalsDraft()
 
-    fun forPatient(id: String?): VitalsDraft {
+    /** [begun]: the patient a first answer has just begun from "not yet begun" ([KeyState.begun]). */
+    fun forPatient(id: String?, begun: String?): VitalsDraft {
         if (id != of) {
-            if (of != null) draft = VitalsDraft()
+            if (of != null || id != begun) draft = VitalsDraft()
             of = id
         }
         return draft
