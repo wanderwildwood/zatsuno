@@ -153,14 +153,19 @@ class Assessments(private val p: AssessmentPlatform, private val now: () -> Long
      * Run whenever the app's process starts: files that were read and make no sense go (one that
      * could not be read just now stays), an old undo goes, no patient means no alarm and no
      * notification (whatever left them behind), and each open one counts in the reminder again.
-     * A reminder still showing stays: a process starting is not the person answering it.
+     * A reminder still showing stays: a process starting is not the person answering it. While
+     * any file could not be read, the alarm and the reminder are left as they are: that patient
+     * may be the one they are for.
      */
     fun sweep() {
+        var unread = false
         for (id in p.openIds()) {
-            val text = runCatching { p.readOpen(id) }.getOrNull() ?: continue
+            val text = runCatching { p.readOpen(id) }.getOrNull()
+            if (text == null) { unread = true; continue }
             if (runCatching { Incident.decode(text) }.getOrNull() == null) p.deleteOpen(id)
         }
         undoable()
+        if (unread) return
         val all = patients()
         if (all.isEmpty()) p.cancelReminder() else p.remind(all)
     }

@@ -124,6 +124,15 @@ class AssessmentsTest {
         assertEquals(first, Assessments(p).open())
     }
 
+    @Test fun aFileThatCannotBeReadJustNowKeepsItsReminder() {
+        val p = Fake(); val a = Assessments(p)
+        a.save(first); p.notificationShowing = true
+        p.unreadable = first.id
+        Assessments(p).sweep()
+        assertTrue(p.alarmSet); assertTrue(p.notificationShowing)
+        assertTrue(p.open.containsKey(first.id))
+    }
+
     @Test fun endingWithNothingOpenIsHarmless() {
         val p = Fake(); val a = Assessments(p)
         a.end("123", keep = true)
