@@ -74,6 +74,7 @@ and it will install on any Android 12 device.
   "Calling for help", and on the lock screen through
   [Glance](https://github.com/wanderwildwood/hitome) if you switch that on, with the lines you
   choose.
+- **Dark mode** follows the phone's own dark setting, and has a switch of its own.
 - **Search across all of it**, and send any page or knot to Memo or anywhere else as text.
   Select text on a page to reach Define and the other text apps; a "see Shock" on a page opens
   that page.
