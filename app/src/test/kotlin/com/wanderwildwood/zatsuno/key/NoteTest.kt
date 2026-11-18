@@ -177,4 +177,17 @@ class NoteTest {
         assertTrue(text.lines().first(), text.lines().first().contains("2:02") && text.lines().first().contains("PM"))
         assertEquals("14:02", note.time(at(14, 2)))
     }
+
+    // A last-known fix from long before is not where the patient is.
+    @Test
+    fun anOldFixIsNeverKeptAsWhereThePatientIs() {
+        val min = 60_000L
+        val now = 100 * min
+        val blank = Incident(90 * min)
+        assertTrue(blank.takesWhere(now - 1 * min, now))
+        assertTrue(!blank.takesWhere(now - 3 * 60 * min, now))
+        val placed = blank + Incident.Where(now - 1 * min, 45.0, -122.0, 10f)
+        assertTrue(!placed.takesWhere(now, now))
+        assertTrue(placed.takesWhere(now + 5 * min, now + 5 * min))
+    }
 }

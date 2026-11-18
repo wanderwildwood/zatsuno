@@ -162,11 +162,10 @@ class KeyState(
         incident?.let { Recheck.seen(context, it.id) }
     }
 
-    /** Where the phone is, kept once and again when it is five minutes stale. */
+    /** Where the phone is, kept once and again when it is five minutes stale; never an old last-known fix ([Incident.takesWhere]). */
     fun where(lat: Double, lon: Double, accuracy: Float?, at: Long) {
         val inc = incident ?: return
-        val last = inc.where()
-        if (last == null || at - last.at > 5 * 60_000L) change { Incident.Where(at, lat, lon, accuracy) }
+        if (inc.takesWhere(at, now())) change { Incident.Where(at, lat, lon, accuracy) }
     }
 
     /** The note of the last assessment ended with "Keep the note", for the home screen. */

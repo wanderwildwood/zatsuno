@@ -90,6 +90,17 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
 
     fun where(): Where? = events.filterIsInstance<Where>().lastOrNull()
 
+    /**
+     * Whether a position fix taken at [at] goes in as where the patient is, at [now]: once, and
+     * again when it is [WHERE_FRESH_MS] newer than the one kept. A fix older than that is the
+     * phone's last known place, perhaps from hours before and far away, and is never kept.
+     */
+    fun takesWhere(at: Long, now: Long): Boolean {
+        if (now - at > WHERE_FRESH_MS) return false
+        val last = where() ?: return true
+        return at - last.at > WHERE_FRESH_MS
+    }
+
     /** When anything last happened: the end of the note's time span. */
     val last: Long get() = events.maxOfOrNull { it.at } ?: started
 
@@ -118,6 +129,8 @@ data class Incident(val started: Long, val events: List<Event> = emptyList()) {
     }
 
     companion object {
+        /** How old a position fix may be and still go in the note; how much newer to replace one. */
+        const val WHERE_FRESH_MS = 5 * 60_000L
         const val FAST_PULSE = 100
         /** Over this many breaths a minute is a red flag (START triage, WMA/SOLO). */
         const val FAST_BREATHS = 30
