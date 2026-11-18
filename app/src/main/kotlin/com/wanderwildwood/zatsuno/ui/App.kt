@@ -21,11 +21,13 @@ import com.wanderwildwood.zatsuno.R
 import com.wanderwildwood.zatsuno.aid.Pages
 import com.wanderwildwood.zatsuno.compass.CompassModel
 import com.wanderwildwood.zatsuno.key.Keys
+import com.wanderwildwood.zatsuno.key.Recheck
 import com.wanderwildwood.zatsuno.key.Stage
 import com.wanderwildwood.zatsuno.knots.Knots
 import com.wanderwildwood.zatsuno.search.Entry
 import com.wanderwildwood.zatsuno.search.Kind
 import com.wanderwildwood.zatsuno.search.Search
+import kotlinx.coroutines.delay
 
 /** Where the app can be, as plain strings so the stack survives the process being stopped. */
 object Route {
@@ -79,6 +81,15 @@ fun FieldKitApp(
     val pages = remember { Pages.all(context) }
     val titles = remember(pages) { pages.associate { it.title to it.id } }
     val keyState = remember { KeyState(context, Keys.get(context), Keys.words(context), pages.associate { it.id to it.title }) }
+    // The vitals being entered, held here so an aid page, the note or the read-out does not lose
+    // them. A fresh draft for each patient, except that a patient is begun by the first answer:
+    // the vitals typed before it, for "not yet begun", go on with the patient it became.
+    val drafts = rememberSaveable(saver = DraftHolder.Saver) { DraftHolder() }
+    val draft = drafts.forPatient(keyState.incident?.id, keyState.begun)
+    // The 15-second count runs on while another screen is open, and buzzes at its end there too.
+    LaunchedEffect(draft, draft.counting) {
+        if (draft.counting) { delay(15_000); Recheck.buzz(context); draft.counting = false }
+    }
 
     LaunchedEffect(request) {
         val r = request ?: return@LaunchedEffect
@@ -126,6 +137,7 @@ fun FieldKitApp(
         )
         route == Route.KEY -> KeyScreen(
             state = keyState,
+            draft = draft,
             stage = Stage.valueOf(keyStage),
             onStage = { keyStage = it.name },
             model = model,

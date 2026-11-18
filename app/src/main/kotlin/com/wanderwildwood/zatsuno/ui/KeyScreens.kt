@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,7 +60,6 @@ import com.wanderwildwood.zatsuno.key.Stage
 import com.wanderwildwood.zatsuno.key.Words
 import com.wanderwildwood.zatsuno.key.rank
 import com.wanderwildwood.zatsuno.key.vitalRows
-import kotlinx.coroutines.delay
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
@@ -250,6 +250,7 @@ private const val PUPILS_NOT_CHECKED = "not_checked"
 @Composable
 fun KeyScreen(
     state: KeyState,
+    draft: VitalsDraft,
     stage: Stage,
     onStage: (Stage) -> Unit,
     model: CompassModel,
@@ -263,14 +264,6 @@ fun KeyScreen(
 ) {
     val list = rememberLazyListState()
     LaunchedEffect(stage) { list.scrollToItem(0) }
-    val context = LocalContext.current
-    // A fresh draft for each patient, except that a patient is begun by the first answer: the
-    // vitals typed before it, for "not yet begun", go on with the patient it became.
-    val drafts = remember { DraftHolder() }
-    val draft = drafts.forPatient(state.incident?.id, state.begun)
-    LaunchedEffect(draft.counting) {
-        if (draft.counting) { delay(15_000); Recheck.buzz(context); draft.counting = false }
-    }
     if (stage == Stage.CALL) RecordWhere(state, model)
     Screen(
         title = state.incident?.takeIf { state.patients.size > 1 }?.let { state.label(it) } ?: stringResource(R.string.key_title_bar),
@@ -724,8 +717,12 @@ private fun DoneLine(state: KeyState) {
     }
 }
 
-/** Which patient the vitals draft belongs to. Not state: the draft follows from the id alone. */
-private class DraftHolder {
+/**
+ * Which patient the vitals draft belongs to. Not state: the draft follows from the id alone.
+ * Held by the whole app rather than the key screen, so a draft half typed is still there after
+ * an aid page, the note or the read-out, and after the process is stopped ([Saver]).
+ */
+class DraftHolder {
     private var of: String? = null
     private var draft = VitalsDraft()
 
@@ -736,6 +733,28 @@ private class DraftHolder {
             of = id
         }
         return draft
+    }
+
+    /** The patient and the draft as plain strings; the count under way is not kept. */
+    fun save(): List<String> = listOf(
+        of.orEmpty(), draft.avpu.orEmpty(), draft.pulse, draft.rhythm.orEmpty(), draft.breaths,
+        draft.quality.orEmpty(), draft.skin.joinToString(","), draft.pupils.orEmpty(),
+    )
+
+    companion object {
+        fun restore(saved: List<String>): DraftHolder = DraftHolder().apply {
+            if (saved.size < 8) return@apply
+            of = saved[0].ifEmpty { null }
+            draft.avpu = saved[1].ifEmpty { null }
+            draft.pulse = saved[2]
+            draft.rhythm = saved[3].ifEmpty { null }
+            draft.breaths = saved[4]
+            draft.quality = saved[5].ifEmpty { null }
+            draft.skin = saved[6].split(',').filter { it.isNotEmpty() }
+            draft.pupils = saved[7].ifEmpty { null }
+        }
+
+        val Saver = listSaver<DraftHolder, String>(save = { it.save() }, restore = { restore(it) })
     }
 }
 
