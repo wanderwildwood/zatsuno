@@ -233,12 +233,12 @@ class AssessmentsTest {
         val key = KeyFixtures.key
         val min = 60_000L
         val early = Incident(0L); val late = Incident(10 * min)
-        val (who, at) = ReminderPlan.next(key, listOf(late, early), 1 * min, 0L)!!
+        val (who, at) = ReminderPlan.next(key, listOf(late, early), 1 * min, emptyMap())!!
         assertEquals(early, who)
         assertEquals(early.nextCheck(key), at)
-        assertNull(ReminderPlan.next(key, emptyList(), 0L, 0L))
+        assertNull(ReminderPlan.next(key, emptyList(), 0L, emptyMap()))
         // The first has been reminded about; the second is still to come.
-        assertEquals(late, ReminderPlan.next(key, listOf(early, late), early.nextCheck(key) + min, early.nextCheck(key))!!.first)
+        assertEquals(late, ReminderPlan.next(key, listOf(early, late), early.nextCheck(key) + min, mapOf(early.id to early.nextCheck(key)))!!.first)
     }
 
     // Two patients: the first reminded about and not yet reassessed must not swallow the second's reminder.
@@ -247,18 +247,30 @@ class AssessmentsTest {
         val min = 60_000L
         val early = Incident(0L); val late = Incident(10 * min)
         val dueEarly = early.nextCheck(key); val dueLate = late.nextCheck(key)
-        assertNull(ReminderPlan.dueNow(key, listOf(early, late), dueEarly - min, 0L))       // nobody due yet
-        assertEquals(early, ReminderPlan.dueNow(key, listOf(early, late), dueEarly, 0L))    // the first comes first
-        assertEquals(late, ReminderPlan.dueNow(key, listOf(early, late), dueLate, dueEarly)) // then the second, not the first again
+        assertEquals(emptyList<Incident>(), ReminderPlan.dueNow(key, listOf(early, late), dueEarly - min, emptyMap()))   // nobody due yet
+        assertEquals(listOf(early), ReminderPlan.dueNow(key, listOf(early, late), dueEarly, emptyMap()))                 // the first comes first
+        assertEquals(listOf(late), ReminderPlan.dueNow(key, listOf(early, late), dueLate, mapOf(early.id to dueEarly)))  // then the second, not the first again
         // Once both are given there is nothing to remind about and no alarm, so the alarm cannot go off again and again.
-        assertNull(ReminderPlan.dueNow(key, listOf(early, late), dueLate + min, dueLate))
-        assertNull(ReminderPlan.next(key, listOf(early, late), dueLate + min, dueLate))
+        val both = mapOf(early.id to dueEarly, late.id to dueLate)
+        assertEquals(emptyList<Incident>(), ReminderPlan.dueNow(key, listOf(early, late), dueLate + min, both))
+        assertNull(ReminderPlan.next(key, listOf(early, late), dueLate + min, both))
         // Left for 12 hours: not reminded about.
-        assertNull(ReminderPlan.dueNow(key, listOf(late), late.last + ReminderPlan.STALE_MS + min, 0L))
-        // Both overdue at once (after a restart, or a late alarm), listed later-due first:
-        // the earlier-due one is reminded first, then the other.
-        assertEquals(early, ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, 0L))
-        assertEquals(late, ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, dueEarly))
+        assertEquals(emptyList<Incident>(), ReminderPlan.dueNow(key, listOf(late), late.last + ReminderPlan.STALE_MS + min, emptyMap()))
+        // Both overdue at once (after a restart, or a late alarm), listed later-due first: both
+        // are reminded at once, the earlier-due first, and neither stands in for the other.
+        assertEquals(listOf(early, late), ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, emptyMap()))
+        assertEquals(listOf(late), ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, mapOf(early.id to dueEarly)))
+        assertEquals(listOf(early), ReminderPlan.dueNow(key, listOf(late, early), dueLate + min, mapOf(late.id to dueLate)))
+    }
+
+    // One patient reminded about late must not hide another whose due time moves back before it.
+    @Test fun aPatientWhoseDueTimeMovesBackIsStillReminded() {
+        val key = KeyFixtures.key
+        val min = 60_000L
+        val a = Incident(0L); val b = Incident(1 * min)
+        // B was reminded about at a later due time than A's.
+        val fired = mapOf(b.id to a.nextCheck(key) + 5 * min)
+        assertEquals(listOf(a), ReminderPlan.dueNow(key, listOf(a, b), a.nextCheck(key) + 6 * min, fired))
     }
 
     // The reminder is given once per due time, not on every tap after it.

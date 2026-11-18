@@ -243,14 +243,15 @@ object IncidentStore {
 }
 
 /**
- * When the reminder next goes off, if at all. Once per due time: a reminder already given for
- * this due time is not given again every time the screen is tapped; and an assessment nobody
- * has touched for [STALE_MS] is left alone rather than nagged about for ever.
+ * When the reminder next goes off, if at all. Once per due time, for each patient on their own:
+ * a reminder already given for this due time is not given again every time the screen is
+ * tapped, and one patient's reminder never stands for another's. An assessment nobody has
+ * touched for [STALE_MS] is left alone rather than nagged about for ever.
  */
 object ReminderPlan {
     const val STALE_MS = 12 * 60 * 60_000L
 
-    /** [due] is Incident.nextCheck; [firedFor] the due time last reminded about (0 for none). Null: no alarm. */
+    /** [due] is Incident.nextCheck; [firedFor] the due time last reminded about for this patient (0 for none). Null: no alarm. */
     fun alarmAt(due: Long, lastActivity: Long, now: Long, firedFor: Long): Long? = when {
         now - lastActivity > STALE_MS -> null
         due > now -> due
@@ -258,35 +259,44 @@ object ReminderPlan {
         else -> now
     }
 
-    /** Of several open patients, the one whose reminder comes first, and when. */
-    fun next(key: Key, patients: List<Incident>, now: Long, firedFor: Long): Pair<Incident, Long>? =
-        patients.mapNotNull { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor)?.let { i to it } }
-            // Several overdue at once all alarm "now": the one due first goes first, so a later
-            // reminder never raises FIRED_FOR past a patient who has not been reminded yet.
+    /**
+     * Of several open patients, the one whose reminder comes first, and when. [firedFor]: for
+     * each patient's id, the due time last reminded about.
+     */
+    fun next(key: Key, patients: List<Incident>, now: Long, firedFor: Map<String, Long>): Pair<Incident, Long>? =
+        patients.mapNotNull { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor[i.id] ?: 0L)?.let { i to it } }
+            // Several overdue at once all alarm "now": the one due first goes first.
             .minWithOrNull(compareBy<Pair<Incident, Long>>({ it.second }, { it.first.nextCheck(key) }))
 
     /**
-     * The patient to remind about now, or null when nobody is due. The same choice as [next]: a
-     * patient already reminded about for their due time, or left for [STALE_MS], is passed over,
-     * so a later patient's reminder is given rather than lost behind them.
+     * Every patient to remind about now, the one due first first; empty when nobody is due. A
+     * patient already reminded about for their due time, or left for [STALE_MS], is passed over.
      */
-    fun dueNow(key: Key, patients: List<Incident>, now: Long, firedFor: Long): Incident? =
-        next(key, patients, now, firedFor)?.takeIf { it.second <= now }?.first
+    fun dueNow(key: Key, patients: List<Incident>, now: Long, firedFor: Map<String, Long>): List<Incident> =
+        patients.filter { i -> alarmAt(i.nextCheck(key), i.last, now, firedFor[i.id] ?: 0L)?.let { it <= now } == true }
+            .sortedBy { it.nextCheck(key) }
 }
 
 /**
  * The reassessment reminder: one alarm, set for the next reassessment whenever the incident
- * changes. When it goes off the phone buzzes and a notification says a reassessment is due;
- * tapping it opens the key at Monitoring. The notification can be swiped away, is never
- * ongoing, takes itself away after an hour, and has an "End assessment" action.
+ * changes. When it goes off the phone buzzes and a notification says a reassessment is due,
+ * one for each patient due; tapping it opens the key at Monitoring. The notification can be
+ * swiped away, is never ongoing, takes itself away after an hour, and has an "End assessment"
+ * action.
  */
 object Recheck {
     private const val CHANNEL = "recheck2"
     /** The first channel had no sound attributes of its own; its settings cannot be changed once made, so it is replaced. */
     private const val OLD_CHANNEL = "recheck"
+    /** The one notification of the versions before each patient had their own. */
     private const val NOTIFICATION = 1
+    /** Each patient's notification: this tag, and an id from theirs. */
+    private const val TAG = "recheck"
     private const val PREFS = "recheck"
+    /** The versions before each patient had their own: one due time for all of them. */
     private const val FIRED_FOR = "fired_for"
+    /** Then the patient's id: the due time last reminded about for them. */
+    private const val FIRED_AT = "fired_at_"
     const val EXTRA_MONITOR = "com.wanderwildwood.zatsuno.extra.MONITOR"
     /** Only Field Kit's own notification sends it: opens the question "End assessment?". */
     const val EXTRA_END = "com.wanderwildwood.zatsuno.extra.END"
@@ -298,10 +308,37 @@ object Recheck {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-    private fun firedFor(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong(FIRED_FOR, 0L)
+    private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+
+    /** For each patient's id, the due time last reminded about. */
+    private fun firedFor(context: Context): Map<String, Long> =
+        prefs(context).all.entries.filter { it.key.startsWith(FIRED_AT) && it.value is Long }
+            .associate { it.key.removePrefix(FIRED_AT) to it.value as Long }
+
+    /**
+     * Keeps a due time only for a patient still open. The one due time of earlier versions
+     * becomes each patient's own once, so nobody already reminded about is reminded again.
+     */
+    private fun tidy(context: Context, patients: List<Incident>) {
+        val prefs = prefs(context)
+        val open = patients.map { it.id }.toSet()
+        val gone = prefs.all.keys.filter { it.startsWith(FIRED_AT) && it.removePrefix(FIRED_AT) !in open }
+        // Most calls change nothing: nothing is written then (this runs on every change to a note).
+        if (!prefs.contains(FIRED_FOR) && gone.isEmpty()) return
+        val edit = prefs.edit()
+        if (prefs.contains(FIRED_FOR)) {
+            val old = prefs.getLong(FIRED_FOR, 0L)
+            val key = Keys.get(context)
+            for (i in patients) if (!prefs.contains(FIRED_AT + i.id) && i.nextCheck(key) <= old) edit.putLong(FIRED_AT + i.id, i.nextCheck(key))
+            edit.remove(FIRED_FOR)
+        }
+        for (k in gone) edit.remove(k)
+        edit.apply()
+    }
 
     /** One alarm, for whichever open patient is due first. */
     fun schedule(context: Context, patients: List<Incident>, now: Long = System.currentTimeMillis()) {
+        tidy(context, patients)
         val alarms = context.getSystemService(AlarmManager::class.java)
         val at = ReminderPlan.next(Keys.get(context), patients, now, firedFor(context))?.second
         if (at == null) { alarms.cancel(pending(context)); return }
@@ -312,17 +349,30 @@ object Recheck {
 
     fun cancel(context: Context) {
         context.getSystemService(AlarmManager::class.java).cancel(pending(context))
-        context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().remove(FIRED_FOR).apply()
+        seen(context)
+        val prefs = prefs(context)
+        val edit = prefs.edit().remove(FIRED_FOR)
+        for (k in prefs.all.keys) if (k.startsWith(FIRED_AT)) edit.remove(k)
+        edit.apply()
     }
 
-    /** Dismisses the reminder once the reassessment is under way. */
+    private fun notificationId(patient: String) = patient.hashCode()
+
+    /** Dismisses every reminder showing: the app is open, or a patient has ended. */
     fun seen(context: Context) {
-        context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.cancel(NOTIFICATION)
+        runCatching { manager.activeNotifications }.getOrNull().orEmpty()
+            .filter { it.tag == TAG }.forEach { manager.cancel(TAG, it.id) }
     }
 
-    /** The patient whose reminder is due now and not yet given, or null when there is none. */
-    fun dueFirst(context: Context, patients: List<Incident>, now: Long = System.currentTimeMillis()): Incident? =
+    /** Dismisses patient [patient]'s reminder once their reassessment is under way; the others' stay. */
+    fun seen(context: Context, patient: String) {
+        context.getSystemService(NotificationManager::class.java).cancel(TAG, notificationId(patient))
+    }
+
+    /** The patients whose reminder is due now and not yet given, the one due first first. */
+    fun dueNow(context: Context, patients: List<Incident>, now: Long = System.currentTimeMillis()): List<Incident> =
         ReminderPlan.dueNow(Keys.get(context), patients, now, firedFor(context))
 
     /**
@@ -343,30 +393,35 @@ object Recheck {
         )
     }
 
-    fun notify(context: Context, incident: Incident, several: Boolean = false, label: String = "") {
+    /**
+     * Posts patient [incident]'s reminder, a notification of their own, unless it was already
+     * given for this due time. True when it was posted; the caller buzzes once for all.
+     */
+    fun notify(context: Context, incident: Incident, several: Boolean = false, label: String = ""): Boolean {
         val due = incident.nextCheck(Keys.get(context))
         // Once per due time. Starting the app's process to deliver this alarm sets an alarm again
         // (FieldKitApplication), which would otherwise buzz a second time a moment after the first.
-        if (firedFor(context) >= due) return
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-            .putLong(FIRED_FOR, due).apply()
+        if ((firedFor(context)[incident.id] ?: 0L) >= due) return false
+        prefs(context).edit().putLong(FIRED_AT + incident.id, due).apply()
         val manager = context.getSystemService(NotificationManager::class.java)
         channel(context)
+        // Each patient's intents are their own (the identifier), so one patient's reminder
+        // never opens another's.
         // With the screen off or locked the reminder comes up as a whole screen, which stays
         // until it is answered; with the phone in use it is a notification at the top.
         val screen = PendingIntent.getActivity(
             context, 2,
-            Intent(context, ReminderActivity::class.java).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            Intent(context, ReminderActivity::class.java).setIdentifier(incident.id).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val open = PendingIntent.getActivity(
             context, 0,
-            Intent(context, MainActivity::class.java).putExtra(EXTRA_MONITOR, true).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, MainActivity::class.java).setIdentifier(incident.id).putExtra(EXTRA_MONITOR, true).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val end = PendingIntent.getActivity(
             context, 1,
-            Intent(context, MainActivity::class.java).putExtra(EXTRA_END, true).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, MainActivity::class.java).setIdentifier(incident.id).putExtra(EXTRA_END, true).putExtra(EXTRA_PATIENT, incident.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val n = android.app.Notification.Builder(context, CHANNEL)
@@ -378,12 +433,11 @@ object Recheck {
             .setOngoing(false)
             .setCategory(android.app.Notification.CATEGORY_ALARM)
             .setFullScreenIntent(screen, true)
-            .setOnlyAlertOnce(true)
             .setTimeoutAfter(60 * 60_000L)
             .addAction(android.app.Notification.Action.Builder(null, context.getString(R.string.recheck_end), end).build())
             .build()
-        manager.notify(NOTIFICATION, n)
-        buzz(context, 600)
+        manager.notify(TAG, notificationId(incident.id), n)
+        return true
     }
 
     /** One buzz: the end of the 15-second count, or a reassessment due. */
@@ -415,11 +469,15 @@ class RecheckReceiver : BroadcastReceiver() {
         val all = IncidentStore.patients(context)
         if (all.isEmpty()) { Recheck.cancel(context); return }
         val now = System.currentTimeMillis()
-        // Nobody due now (each already reminded about, or left too long): no reminder, and the
-        // alarm is set again only for a reminder still to come, never for now.
-        val due = Recheck.dueFirst(context, all, now)
+        // Everyone due now gets a reminder of their own, so none stands in for another. Nobody
+        // due (each already reminded about, or left too long): no reminder, and the alarm is set
+        // again only for a reminder still to come, never for now. The one due first is posted
+        // last, so the whole screen comes up for them.
+        val due = Recheck.dueNow(context, all, now)
+        var posted = false
         // Numbered, not named: the notification is shown on the lock screen.
-        if (due != null) Recheck.notify(context, due, all.size > 1, Patients.numbered(due, all, context))
+        for (i in due.asReversed()) if (Recheck.notify(context, i, all.size > 1, Patients.numbered(i, all, context))) posted = true
+        if (posted) Recheck.buzz(context, 600)
         // The others are still to come.
         Recheck.schedule(context, all, now)
     }

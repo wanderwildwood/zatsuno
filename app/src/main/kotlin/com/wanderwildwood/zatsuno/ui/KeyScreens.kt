@@ -159,7 +159,7 @@ class KeyState(
     fun check(avpu: String?, pulse: Int?, breaths: Int?, skin: List<String>, rhythm: String?, quality: String?, pupils: String?) {
         change { Incident.Check(it, avpu, pulse, breaths, skin, rhythm, quality, pupils) }
         if (avpu != null && answers.single("avpu") != avpu) answer("avpu", avpu)
-        Recheck.seen(context)
+        incident?.let { Recheck.seen(context, it.id) }
     }
 
     /** Where the phone is, kept once and again when it is five minutes stale. */

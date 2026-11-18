@@ -100,6 +100,21 @@ private fun Reminder(patientId: String?, onOpen: (String?) -> Unit, onEnd: (Stri
             text = if (all.size > 1) stringResource(R.string.recheck_text_named, who) else stringResource(R.string.recheck_text),
             style = MaterialTheme.typography.bodyLarge,
         )
+        // Others overdue as well each have a notification of their own; this screen names them
+        // too (numbered), so answering it for one patient never hides the rest.
+        val others = androidx.compose.runtime.remember(patientId) {
+            val key = Keys.get(context)
+            val now = System.currentTimeMillis()
+            all.filter { it.id != incident.id && it.nextCheck(key) <= now && now - it.last <= ReminderPlan.STALE_MS }
+                .sortedBy { it.nextCheck(key) }
+        }
+        if (others.isNotEmpty()) {
+            Spacer(Modifier.height(10.dp))
+            TextMMD(
+                text = stringResource(R.string.reminder_also_due, others.joinToString(", ") { Patients.numbered(it, all, context) }),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
         Spacer(Modifier.height(10.dp))
         val due = DateFormat.getTimeFormat(context).format(Date(incident.nextCheck(Keys.get(context))))
         TextMMD(text = stringResource(R.string.key_next_check, due), style = MaterialTheme.typography.labelSmall)

@@ -681,6 +681,7 @@
     <string name="reminder_later">Later</string>
     <string name="reminder_none">No assessment is open.</string>
     <string name="reminder_close">Close</string>
+    <string name="reminder_also_due">Also due: %1$s</string>
     <string name="recheck_title">Time to reassess</string>
     <string name="recheck_text">Reassess LOR, airway, breathing, HR, RR and skin (SCTM). Add a set of vital signs to the note.</string>
 
