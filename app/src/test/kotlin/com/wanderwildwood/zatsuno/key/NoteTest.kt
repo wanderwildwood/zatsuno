@@ -40,7 +40,7 @@ class NoteTest {
     @Test
     fun theNoteReadsAsWritten() {
         val expected = listOf(
-            "SOAP note 14:02–14:27 · Field Kit",
+            "SOAP note Oct 7, 2026, 14:02–14:27 · Field Kit",
             "Where: 44.42800, -110.58850 (±8 m, 14:03)",
             "USNG: 12T WQ 32753 19493",
             "",
@@ -99,7 +99,7 @@ class NoteTest {
     @Test
     fun anEmptyNoteSaysSoInEachPart() {
         val text = note.text(Incident(at(9, 0))).lines()
-        assertEquals("SOAP note 09:00–09:00 · Field Kit", text[0])
+        assertEquals("SOAP note Oct 7, 2026, 09:00–09:00 · Field Kit", text[0])
         assertEquals("Where: not recorded", text[1])
         assertEquals("S  –", text[3])
         assertEquals("O  –", text[4])
@@ -176,6 +176,13 @@ class NoteTest {
         val text = twelve.text(incident)
         assertTrue(text.lines().first(), text.lines().first().contains("2:02") && text.lines().first().contains("PM"))
         assertEquals("14:02", note.time(at(14, 2)))
+    }
+
+    // The day is the phone's own, not UTC's: just after midnight UTC is still the evening before in New York.
+    @Test
+    fun theHeadingCarriesTheDayItBegan() {
+        val eastern = Note(KeyFixtures.key, KeyFixtures.words, KeyFixtures.titles, java.time.ZoneId.of("America/New_York"))
+        assertEquals("SOAP note Oct 6, 2026, 20:30–20:30 · Field Kit", eastern.text(Incident(at(0, 30))).lines().first())
     }
 
     // A last-known fix from long before is not where the patient is.

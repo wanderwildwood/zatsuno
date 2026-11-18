@@ -640,8 +640,8 @@
     <string name="key_avpu_short_none">U</string>
 
     <!-- The SOAP note, as sent. Times are 24-hour, HH:MM -->
-    <!-- First line. %1$s the start, %2$s the latest -->
-    <string name="note_head">SOAP note %1$s–%2$s · Field Kit</string>
+    <!-- First line. %1$s the day it began (Nov 18, 2026), %2$s the start, %3$s the latest -->
+    <string name="note_head">SOAP note %1$s, %2$s–%3$s · Field Kit</string>
     <!-- %1$s the position, %2$s meters, %3$s the time -->
     <string name="note_where">Where: %1$s (±%2$s m, %3$s)</string>
     <string name="note_where_no_accuracy">Where: %1$s (%2$s)</string>

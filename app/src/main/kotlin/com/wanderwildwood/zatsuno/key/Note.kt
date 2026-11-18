@@ -58,12 +58,17 @@ class Note(
 
     fun time(at: Long): String = clock.format(Instant.ofEpochMilli(at).atZone(zone))
 
+    /** The day, written out so no one has to guess the order: Nov 18, 2026. The note's words are English. */
+    private val day = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.US)
+
+    fun date(at: Long): String = day.format(Instant.ofEpochMilli(at).atZone(zone))
+
     /** Pages the key reaches from its own stages, so the A line leaves them out. */
     private val stagePages = setOf("call", "scene")
 
     fun text(incident: Incident): String {
         val out = mutableListOf<String>()
-        out += words.get("note_head", time(incident.started), time(incident.last))
+        out += words.get("note_head", date(incident.started), time(incident.started), time(incident.last))
         incident.texts()[Fields.NAME]?.let { out += words.get("note_name", it.text.trim()) }
         out += where(incident)
         grid(incident)?.let { out += it }
