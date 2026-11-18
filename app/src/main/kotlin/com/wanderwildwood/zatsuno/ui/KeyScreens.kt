@@ -717,7 +717,6 @@ private fun DoneLine(state: KeyState) {
     }
 }
 
-/** The check being entered under "now", until it is saved. */
 /** Which patient the vitals draft belongs to. Not state: the draft follows from the id alone. */
 private class DraftHolder {
     private var of: String? = null
@@ -732,6 +731,7 @@ private class DraftHolder {
     }
 }
 
+/** The check being entered under "now", until it is saved. */
 class VitalsDraft {
     var avpu by mutableStateOf<String?>(null)
     var pulse by mutableStateOf("")
