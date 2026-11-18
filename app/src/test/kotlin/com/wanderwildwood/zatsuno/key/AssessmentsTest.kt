@@ -19,6 +19,7 @@ class AssessmentsTest {
         var reminded: List<Incident> = emptyList()
         var notificationShowing = false
         var unreadable: String? = null
+        var forgetAt: Long? = null
         override fun openIds() = open.keys.toList()
         override fun readOpen(id: String) = if (id == unreadable) throw java.io.IOException("not now") else open[id]
         override fun writeOpen(id: String, text: String) { open[id] = text }
@@ -31,6 +32,7 @@ class AssessmentsTest {
         override fun readTrash() = trash
         override fun writeTrash(text: String) { trash = text }
         override fun deleteTrash() { trash = null }
+        override fun forgetTrashAt(at: Long) { forgetAt = at }
         override fun remind(patients: List<Incident>) { alarmSet = true; reminded = patients }
         override fun cancelReminder() { alarmSet = false; notificationShowing = false; reminded = emptyList() }
         override fun dismissNotification() { notificationShowing = false }
@@ -230,6 +232,8 @@ class AssessmentsTest {
         a.save(first); a.end(first.id, keep = false)
         t += Assessments.UNDO_MS - 1
         assertEquals(Assessments.OPEN, a.undoable())
+        // The slot empties itself when its time is up, whether or not the app is opened.
+        assertEquals(1_000_000L + Assessments.UNDO_MS, p.forgetAt)
         t += 2
         assertNull(a.undoable()); assertNull(p.trash)
         assertNull(a.undo())

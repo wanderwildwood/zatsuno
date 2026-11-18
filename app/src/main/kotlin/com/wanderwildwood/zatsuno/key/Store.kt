@@ -53,6 +53,8 @@ interface AssessmentPlatform {
     fun readTrash(): String?
     fun writeTrash(text: String)
     fun deleteTrash()
+    /** Removes what waits in the undo slot at [at] if it is still there and too old, whether or not the app is opened. */
+    fun forgetTrashAt(at: Long)
     /** Sets the one reminder, for whichever open patient is due first (or takes it away if none is). */
     fun remind(patients: List<Incident>)
     /** Cancels the alarm and any reminder notification showing. */
@@ -154,7 +156,11 @@ class Assessments(private val p: AssessmentPlatform, private val now: () -> Long
         return kind
     }
 
-    private fun trash(kind: String, text: String) = p.writeTrash("$kind\t${now()}\n$text")
+    private fun trash(kind: String, text: String) {
+        val at = now()
+        p.writeTrash("$kind\t$at\n$text")
+        p.forgetTrashAt(at + UNDO_MS)
+    }
 
     private fun remindAgain() {
         val all = patients()
@@ -233,6 +239,7 @@ class AndroidAssessmentPlatform(private val context: Context) : AssessmentPlatfo
     override fun readTrash() = read(trash())
     override fun writeTrash(text: String) = write(trash(), text)
     override fun deleteTrash() { trash().delete() }
+    override fun forgetTrashAt(at: Long) = Recheck.forgetUndoAt(context, at)
     override fun remind(patients: List<Incident>) = Recheck.schedule(context, patients)
     override fun cancelReminder() = Recheck.cancel(context)
     override fun dismissNotification() = Recheck.seen(context)
@@ -359,6 +366,23 @@ object Recheck {
         else alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pending(context))
     }
 
+    /** For [RecheckReceiver]: the undo slot's time is up. */
+    const val ACTION_FORGET_UNDO = "com.wanderwildwood.zatsuno.action.FORGET_UNDO"
+
+    /**
+     * An alarm at [at] that empties the undo slot once its ten minutes are up, so a deleted note
+     * does not wait for the app to be opened again. Not exact: a little late is fine. A later
+     * delete moves it to its own time.
+     */
+    fun forgetUndoAt(context: Context, at: Long) {
+        val forget = PendingIntent.getBroadcast(
+            context, 1, Intent(context, RecheckReceiver::class.java).setAction(ACTION_FORGET_UNDO),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        // A second after: [Assessments.undoable] keeps it up to the last millisecond.
+        context.getSystemService(AlarmManager::class.java).setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at + 1_000L, forget)
+    }
+
     fun cancel(context: Context) {
         context.getSystemService(AlarmManager::class.java).cancel(pending(context))
         seen(context)
@@ -477,6 +501,8 @@ class BootReceiver : BroadcastReceiver() {
 
 class RecheckReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        // The undo slot's ten minutes are up: whatever waits there and is too old goes.
+        if (intent.action == Recheck.ACTION_FORGET_UNDO) { runCatching { IncidentStore.undoable(context) }; return }
         // Only while an assessment is still open: ending the last one cancels the alarm, this makes sure.
         val all = IncidentStore.patients(context)
         if (all.isEmpty()) { Recheck.cancel(context); return }
