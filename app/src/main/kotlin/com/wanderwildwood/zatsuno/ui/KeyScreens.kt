@@ -670,12 +670,14 @@ private fun TextLine(state: KeyState, field: String, letter: String?) {
             modifier = Modifier.width(16.dp).padding(top = 3.dp))
         Column(Modifier.weight(1f)) {
             TextMMD(text = state.words.get("key_field_$field"), style = MaterialTheme.typography.labelSmall)
-            TextFieldMMD(
-                value = value,
-                onValueChange = { value = it; state.write(field, it) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().textActions(),
-            )
+            NoLearning {
+                TextFieldMMD(
+                    value = value,
+                    onValueChange = { value = it; state.write(field, it) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth().textActions(),
+                )
+            }
         }
     }
 }
@@ -735,13 +737,15 @@ private fun LazyListScope.treat(state: KeyState, ranking: Ranking, onOpenPage: (
 private fun DoneLine(state: KeyState) {
     var value by rememberSaveable { mutableStateOf("") }
     Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) {
-        TextFieldMMD(
-            value = value,
-            onValueChange = { value = it },
-            singleLine = true,
-            placeholder = { TextMMD(text = stringResource(R.string.key_done_hint), style = MaterialTheme.typography.labelSmall) },
-            modifier = Modifier.fillMaxWidth().textActions(),
-        )
+        NoLearning {
+            TextFieldMMD(
+                value = value,
+                onValueChange = { value = it },
+                singleLine = true,
+                placeholder = { TextMMD(text = stringResource(R.string.key_done_hint), style = MaterialTheme.typography.labelSmall) },
+                modifier = Modifier.fillMaxWidth().textActions(),
+            )
+        }
         Spacer(Modifier.height(6.dp))
         WideButton(stringResource(R.string.key_done_add)) { if (value.isNotBlank()) { state.done(value); value = "" } }
     }
@@ -973,13 +977,15 @@ private fun CountField(label: String, value: String, onChange: (String) -> Unit)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
         Column(Modifier.weight(1f)) {
             TextMMD(text = label, style = MaterialTheme.typography.labelSmall)
-            TextFieldMMD(
-                value = value,
-                onValueChange = { v -> onChange(v.filter(Char::isDigit).take(3)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-            )
+            NoLearning {
+                TextFieldMMD(
+                    value = value,
+                    onValueChange = { v -> onChange(v.filter(Char::isDigit).take(3)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
         val n = value.toIntOrNull()
         TextMMD(text = if (n != null) stringResource(R.string.key_per_minute, (n * 4).toString()) else "",

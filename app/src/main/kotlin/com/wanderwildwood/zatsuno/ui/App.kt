@@ -1,6 +1,7 @@
 package com.wanderwildwood.zatsuno.ui
 
 import android.app.Activity
+import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -49,6 +50,9 @@ object Route {
     const val LAST_QR = "key:last:qr"
     fun aid(id: String, more: Boolean = false) = if (more) "aid:$id:more" else "aid:$id"
     fun knot(id: String) = "knot:$id"
+
+    /** "Patient assessment" and its note: a patient's name and condition can be on screen. */
+    fun holdsPatient(route: String) = route == KEY || route.startsWith("$KEY:")
 }
 
 /**
@@ -122,6 +126,14 @@ fun FieldKitApp(
     }
 
     val route = stack.last()
+    // A patient's name and condition stay out of screenshots and the Recents picture; the aid
+    // pages, knots and compass can still be screenshotted.
+    val secure = Route.holdsPatient(route)
+    DisposableEffect(secure) {
+        val window = (context as? Activity)?.window
+        if (secure) window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        onDispose { if (secure) window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE) }
+    }
     // A sent position belongs to the visit that brought it; the call page opened later is the phone's own.
     LaunchedEffect(route) { if (route != Route.aid(Pages.CALL) && route != Route.aid(Pages.CALL, more = true)) givenSaved = null }
     when {

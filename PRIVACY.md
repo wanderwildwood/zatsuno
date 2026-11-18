@@ -20,6 +20,12 @@ ending the assessment cancels the alarm and the notification. After a restart or
 alarm of an open assessment is set again, which is what the permission to know the phone has
 started is for.
 
+The "Patient assessment" screens, the note, the verbal report and the list of patients are marked
+secure, so they are left out of screenshots and the Recents picture; the first-aid pages, knots
+and compass are not, so they can still be screenshotted. The assessment's write-in lines and vital
+signs ask the keyboard not to learn what is typed in them, so a patient's name or condition does
+not turn up in its suggestions elsewhere; whether a keyboard honors that is up to the keyboard.
+
 The "In case of emergency" card is kept in the app's private storage and is never backed up by
 the app. If you switch on "Show on the lock screen", the lines you choose are handed to Glance
 (com.wanderwildwood.hitome) on the same phone, which draws them on the lock screen, where
