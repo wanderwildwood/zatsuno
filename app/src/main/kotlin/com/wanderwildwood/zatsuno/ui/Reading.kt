@@ -231,7 +231,7 @@ private fun BlockView(
         is Block.Urgent -> Readable {
             TextMMD(text = link(block.text), style = body, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 6.dp))
         }
-        // What has changed, and who says so: set apart by a rule round it, not by colour.
+        // What has changed, and who says so: set apart by a rule round it, not by color.
         is Block.Note -> Readable {
             TextMMD(
                 text = link(block.text),

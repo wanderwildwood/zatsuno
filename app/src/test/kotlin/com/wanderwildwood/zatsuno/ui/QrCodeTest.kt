@@ -50,7 +50,7 @@ class QrCodeTest {
     @Test fun theCodeIsSquareAndHasItsFinderCorners() {
         val m = qrModules("http://192.168.1.20:41234/0123456789abcdef0123456789abcdef")!!
         assertTrue(m.all { it.size == m.size })
-        // top-left finder pattern: a black 7x7 ring with a black 3x3 centre
+        // top-left finder pattern: a black 7x7 ring with a black 3x3 center
         assertTrue((0..6).all { m[0][it] && m[6][it] && m[it][0] && m[it][6] })
         assertTrue(m[3][3] && !m[1][1])
     }

@@ -38,7 +38,7 @@ class CardTest {
     fun emptyMeansEveryLineBlank() {
         assertTrue(Card().isEmpty)
         assertTrue(Card(name = "  ").isEmpty)
-        assertTrue(!Card(contacts = listOf(Contact("Mum", ""))).isEmpty)
+        assertTrue(!Card(contacts = listOf(Contact("Mom", ""))).isEmpty)
     }
 
     @Test

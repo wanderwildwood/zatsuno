@@ -53,7 +53,7 @@ import androidx.compose.ui.semantics.toggleableState
  *
  * The card and the reading follow kCompass (Ondřej Koloničný, OK1CDJ, GPL-3.0). True north is
  * only offered as a number once there is a position, since the declination depends on where
- * you are; until then the screen says so rather than showing magnetic labelled true.
+ * you are; until then the screen says so rather than showing magnetic labeled true.
  */
 @Composable
 fun CompassScreen(model: CompassModel, onBack: () -> Unit) {
@@ -159,8 +159,8 @@ private fun Rose(heading: Float?, letters: List<String>, modifier: Modifier) {
         val cx = size.width / 2f
         val cy = size.height / 2f
         val r = min(cx, cy) - 14f
-        val centre = Offset(cx, cy)
-        drawCircle(Color.Black, radius = r, center = centre, style = Stroke(width = 3f))
+        val middle = Offset(cx, cy)
+        drawCircle(Color.Black, radius = r, center = middle, style = Stroke(width = 3f))
         val mark = Path().apply {
             moveTo(cx, cy - r + 2f)
             lineTo(cx - 10f, cy - r - 13f)
@@ -171,7 +171,7 @@ private fun Rose(heading: Float?, letters: List<String>, modifier: Modifier) {
         // With no heading to show honestly, the card is left blank rather than pointing
         // a north it does not know.
         if (heading == null) return@Canvas
-        rotate(degrees = -heading, pivot = centre) {
+        rotate(degrees = -heading, pivot = middle) {
             for (deg in 0 until 360 step 15) {
                 val a = Math.toRadians(deg.toDouble())
                 val len = when {
@@ -196,7 +196,7 @@ private fun Rose(heading: Float?, letters: List<String>, modifier: Modifier) {
                 close()
             }
             drawPath(needle, Color.Black, style = Stroke(width = 4f))
-            drawLine(Color.Black, centre, Offset(cx, cy + (r - 58f)), strokeWidth = 2f)
+            drawLine(Color.Black, middle, Offset(cx, cy + (r - 58f)), strokeWidth = 2f)
             val paint = Paint().apply {
                 color = android.graphics.Color.BLACK
                 textSize = 20f * density

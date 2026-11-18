@@ -32,8 +32,8 @@ import androidx.compose.ui.semantics.semantics
 
 /**
  * Choices as a grid of tiles, from the mushroom journal's ChoiceGrid without its drawings: every
- * tile in a row the same height, its label centred, so the grid reads as a grid. Chosen is a
- * heavy border, "not sure" a dotted one; no fill, no colour, nothing moves.
+ * tile in a row the same height, its label centered, so the grid reads as a grid. Chosen is a
+ * heavy border, "not sure" a dotted one; no fill, no color, nothing moves.
  *
  * Three to a row when every label is short (Yes, No, Not sure), two otherwise.
  */
