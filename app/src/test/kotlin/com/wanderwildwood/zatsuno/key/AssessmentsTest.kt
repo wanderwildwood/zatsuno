@@ -210,6 +210,20 @@ class AssessmentsTest {
         assertNull(a.undo())
     }
 
+    @Test fun aLastNoteReplacedByAnotherCanBePutBack() {
+        val p = Fake(); val a = Assessments(p)
+        a.save(first); a.save(second)
+        a.end(first.id, keep = true)
+        a.end(second.id, keep = true)
+        assertEquals(second, a.kept())
+        assertEquals(Assessments.KEPT, a.undoable())
+        assertEquals(Assessments.KEPT, a.undo())
+        assertEquals(first, a.kept())
+        // The newer note was not lost by putting the older one back: it can come back in turn.
+        assertEquals(Assessments.KEPT, a.undo())
+        assertEquals(second, a.kept())
+    }
+
     @Test fun undoIsOnlyForTenMinutes() {
         val p = Fake(); var t = 1_000_000L
         val a = Assessments(p) { t }

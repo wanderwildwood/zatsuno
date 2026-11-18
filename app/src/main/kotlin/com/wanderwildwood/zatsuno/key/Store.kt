@@ -94,11 +94,17 @@ class Assessments(private val p: AssessmentPlatform, private val now: () -> Long
         p.remind(patients())
     }
 
-    /** Ends patient [id]: [keep] the note as the last one, or throw it away (it can be put back). Either way the reminder is worked out again without it. */
+    /**
+     * Ends patient [id]: [keep] the note as the last one, or throw it away (it can be put back).
+     * A last note it replaces waits in the undo slot, as a deleted one does. Either way the
+     * reminder is worked out again without it.
+     */
     fun end(id: String, keep: Boolean) {
         val text = p.readOpen(id)
-        if (keep && text != null && Incident.decode(text) != null) p.writeKept(text)
-        else if (text != null) trash(OPEN, text)
+        if (keep && text != null && Incident.decode(text) != null) {
+            p.readKept()?.takeIf { it != text }?.let { trash(KEPT, it) }
+            p.writeKept(text)
+        } else if (text != null) trash(OPEN, text)
         p.deleteOpen(id)
         if (p.readActive() == id) p.writeActive(null)
         remindAgain()
@@ -127,13 +133,19 @@ class Assessments(private val p: AssessmentPlatform, private val now: () -> Long
         return kind.takeIf { it == KEPT || it == OPEN }
     }
 
-    /** Puts back what was last deleted, discarded or reset. Returns what it was, or null. */
+    /**
+     * Puts back what was last deleted, discarded or reset. Returns what it was, or null. A last
+     * note put back over a newer one changes places with it: the newer one waits in the undo slot.
+     */
     fun undo(): String? {
         val kind = undoable() ?: return null
         val body = p.readTrash()!!.substringAfter('\n', "")
         p.deleteTrash()
         when (kind) {
-            KEPT -> p.writeKept(body)
+            KEPT -> {
+                p.readKept()?.takeIf { it != body }?.let { trash(KEPT, it) }
+                p.writeKept(body)
+            }
             else -> {
                 val inc = Incident.decode(body) ?: return null
                 save(inc)
