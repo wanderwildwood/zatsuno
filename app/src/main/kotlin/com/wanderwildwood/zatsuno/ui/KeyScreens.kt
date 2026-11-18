@@ -66,8 +66,8 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 
 /**
- * The open incident, and every change to it. Each change is one timed event, saved at once,
- * and the recheck alarm is set again from it.
+ * The open incident, and every change to it. Each change is one timed event, saved at once
+ * (a line being typed, once the typing pauses), and the recheck alarm is set again from it.
  */
 class KeyState(
     private val context: Context,
@@ -107,6 +107,7 @@ class KeyState(
 
     /** Shows patient [id]; null is a new one, begun by the first answer. */
     fun show(id: String?) {
+        savePending()
         IncidentStore.show(context, id)
         reload()
     }
@@ -114,12 +115,14 @@ class KeyState(
     /** Clears this patient and shows a new one: the answers, the note and the reminder for it go (Undo puts them back). */
     fun reset() {
         val id = incident?.id ?: return
+        savePending()
         IncidentStore.reset(context, id)
         reload()
     }
 
     /** Puts back what was last deleted, discarded or cleared. */
     fun undo() {
+        savePending()
         IncidentStore.undo(context)
         reload()
     }
@@ -137,8 +140,30 @@ class KeyState(
         val next = if (e is Incident.Text && last is Incident.Text && last.field == e.field) base.copy(events = base.events.dropLast(1) + e)
             else base + e
         incident = next
-        IncidentStore.save(context, next)
-        patients = IncidentStore.patients(context)
+        handler.removeCallbacks(saveLater)
+        if (e is Incident.Text) {
+            // Saved once the typing pauses, not at every letter: each save writes the file,
+            // reads every patient's and sets the alarm again. Until then the lists follow it here.
+            pending = next
+            patients = Patients.replaced(patients, next)
+            handler.postDelayed(saveLater, TEXT_SAVE_MS)
+        } else {
+            pending = null
+            IncidentStore.save(context, next)
+            patients = IncidentStore.patients(context)
+        }
+    }
+
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var pending: Incident? = null
+    private val saveLater = Runnable { savePending() }
+
+    /** Saves a line still waiting for the typing to pause. Run before anything that reads the files. */
+    fun savePending() {
+        handler.removeCallbacks(saveLater)
+        val p = pending ?: return
+        pending = null
+        IncidentStore.save(context, p)
     }
 
     /** One answer; the same one again takes it back. */
@@ -175,11 +200,13 @@ class KeyState(
     /** Ends the assessment: keep the note as the last one, or discard it. All that belongs to it is cleared, reminder included. */
     fun end(keep: Boolean) {
         val id = incident?.id ?: return
+        savePending()
         IncidentStore.end(context, id, keep)
         reload()
     }
 
     fun deleteKept() {
+        savePending()
         IncidentStore.deleteKept(context)
         reload()
     }
@@ -241,6 +268,9 @@ private val QUALITY = listOf("easy", "labored", "noisy")
 /** The pupils: equal and reacting (PERRL), or not. "Not checked" is the third choice, and saves nothing. */
 private val PUPILS = listOf(Incident.EQUAL, Incident.UNEQUAL)
 private const val PUPILS_NOT_CHECKED = "not_checked"
+
+/** How long typing in a line pauses before the line is saved. */
+private const val TEXT_SAVE_MS = 700L
 
 /**
  * Patient assessment: the Patient Assessment System, one stage on screen at a time under a

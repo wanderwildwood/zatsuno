@@ -18,6 +18,10 @@ object Patients {
         return words.get("patient_n", n.toString())
     }
 
+    /** [all] with [incident] in place of its earlier self, or added, the oldest first: the list once it is saved. */
+    fun replaced(all: List<Incident>, incident: Incident): List<Incident> =
+        (all.filterNot { it.id == incident.id } + incident).sortedBy { it.started }
+
     fun numbered(incident: Incident, all: List<Incident>, context: android.content.Context): String =
         numbered(incident, all, Keys.words(context))
 

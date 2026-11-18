@@ -3,6 +3,7 @@ package com.wanderwildwood.zatsuno.ui
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -81,6 +82,8 @@ fun FieldKitApp(
     val pages = remember { Pages.all(context) }
     val titles = remember(pages) { pages.associate { it.title to it.id } }
     val keyState = remember { KeyState(context, Keys.get(context), Keys.words(context), pages.associate { it.id to it.title }) }
+    // A line typed in the last moment is saved before the screen goes (the phone switching to dark, say).
+    DisposableEffect(keyState) { onDispose { keyState.savePending() } }
     // The vitals being entered, held here so an aid page, the note or the read-out does not lose
     // them. A fresh draft for each patient, except that a patient is begun by the first answer:
     // the vitals typed before it, for "not yet begun", go on with the patient it became.

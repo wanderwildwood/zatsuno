@@ -30,6 +30,13 @@ class PatientsTest {
         assertTrue(note.text(a).lines().none { it.startsWith("Name:") })
     }
 
+    @Test fun aLineBeingTypedTakesThePatientsPlaceInTheList() {
+        val b2 = b + Incident.Text(2_200L, "name", "Test Person C")
+        assertEquals(listOf(a, b2), Patients.replaced(listOf(b, a), b2))
+        val c = Incident(1_500L) + Incident.Text(1_500L, "who", "x")
+        assertEquals(listOf(a, c, b), Patients.replaced(listOf(a, b), c))
+    }
+
     @Test fun aShortNoteIsOneCodeAsItStands() {
         assertEquals(listOf("hello\nthere"), Patients.codes("hello\nthere"))
     }
