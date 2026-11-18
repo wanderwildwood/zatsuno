@@ -93,8 +93,13 @@ private fun Reminder(patientId: String?, onOpen: (String?) -> Unit, onEnd: (Stri
         }
         TextMMD(text = stringResource(R.string.recheck_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(12.dp))
+        // Over the lock screen the patient is numbered, never named: anyone near can read it.
+        val locked = androidx.compose.runtime.remember(patientId) {
+            context.getSystemService(android.app.KeyguardManager::class.java)?.isKeyguardLocked != false
+        }
+        val who = if (locked) Patients.numbered(incident, all, context) else Patients.label(incident, all, context)
         TextMMD(
-            text = if (all.size > 1) stringResource(R.string.recheck_text_named, Patients.label(incident, all, context)) else stringResource(R.string.recheck_text),
+            text = if (all.size > 1) stringResource(R.string.recheck_text_named, who) else stringResource(R.string.recheck_text),
             style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(Modifier.height(10.dp))

@@ -18,6 +18,11 @@ class PatientsTest {
         assertEquals("Patient 3", Patients.label(c, listOf(c, a, b), words))
     }
 
+    @Test fun theLockScreenNumbersAPatientEvenWithAName() {
+        assertEquals("Patient 2", Patients.numbered(b, listOf(a, b), words))
+        assertEquals("Patient 1", Patients.numbered(a, listOf(b, a), words))
+    }
+
     @Test fun theNameGoesInTheNoteAndTheVerbalReportOnlyWhenGiven() {
         val note = Note(KeyFixtures.key, words, KeyFixtures.titles, ZoneOffset.UTC)
         assertTrue(note.text(b).lines().any { it == "Name: Test Person B" })

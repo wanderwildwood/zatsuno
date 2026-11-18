@@ -413,7 +413,8 @@ class RecheckReceiver : BroadcastReceiver() {
         // Nobody due now (each already reminded about, or left too long): no reminder, and the
         // alarm is set again only for a reminder still to come, never for now.
         val due = Recheck.dueFirst(context, all, now)
-        if (due != null) Recheck.notify(context, due, all.size > 1, Patients.label(due, all, context))
+        // Numbered, not named: the notification is shown on the lock screen.
+        if (due != null) Recheck.notify(context, due, all.size > 1, Patients.numbered(due, all, context))
         // The others are still to come.
         Recheck.schedule(context, all, now)
     }

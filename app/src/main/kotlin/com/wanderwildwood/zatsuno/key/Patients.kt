@@ -6,9 +6,20 @@ object Patients {
     fun label(incident: Incident, all: List<Incident>, words: Words): String {
         val name = incident.texts()[Fields.NAME]?.text?.trim().orEmpty()
         if (name.isNotEmpty()) return name
+        return numbered(incident, all, words)
+    }
+
+    /**
+     * "Patient 2" by their place among [all] (oldest first), never the written name: what the
+     * lock screen shows, where anyone near the phone can read it.
+     */
+    fun numbered(incident: Incident, all: List<Incident>, words: Words): String {
         val n = all.sortedBy { it.started }.indexOfFirst { it.id == incident.id }.let { if (it < 0) all.size else it } + 1
         return words.get("patient_n", n.toString())
     }
+
+    fun numbered(incident: Incident, all: List<Incident>, context: android.content.Context): String =
+        numbered(incident, all, Keys.words(context))
 
     /** The same, for the reminder, which has only a context: the real strings.xml. */
     fun label(incident: Incident, all: List<Incident>, context: android.content.Context): String =

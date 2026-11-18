@@ -47,7 +47,8 @@ android.permission.RECEIVE_BOOT_COMPLETED
 
 The last four are for "Patient assessment": a buzz at the end of a 15-second count, the
 reassessment reminder (the exact alarm, and the screen it may show over the lock screen), and
-setting that alarm again after a restart. Nothing else. Picking an emergency contact uses the phone's own contact picker, which hands
+setting that alarm again after a restart. Nothing else. On the lock screen the reminder never
+shows a patient's written name: with more than one patient open it says "Patient 2" and so on. Picking an emergency contact uses the phone's own contact picker, which hands
 over the one number you pick; Field Kit has no access to your contacts beyond that.
 
 ## What it hands to other apps, and only when you press
