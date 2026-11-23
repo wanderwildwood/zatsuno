@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
@@ -119,14 +120,26 @@ fun AidScreen(
         LaunchedEffect(page.id) {
             if (openMore && hasMore) list.scrollToItem(page.now.size + if (showCard) 1 else 0)
         }
-        PagedColumn(modifier, state = list, showCutRow = true) {
+        // A long paragraph in rows of whole lines, so a turn never opens on half a line.
+        val fit = rememberWholeLineFit()
+        val body = MaterialTheme.typography.bodyMedium
+        fun LazyListScope.blockRows(block: Block, key: Any) {
+            if (block is Block.Para) {
+                wholeLineItems(key, block.text, body, fit, gap = 6.dp) { run, _, textModifier ->
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+                        Readable { TextMMD(text = link(run), style = body, modifier = Modifier.padding(vertical = 3.dp).then(textModifier)) }
+                    }
+                }
+            } else item(key = key) {
+                Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link, page.checklist, ticked, onTick, titles, onOpenPage) }
+            }
+        }
+        PagedColumn(modifier.wholeLinePage(fit), state = list, showCutRow = true) {
             if (showCard) {
                 item(key = "card") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { CardLines(card!!, bordered = true) } }
             }
             page.now.forEachIndexed { i, block ->
-                item(key = i) {
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link, page.checklist, ticked, onTick, titles, onOpenPage) }
-                }
+                blockRows(block, i)
                 // The open note, right under the position it starts with.
                 if (block == Block.Position && readOut != null) {
                     item(key = "readout") { Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { ReadOutBox(readOut) } }
@@ -137,9 +150,7 @@ fun AidScreen(
             }
             if (moreOpen || !hasMore) {
                 page.rest.forEachIndexed { i, block ->
-                    item(key = page.more + i) {
-                        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { BlockView(block, model, given, onDropGiven, link, page.checklist, ticked, onTick, titles, onOpenPage) }
-                    }
+                    blockRows(block, page.more + i)
                 }
                 item(key = "sources") {
                     Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 18.dp)) {
