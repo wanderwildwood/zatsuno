@@ -256,7 +256,6 @@
     <string name="card_on_lock_screen">Show on the lock screen</string>
     <string name="card_lock_warning">Anyone holding the phone can read what is shown there, without unlocking it. That is the point of it for someone helping you, and the cost of it everywhere else.</string>
     <string name="card_lock_glance">The lock screen shows it through the Glance app, when Glance is installed and switched on.</string>
-    <string name="card_lock_no_glance">The lock screen panel comes from the Glance app, which is not installed here. The card works without it.</string>
     <string name="card_lock_on">Shown on the lock screen, through Glance.</string>
     <string name="card_lock_off">Not shown on the lock screen.</string>
     <!-- Someone sent from Contacts ("Add to emergency card") -->

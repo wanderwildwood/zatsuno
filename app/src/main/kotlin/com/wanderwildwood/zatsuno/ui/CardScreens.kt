@@ -120,15 +120,10 @@ fun CardScreen(onBack: () -> Unit, onEdit: () -> Unit) {
                     Spacer(Modifier.height(16.dp))
                     WideButton(stringResource(if (card.isEmpty) R.string.card_fill else R.string.card_edit), onClick = onEdit)
                     Spacer(Modifier.height(12.dp))
-                    val glance = remember { glanceInstalled(context) }
-                    TextMMD(
-                        text = stringResource(
-                            when {
-                                !glance -> R.string.card_lock_no_glance
-                                card.onLockScreen -> R.string.card_lock_on
-                                else -> R.string.card_lock_off
-                            },
-                        ),
+                    // Said only where Glance is, or while the card is still set to show there.
+                    val glanceHere = remember { glanceInstalled(context) }
+                    if (glanceHere || card.onLockScreen) TextMMD(
+                        text = stringResource(if (card.onLockScreen) R.string.card_lock_on else R.string.card_lock_off),
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
@@ -166,6 +161,9 @@ fun CardEditScreen(onDone: () -> Unit) {
     var note by rememberSaveable { mutableStateOf(start.note) }
     var contacts by rememberSaveable { mutableStateOf(Card.encodeContacts(start.contacts)) }
     var lock by rememberSaveable { mutableStateOf(start.onLockScreen) }
+    // The lock-screen switches are for a reader who has Glance, or whose card is still set to show there.
+    val glanceHere = remember { glanceInstalled(context) }
+    val lockRow = glanceHere || start.onLockScreen
     var shown by rememberSaveable { mutableStateOf(start.shown.map { it.name }) }
     var noContactsApp by remember { mutableStateOf(false) }
 
@@ -250,7 +248,7 @@ fun CardEditScreen(onDone: () -> Unit) {
                 }
             }
             item(key = "note") { Field(stringResource(R.string.card_note), note, lines = 3, onFocus = toTop(6)) { note = it } }
-            item(key = "lock") {
+            if (lockRow) item(key = "lock") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp)) {
                     SwitchRow(stringResource(R.string.card_on_lock_screen), lock) { lock = it }
                     TextMMD(text = stringResource(R.string.card_lock_warning), style = MaterialTheme.typography.labelSmall)
@@ -261,8 +259,8 @@ fun CardEditScreen(onDone: () -> Unit) {
                                 shown = if (on) shown + f.name else shown - f.name
                             }
                         }
-                        TextMMD(
-                            text = stringResource(if (glanceInstalled(context)) R.string.card_lock_glance else R.string.card_lock_no_glance),
+                        if (glanceHere) TextMMD(
+                            text = stringResource(R.string.card_lock_glance),
                             style = MaterialTheme.typography.labelSmall,
                         )
                     }
