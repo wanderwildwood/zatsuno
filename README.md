@@ -87,6 +87,9 @@ and it will install on any Android 12 device.
 - **No internet.** The app has no internet permission. Location is used only while the compass,
   "Calling for help" or the note is open, and stays on the phone. A note you start stays on the
   phone until you clear it.
+- **Assessments stay out of screenshots.** Patient assessments and their notes are left out of
+  screenshots and the recent-apps picture, and the keyboard is asked not to learn what is typed
+  in them.
 - **The emergency card stays on the phone.** It is shown on the lock screen only if you switch
   that on, and then anyone holding the phone can read it without unlocking.
 - **True north needs a fix.** The declination depends on where you are, so until there is a
